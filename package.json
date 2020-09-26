@@ -1,5 +1,5 @@
 {
-  "name": "QuizCreate",
+  "name": "quizcreate",
   "version": "1.0.0",
   "description": "Website created for A-level programming project, teachers able to create quizzes for their classes to compelete online",
   "main": "server.js",
