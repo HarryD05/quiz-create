@@ -1,0 +1,16 @@
+{
+  "name": "QuizCreate",
+  "version": "1.0.0",
+  "description": "Website created for A-level programming project, teachers able to create quizzes for their classes to compelete online",
+  "main": "server.js",
+  "scripts": {
+    "run": "node server",
+    "dev": "nodemon server"
+  },
+  "keywords": [],
+  "author": "Harry Davis",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}
