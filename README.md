@@ -1,4 +1,4 @@
-![QuizCreateLogo](https://github.com/HarryD05/quiz-create/blob/master/client/src/QuizCreateLogo.png)
+![QuizCreateLogo](https://github.com/HarryD05/quiz-create/blob/master/client/src/assets/QuizCreateLogo.png)
 
 # QuizCreate
 Created for my A-level programming project, a website where teachers can create quizzes for their classes to complete online
