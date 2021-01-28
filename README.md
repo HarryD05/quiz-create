@@ -5,10 +5,10 @@ Created for my A-level programming project, a website where teachers can create 
 
 ## Features
 ### _For Teachers:_ ###
-- Create classes, personalise a name & joining code
+- Create classes (choosing the name, qualification, subject and joining code)
 - Assign quizzes for classes to complete online, with no marking required
-- Results for classes & specific students shown with graphs & tables, areas of concern highlighted
-- All quesitons created (from all teachers) stored in database for reuse when creating quizzes (categorised by qualification, subject, topic & subtopic)
+- Results for classes and specific students shown with graphs and tables, areas of concern highlighted
+- All quesitons created (from all teachers) stored in database for reuse when creating quizzes (categorised by qualification, subject and topic)
 
 ### _For Students:_ ###
 - Join classes using the joining code created by your teacher
