@@ -21,7 +21,13 @@ const AssignmentSchema = new Schema({
   },
   questions: {
     type: [Schema.Types.ObjectId],
-    require: [true, 'Questions required']
+    ref: 'Question',
+    required: [true, 'Questions required']
+  },
+  class: {
+    type: Schema.Types.ObjectId,
+    req: 'Class',
+    required: [true, 'Class required']
   }
 })
 

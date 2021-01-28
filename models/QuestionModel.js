@@ -15,7 +15,7 @@ const QuestionSchema = new Schema({
     type: String,
     required: [true, 'Explanation required']
   },
-  type: {
+  qtype: {
     type: String,
     enum: [
       'multichoice',

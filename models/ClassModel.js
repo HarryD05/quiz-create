@@ -16,6 +16,11 @@ const ClassSchema = new Schema({
     type: String,
     required: [true, 'Qualification required']
   },
+  joiningCode: {
+    type: String,
+    required: [true, 'Joining code required'],
+    unique: true
+  },
   teacher: {
     type: Schema.Types.ObjectId,
     ref: 'User',
@@ -24,6 +29,14 @@ const ClassSchema = new Schema({
   students: {
     type: [Schema.Types.ObjectId],
     ref: 'Student'
+  },
+  assignments: {
+    type: [Schema.Types.ObjectId],
+    ref: 'Assignment'
+  },
+  results: {
+    type: [Schema.Types.ObjectId],
+    ref: 'Assignment-result'
   }
 })
 

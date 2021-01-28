@@ -2,12 +2,29 @@
 const express = require('express'); //allows for creation of a backend server
 const mongoose = require('mongoose'); //allows for connection to a database
 const cors = require('cors'); //allows for api calls from different origins
+const { graphqlHTTP } = require('express-graphql'); //allows for graphql as middleware
+
 require('dotenv').config() //allows you to retrieve variables form the .env file
+
+//IMPORTING THE GRAPHQL SCHEMA AND RESOLVERS 
+const graphQlSchema = require('./graphql/schema/index');
+const graphQlResolvers = require('./graphql/resolvers/index');
+
 
 //CREATING THE EXPRESS SERVER
 const app = express();
 app.use(express.json()); //allows the server to recieve json files as arguements
 app.use(cors()); //allows the server to use the cors library
+
+//MIDDLEWARE
+app.use(require('./middleware/is-auth')); //uses the is-auth middleware
+
+//Setting up the graphql middleware
+app.use('/graphql', graphqlHTTP({
+  schema: graphQlSchema,
+  rootValue: graphQlResolvers,
+  graphiql: true
+}));
 
 
 //SETTING UP MONGOOSE
@@ -27,7 +44,7 @@ mongoose
       console.log(`Connected to the database succesfully, server started on port ${PORT}`);
     });
   })
-  .catch((error) => {
+  .catch(error => {
     //This is executed if connecting to the database failed
     console.error(error);
   });
