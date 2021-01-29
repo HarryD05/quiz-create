@@ -33,6 +33,14 @@ const QuestionSchema = new Schema({
     type: Number,
     required: [true, 'Marks required']
   },
+  qualification: {
+    type: String,
+    required: [true, 'Qualification required']
+  },
+  subject: {
+    type: String,
+    required: [true, 'Subject required']
+  },
   topic: {
     type: String,
     required: [true, 'Topic required']

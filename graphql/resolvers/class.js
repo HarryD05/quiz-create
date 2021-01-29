@@ -58,7 +58,7 @@ module.exports = {
       const { joiningCode } = args;
 
       //Finding the linked class
-      const targetClass = await Class.find({ joiningCode });
+      const targetClass = await Class.findOne({ joiningCode });
 
       if (!targetClass) {
         throw new Error('INVALID JOINING CODE');
@@ -69,7 +69,7 @@ module.exports = {
       const result = await targetClass.save();
 
       //Add class to student's class list
-      const student = User.findById(req.userId);
+      const student = await User.findById(req.userId);
       student.classes.push(result._id);
       await student.save();
 

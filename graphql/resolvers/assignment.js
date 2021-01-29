@@ -27,7 +27,7 @@ module.exports = {
       const result = await newAssignment.save(); //Saving assignment to database
 
       //Adding the assignment to the class' assignment list
-      const currentClass = Class.findById(classID);
+      const currentClass = await Class.findById(classID);
       currentClass.assignments.push(result._id);
       await currentClass.save();
       //Saving the class with the assignment to the database

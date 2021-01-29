@@ -69,13 +69,13 @@ module.exports = {
     const token = jwt.sign(
       { userId: userResult.id, username: userResult.username, role: userResult.role },
       process.env.secretOrKey,
-      { expiresIn: '1h' }
+      { expiresIn: '6h' }
     );
 
     return {
       userId: userResult.id,
       token: token,
-      tokenExpiration: 1
+      tokenExpiration: 6
     }
   },
   createUser: async (args, req) => {

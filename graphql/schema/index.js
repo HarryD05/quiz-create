@@ -25,6 +25,8 @@ module.exports = buildSchema(`
   type Question {
     _id: ID!
     question: String!
+    qualification: String!
+    subject: String! 
     topic: String!
     hint: String
     explanation: String!
@@ -81,10 +83,13 @@ module.exports = buildSchema(`
 
   input InitQuestionInput {
     question: String!
+    qualification: String!
+    subject: String!
+    topic: String!
     hint: String
     explanation: String!
     qtype: String!
-    wrong: [String]!
+    wrong: [String]
     correct: String!
     marks: Int!
   }

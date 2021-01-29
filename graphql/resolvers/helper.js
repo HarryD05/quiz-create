@@ -122,7 +122,8 @@ const transformAssignment = async assignmentData => {
   return {
     ...assignmentData._doc,
     dueDate: transformDate(assignmentData._doc.dueDate),
-    questions: transformQuestions.bind(this, assignmentData._doc.questions)
+    questions: transformQuestions.bind(this, assignmentData._doc.questions),
+    class: transformClassById.bind(this, assignmentData._doc.class)
   }
 }
 

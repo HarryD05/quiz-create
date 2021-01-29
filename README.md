@@ -13,4 +13,4 @@ Created for my A-level programming project, a website where teachers can create 
 ### _For Students:_ ###
 - Join classes using the joining code created by your teacher
 - Complete quizzes which are marked instantaneously, on the results page an explanation for the correct answer will be given
-- See your results visualised & topics of concern highlighted
+- See your results visualised and topics of concern highlighted
