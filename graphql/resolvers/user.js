@@ -1,3 +1,8 @@
+//Dependencies
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
+//Models
 const User = require('../../models/UserModel');
 const Class = require('../../models/ClassModel');
 

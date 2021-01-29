@@ -193,7 +193,7 @@ const transformResults = async resultIDs => {
 exports.transformUsers = transformUsers;
 exports.transformUserById = transformUserById;
 exports.tranformClasses = transformClasses;
-exports.transformclassById = transformClassById;
+exports.transformClassById = transformClassById;
 exports.transformQuestions = transformQuestions;
 exports.transformQuestionById = transformQuestionById;
 exports.transformAssignments = transformAssignments;

@@ -4,7 +4,7 @@ module.exports = buildSchema(`
   type User {
     _id: ID!
     username: String!
-    password: String!
+    password: String
     role: String!
     classes: [Class]
     results: [AssignmentResult]
