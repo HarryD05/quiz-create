@@ -15,7 +15,7 @@ const transformDate = date => {
 const transformUser = async userData => {
   return {
     ...userData._doc,
-    classes: transformClass.bind(this, userData._doc.classes),
+    classes: transformClasses.bind(this, userData._doc.classes),
     results: transformResults.bind(this, userData._doc.results)
   }
 }
@@ -72,7 +72,7 @@ const transformClasses = async classIDs => {
     const classes = await Class.find({ _id: { $in: classIDs } });
 
     const result = await Promise.all(classes.map(async classData => {
-      const classResult = await tranformClass(classData);
+      const classResult = await transformClass(classData);
       return classResult;
     }));
 
@@ -159,8 +159,8 @@ const transformResult = async resultData => {
   return {
     ...resultData._doc,
     date: transformDate(resultData._doc.date),
-    student: transformUserById(this, resultData._doc.student),
-    assignment: transformAssignmentById(this, resultData._doc.assignment)
+    student: transformUserById.bind(this, resultData._doc.student),
+    assignment: transformAssignmentById.bind(this, resultData._doc.assignment)
   }
 }
 

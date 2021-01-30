@@ -12,6 +12,10 @@ const AssignmentResultSchema = new Schema({
     type: Date,
     required: [true, 'Date required']
   },
+  answers: {
+    type: [String],
+    required: [true, "Answers required"]
+  },
   timeTaken: {
     type: Number
   },

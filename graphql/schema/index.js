@@ -51,6 +51,7 @@ module.exports = buildSchema(`
     _id: ID!
     marks: Int!
     date: String!
+    answers: [String]!
     timeTaken: Int
     student: User!
     assignment: Assignment!
@@ -106,6 +107,7 @@ module.exports = buildSchema(`
   input InitResultInput {
     marks: Int!
     timeTaken: Int
+    answers: [String]!
     assignment: ID!
   }
 
