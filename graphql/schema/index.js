@@ -52,6 +52,7 @@ module.exports = buildSchema(`
     marks: Int!
     date: String!
     answers: [String]!
+    hints: [Int]!
     timeTaken: Int
     student: User!
     assignment: Assignment!
@@ -108,6 +109,7 @@ module.exports = buildSchema(`
     marks: Int!
     timeTaken: Int
     answers: [String]!
+    hints: [Int]!
     assignment: ID!
   }
 

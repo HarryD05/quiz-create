@@ -13,7 +13,7 @@ module.exports = {
       }
 
       //Extracting input data from request
-      const { marks, timeTaken, answers, assignment } = args.initResultInput;
+      const { marks, timeTaken, answers, hints, assignment } = args.initResultInput;
 
       const newResult = new AssignmentResult({
         marks,
@@ -21,6 +21,7 @@ module.exports = {
         date: new Date(),
         answers,
         assignment,
+        hints,
         student: req.userId
       });
 
