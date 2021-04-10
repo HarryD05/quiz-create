@@ -5,7 +5,7 @@ import React from 'react';
 const TeacherHomepage = props => {
   return (
     <div id="teacher-homepage">
-      <h2>Teacher homepage page</h2>
+      <h2>Teacher homepage</h2>
       <p>This page with be the welcome page for teachers</p>
     </div>
   );

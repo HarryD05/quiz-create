@@ -1,6 +1,9 @@
 //React dependencies
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { BrowserRouter } from 'react-router-dom';
+//BrowserRouter allows for the route functionality 
+//where if the URL changes the page shown changes
 
 //Components
 import App from './app';
@@ -10,6 +13,6 @@ import App from './app';
 import './index.scss'; //the root styling for the website
 
 ReactDOM.render(
-  <App />,
+  <BrowserRouter><App /></BrowserRouter>,
   document.getElementById('root')
 ); //this renders the app component to the website
