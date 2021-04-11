@@ -9,11 +9,14 @@ import QuizCreation from './pages/quiz_creation';
 import StudentHomepage from './pages/student_homepage';
 import Quiz from './pages/quiz';
 
+//Components
+import Navbar from './components/navbar/navbar';
+
 //App functional component
 const App = () => {
   return (
-    <>
-      <h1>QuizCreate</h1>
+    <div id="main">
+      <Navbar />
 
       <Switch> {'Allows for displaying of different pages'}
         <Route path='/auth' component={Authentication} />
@@ -23,7 +26,7 @@ const App = () => {
         <Route path='/student/quiz' component={Quiz} />
         <Redirect to='/auth' /> {'if none of paths above used, redirected to authentication page'}
       </Switch>
-    </>
+    </div>
   );
 }
 

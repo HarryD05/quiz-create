@@ -1,7 +1,7 @@
 //React dependencies 
 import React from 'react';
 
-//Authentication functional component
+//Quiz creation functional component
 const QuizCreation = props => {
   return (
     <div id="quiz-creation">

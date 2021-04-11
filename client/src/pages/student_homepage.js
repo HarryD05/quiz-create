@@ -1,7 +1,7 @@
 //React dependencies 
 import React from 'react';
 
-//Authentication functional component
+//Student homepage functional component
 const StudentHomepage = () => {
   return (
     <div id="student-homepage">

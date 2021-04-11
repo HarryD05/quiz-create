@@ -1,7 +1,7 @@
 //React dependencies 
 import React from 'react';
 
-//Authentication functional component
+//Teacher homepage functional component
 const TeacherHomepage = props => {
   return (
     <div id="teacher-homepage">
