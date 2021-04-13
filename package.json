@@ -5,12 +5,14 @@
   "main": "server.js",
   "scripts": {
     "run": "node server",
-    "dev": "nodemon server"
+    "dev": "nodemon server",
+    "development": "concurrently \"npm run dev \" \"cd client && npm start\""
   },
   "keywords": [],
   "author": "Harry Davis",
   "license": "ISC",
   "devDependencies": {
+    "concurrently": "^6.0.2",
     "nodemon": "^2.0.4"
   },
   "dependencies": {
