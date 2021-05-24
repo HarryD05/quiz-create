@@ -1,7 +1,7 @@
 //React dependencies
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter } from 'react-router-dom';
+import { HashRouter as Router } from 'react-router-dom';
 //BrowserRouter allows for the route functionality 
 //where if the URL changes the page shown changes
 
@@ -16,6 +16,6 @@ import AuthProvider from './context/AuthContext';
 import './index.scss'; //the root styling for the website
 
 ReactDOM.render(
-  <AuthProvider><BrowserRouter><App /></BrowserRouter></AuthProvider>,
+  <AuthProvider><Router><App /></Router></AuthProvider>,
   document.getElementById('root')
 ); //this renders the app component to the website
