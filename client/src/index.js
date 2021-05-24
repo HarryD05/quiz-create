@@ -9,10 +9,13 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './app';
 //the app component stores all the separate pages
 
+//Context
+import AuthProvider from './context/AuthContext';
+
 //Styling
 import './index.scss'; //the root styling for the website
 
 ReactDOM.render(
-  <BrowserRouter><App /></BrowserRouter>,
+  <AuthProvider><BrowserRouter><App /></BrowserRouter></AuthProvider>,
   document.getElementById('root')
 ); //this renders the app component to the website

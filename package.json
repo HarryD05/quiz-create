@@ -6,7 +6,8 @@
   "scripts": {
     "run": "node server",
     "dev": "nodemon server",
-    "development": "concurrently \"npm run dev \" \"cd client && npm start\""
+    "development": "concurrently \"npm run dev \" \"cd client && npm start\"",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
   },
   "keywords": [],
   "author": "Harry Davis",
@@ -23,6 +24,7 @@
     "express-graphql": "^0.11.0",
     "graphql": "^15.5.0",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.11.13"
+    "mongoose": "^5.11.13",
+    "path": "^0.12.7"
   }
 }

@@ -3,6 +3,7 @@ const express = require('express'); //allows for creation of a backend server
 const mongoose = require('mongoose'); //allows for connection to a database
 const cors = require('cors'); //allows for api calls from different origins
 const { graphqlHTTP } = require('express-graphql'); //allows for graphql as middleware
+const path = require('path');
 
 require('dotenv').config() //allows you to retrieve variables form the .env file
 
@@ -26,6 +27,13 @@ app.use('/graphql', graphqlHTTP({
   graphiql: true
 }));
 
+//linking the front and backend for production (when the webpage is hosted)
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static('client/build'));
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+  });
+}
 
 //SETTING UP MONGOOSE
 //process.env.MONGODB_URI is the uri where the database is hosted
