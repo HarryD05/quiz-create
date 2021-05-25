@@ -1,7 +1,6 @@
 //IMPORTING DEPENDENCIES
 const express = require('express'); //allows for creation of a backend server
 const mongoose = require('mongoose'); //allows for connection to a database
-const cors = require('cors'); //allows for api calls from different origins
 const { graphqlHTTP } = require('express-graphql'); //allows for graphql as middleware
 const path = require('path');
 
@@ -15,9 +14,20 @@ const graphQlResolvers = require('./graphql/resolvers/index');
 //CREATING THE EXPRESS SERVER
 const app = express();
 app.use(express.json()); //allows the server to recieve json files as arguements
-app.use(cors()); //allows the server to use the cors library
 
 //MIDDLEWARE
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST,GET,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+
+  next();
+});
+
 app.use(require('./middleware/is-auth')); //uses the is-auth middleware
 
 //Setting up the graphql middleware

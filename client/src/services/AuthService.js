@@ -28,7 +28,7 @@ export default {
     const requestBody = {
       query: `
         mutation createUser($username: String!, $password: String!, $role: String!) {
-          createUser(initUserInput: {username: $name,usernamepassword: $password, role: $role}) {
+          createUser(initUserInput: {username: $username, password: $password, role: $role}) {
             _id
             username
             password
@@ -44,5 +44,20 @@ export default {
     };
 
     return await Service.sendRequest('createUser', requestBody, null);
+  },
+  currentUser: async token => {
+    const requestBody = {
+      query: `
+        query {
+          currentUser {
+            _id
+            username
+            role
+          }
+        }
+      `
+    };
+
+    return await Service.sendRequest('currentUser', requestBody, token);
   }
 }
