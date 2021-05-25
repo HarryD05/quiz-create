@@ -9,8 +9,6 @@ export default (props) => {
   const [user, setUser] = useState(null);
 
   const login = (token_, user_) => {
-    console.log(user_);
-
     setToken(token_);
     setUser(user_);
   }
