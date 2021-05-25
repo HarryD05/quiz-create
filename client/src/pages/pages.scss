@@ -1,0 +1,75 @@
+//Styling for all pages
+.form-control {
+  label, input, textarea {
+    width: 50%;
+    display: block;
+    outline: none;
+    resize: vertical;
+    margin: auto;
+  }
+
+  label {
+    text-align: left;
+    margin-bottom: 0.5rem;
+  }
+
+  margin-bottom: 1rem;
+}
+
+.form-actions {
+  display: grid;
+  width: 50%;
+  margin: auto;
+  grid-template-columns: 50% 50%;
+
+  #submit {
+    margin: 0 0.5rem;
+  }
+
+  #switch {
+    margin: 0 0.5rem;
+  }
+}
+
+.btn {
+  outline: none;
+  border: solid 1px black;
+  border-radius: 8px;
+
+  background: transparent;
+  color: black;
+
+  text-align: center;
+
+  padding: 0.25rem;
+
+  transition-duration: 0.25s;
+
+  &:hover {
+    background-color: #DAE8FC;
+    cursor: pointer;
+  }
+
+}
+
+//styling for the authentication page
+#auth {
+  width: 32rem; 
+  max-width: 80%;
+  margin: auto;
+
+  .radioBtn {
+    width: 50%;
+    margin: auto;
+    display: flex;
+
+    label {
+      margin-bottom: 0;
+    } 
+
+    input {
+      text-align: right;
+      cursor: pointer;
+    }
+  }
+}
