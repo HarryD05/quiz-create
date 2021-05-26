@@ -2,9 +2,35 @@
   width: 100%; //across entire width of browser;
   margin-bottom: 8px; //8 pixels of whitespace below navbar
   background-color: #DAE8FC; //light-blue
+  position: relative;
+
+  box-shadow: 0 0 8px 2px #00000065; //adds a shadow below the
+  //navbar making the UI less flat
 
   img {
     height: 50px; //logo image always 50px tall
     margin: 4px; //4px of whitespace around image
+  }
+
+  #helpBtn {
+    //The button needs to display at the top left of the screen,
+    //Just below the bottom right corner of the navbar
+    position: absolute;
+    right: 8px;
+    bottom: -40px;
+
+    //The button needed to be circular
+    border: 1px solid black;
+    border-radius: 50%; //makes it a circle
+    width: 32px;
+    height: 32px;
+    background-color: white !important;
+    font-weight: bold;
+    transition-duration: 0.25s;
+
+    &:hover {
+      background-color: #DAE8FC !important;
+      cursor: pointer;
+    }
   }
 }
