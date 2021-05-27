@@ -100,10 +100,29 @@ const Authentication = props => {
     )
   }
 
+  //Render options for signup or login
+  const renderLoginTitle = () => {
+    return (
+      <div id="options">
+        <button className="optionBtn current" id="left" disabled>Login</button>
+        <button className="optionBtn other" id="right" onClick={toggleLogin}>Signup</button>
+      </div>
+    )
+  }
+
+  const renderSignupTitle = () => {
+    return (
+      <div id="options">
+        <button className="optionBtn other" id="left" onClick={toggleLogin}>Login</button>
+        <button className="optionBtn current" id="right" disabled>Signup</button>
+      </div>
+    )
+  }
+
   return (
     <div id="auth">
       <form className="auth-form" onSubmit={handleSubmit}>
-        {isLogin ? <h3>Login</h3> : <h3>Signup</h3>}
+        {isLogin ? renderLoginTitle() : renderSignupTitle()}
 
         <div className="form-control">
           <input type="username" name="username" onChange={handleChange} autoComplete="off" required />
@@ -118,7 +137,6 @@ const Authentication = props => {
         {isLogin ? null : renderRole()}
 
         <div className="form-actions">
-          <button type="button" id="switch" className="btn" onClick={toggleLogin}>Switch</button>
           <button type="submit" id="submit" className="btn">Submit</button>
         </div>
       </form>

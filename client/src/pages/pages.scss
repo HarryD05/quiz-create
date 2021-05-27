@@ -64,17 +64,12 @@
 }
 
 .form-actions {
-  display: grid;
-  margin: auto;
-  margin-top: 1rem;
-  grid-template-columns: 50% 50%;
+  width: 100%;
+  margin: 1rem 0;
+  text-align: right;
 
   #submit {
-    margin-left: 0.5rem;
-  }
-
-  #switch {
-    margin-right: 0.5rem;
+    width: 50%;
   }
 }
 
@@ -98,9 +93,11 @@
 
 //styling for the authentication page
 #auth {
+  max-width: calc(80% - 4rem);
   width: 250px; 
-  max-width: 80%;
+  
   margin: auto;
+  margin-top: 2rem;
 
   background: white;
   padding: 2rem;
@@ -108,4 +105,40 @@
 
   box-shadow: #43475545 0px 0px 0.25em, 
               #5a7dbc0d 0px 0.25em 1em;
+
+  #options {
+    width: 100%;
+    
+    display: grid;
+    grid-template-columns: 50% 50%;
+
+    .optionBtn {
+      outline: none;
+      border: none;
+      background-color: white;
+      border-bottom: 1px solid white;
+      font-size: 17px;
+    }
+
+    .current {
+      color: #1d61e9;
+    }
+
+    .other {
+      color: #838383;
+
+      &:hover {
+        color: black;
+        cursor: pointer;
+      }
+    }
+
+    #left {
+      border-right: 1px solid silver;
+    }
+
+    #right {
+      border-left: 1px solid silver;
+    }
+  }
 }
