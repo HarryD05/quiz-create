@@ -1,44 +1,81 @@
 //Styling for all pages
 .form-control {
-  label, input, textarea {
-    width: 50%;
-    display: block;
-    outline: none;
-    resize: vertical;
-    margin: auto;
-
-    border:none;
-  }
+  position: relative;
+  margin-top: 2rem;
 
   label {
-    text-align: left;
-    margin-bottom: 0.5rem;
+    position: absolute;
+    bottom: 4px;
+    left: 0;
+    color: grey;
+    pointer-events: none;
+
+    transition: all 0.3s ease;
   }
 
   input {
-    border-bottom: 1px solid black;
-    transition-duration: 0.25s;
+    outline: none;
+    border: none;
+    border-bottom: 2px solid silver;
+    width: 100%;
+    font-size: 17px;
 
-    &:focus {
-      border-bottom: 1px solid #4693ff;
+    transition: all 0.3s ease;
+
+    //Moves the label for the input above the 
+    //input box when the user is typing
+    &:focus ~ label,
+    &:valid ~ label {
+      transform: translateY(-20px);
+      font-size: 15px;
+      color: #1d61e9;
+    }
+
+    //Makes the bottom border blue when 
+    //the user is typing
+    &:focus, 
+    &:valid {
+      border-bottom: 2px solid #1d61e9;
     }
   }
+}
 
-  margin-bottom: 1rem;
+//Styling for the role radio buttons
+.role {
+  label, input {
+    width: 100%;
+    display: block;
+    position: initial;
+    outline: none;
+    margin: auto;
+    text-align: left;
+    color: black;
+    cursor: initial;
+  }
+
+  .radioBtn {
+    margin: auto;
+    display: flex;
+    text-align: right;
+  }
+
+  input:hover {
+    cursor: pointer;
+  }
 }
 
 .form-actions {
   display: grid;
-  width: 50%;
   margin: auto;
+  margin-top: 1rem;
   grid-template-columns: 50% 50%;
 
   #submit {
-    margin: 0 0.5rem;
+    margin-left: 0.5rem;
   }
 
   #switch {
-    margin: 0 0.5rem;
+    margin-right: 0.5rem;
   }
 }
 
@@ -50,7 +87,7 @@
   color: black;
   text-align: center;
   padding: 0.25rem;
-  transition-duration: 0.25s;
+  transition-duration: 0.3s;
 
   &:hover {
     background-color: #DAE8FC;
@@ -60,22 +97,7 @@
 
 //styling for the authentication page
 #auth {
-  width: 32rem; 
+  width: 250px; 
   max-width: 80%;
   margin: auto;
-
-  .radioBtn {
-    width: 50%;
-    margin: auto;
-    display: flex;
-
-    label {
-      margin-bottom: 0;
-    } 
-
-    input {
-      text-align: right;
-      cursor: pointer;
-    }
-  }
 }

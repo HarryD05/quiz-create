@@ -86,7 +86,7 @@ const Authentication = props => {
   //Render role form control function (only needed if signup)
   const renderRole = () => {
     return (
-      <div className="form-control">
+      <div className="form-control role">
         <label htmlFor="role">Role:</label>
         <div className="radioBtn">
           <label htmlFor="student">Student</label>
@@ -106,13 +106,13 @@ const Authentication = props => {
         {isLogin ? <h3>Login</h3> : <h3>Signup</h3>}
 
         <div className="form-control">
-          <label htmlFor="username">Username:</label>
-          <input type="username" name="username" onChange={handleChange} required />
+          <input type="username" name="username" onChange={handleChange} autoComplete="off" required />
+          <label htmlFor="username">Username</label>
         </div>
 
         <div className="form-control">
-          <label htmlFor="password">Password:</label>
           <input type="password" name="password" onChange={handleChange} required />
+          <label htmlFor="password">Password</label>
         </div>
 
         {isLogin ? null : renderRole()}
