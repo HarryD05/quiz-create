@@ -11,11 +11,12 @@ import App from './app';
 
 //Context
 import AuthProvider from './context/AuthContext';
+import ModalProvider from './context/ModalContext';
 
 //Styling
 import './index.scss'; //the root styling for the website
 
 ReactDOM.render(
-  <AuthProvider><Router><App /></Router></AuthProvider>,
+  <AuthProvider><ModalProvider><Router><App /></Router></ModalProvider></AuthProvider>,
   document.getElementById('root')
 ); //this renders the app component to the website

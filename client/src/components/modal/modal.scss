@@ -1,0 +1,18 @@
+//Styling for the modal
+#modal {
+  //Setting the position so the modal always shows
+  //in the corner of the webpage
+  position: fixed;
+  top: 10vh;
+  left: calc(50% - (240px + 1rem));
+
+  width: 480px;
+  max-height: 80vh;
+
+  border-radius: 8px;
+  padding: 1rem;
+
+  z-index: 100; //Keeps the modal infront of all content
+
+  background-color: #dddddd;
+}

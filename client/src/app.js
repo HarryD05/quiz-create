@@ -4,6 +4,7 @@ import { Switch, Route, Redirect } from 'react-router-dom';
 
 //Context imports
 import { AuthContext } from './context/AuthContext';
+import { ModalContext } from './context/ModalContext';
 
 //Pages
 import Authentication from './pages/authentication';
@@ -14,10 +15,12 @@ import Quiz from './pages/quiz';
 
 //Components
 import Navbar from './components/navbar/navbar';
+import Modal from './components/modal/modal';
 
 //App functional component
 const App = () => {
   const authContext = useContext(AuthContext);
+  const modalContext = useContext(ModalContext);
 
   const returnSwitch = () => {
     if (!authContext.user) {
@@ -60,6 +63,8 @@ const App = () => {
   return (
     <div id="main">
       <Navbar />
+
+      {modalContext.isModalShowing ? <Modal data={modalContext.info} onClick={modalContext.clearModal} /> : null}
 
       {returnSwitch()}
     </div>

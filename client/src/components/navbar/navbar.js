@@ -1,5 +1,5 @@
 //React dependencies 
-import React from 'react';
+import React, { useContext } from 'react';
 
 //Function imports from external files
 import getInfoText from './infoText';
@@ -7,12 +7,16 @@ import getInfoText from './infoText';
 //Image assets
 import QuizLogoImg from '../../assets/QuizCreateLogo.png';
 
+//Importing context
+import { ModalContext } from './../../context/ModalContext';
+
 //Import styling - imporing the .scss file imports the scss
 //same as <link href="navbar.scss" rel="stylesheet">
 import './navbar.scss';
 
 //Navbar functional component
 const Navbar = () => {
+  const modalContext = useContext(ModalContext);
 
   //Function called when the info button is clicked
   const handleClick = () => {
@@ -22,7 +26,7 @@ const Navbar = () => {
 
     //temporarily this will be an alert, in the future there will be 
     //a dedicated compoenent for the info box
-    alert(getInfoText(path));
+    modalContext.updateModal(getInfoText(path));
   }
 
   return (
