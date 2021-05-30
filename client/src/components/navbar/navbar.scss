@@ -2,7 +2,13 @@
   width: 100%; //across entire width of browser;
   margin-bottom: 8px; //8 pixels of whitespace below navbar
   background-color: #DAE8FC; //light-blue
-  position: relative;
+  display: initial;
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  z-index: 50;
+
 
   box-shadow: 0 0 8px 2px #00000065; //adds a shadow below the
   //navbar making the UI less flat

@@ -5,14 +5,56 @@
   position: fixed;
   top: 10vh;
   left: calc(50% - (240px + 1rem));
-
   width: 480px;
-  max-height: 80vh;
-
-  border-radius: 8px;
   padding: 1rem;
-
   z-index: 100; //Keeps the modal infront of all content
+  background-color: #ffffff;
+  text-align: left;
 
-  background-color: #dddddd;
+  h3 {
+    text-align: center;
+  }
+
+  ul {
+    list-style-type: square;
+    margin-left: 20px;
+  }
+
+  .divider {
+    margin: 1rem 0;
+  }
+
+  #buttons {
+    width: 100%;
+    text-align: right;
+
+    #modalBtn {
+      margin-top: 1rem;
+      padding: 8px;
+    }
+  }
+
+  //Stopping the modal from going outside the display
+  max-width: calc(80vw - 2rem);
+  max-height: calc(80vh - 2rem);
+
+  //if the modal is longer than the screen height,
+  //then the modal will gain a scroll bar
+  overflow-y: auto;
+
+  //If the screen is smaller than 600px wide, the 
+  //modal will lock to the top left corner, not centre
+  @media (max-width: 600px) {
+    left: calc(10vw);
+  }
+}
+
+#backdrop {
+  z-index: 99;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #3131317e;
 }

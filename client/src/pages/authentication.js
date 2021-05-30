@@ -87,7 +87,6 @@ const Authentication = props => {
   const renderRole = () => {
     return (
       <div className="form-control role">
-        <label htmlFor="role">Role:</label>
         <div className="radioBtn">
           <label htmlFor="student">Student</label>
           <input type="radio" name="role" value="student" onChange={handleChange} />
@@ -137,7 +136,9 @@ const Authentication = props => {
         {isLogin ? null : renderRole()}
 
         <div className="form-actions">
-          <button type="submit" id="submit" className="btn">Submit</button>
+          <button type="submit" id="submit" className="btn">
+            {isLogin ? "Login" : "Signup"}
+          </button>
         </div>
       </form>
     </div>

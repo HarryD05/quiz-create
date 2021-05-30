@@ -60,11 +60,18 @@ const App = () => {
     }
   }
 
+  const renderModal = () => {
+    return (<>
+      <Modal data={modalContext.info} onClick={modalContext.clearModal} />
+      <div id="backdrop"></div>
+    </>)
+  }
+
   return (
     <div id="main">
       <Navbar />
 
-      {modalContext.isModalShowing ? <Modal data={modalContext.info} onClick={modalContext.clearModal} /> : null}
+      {modalContext.isModalShowing ? renderModal() : null}
 
       {returnSwitch()}
     </div>

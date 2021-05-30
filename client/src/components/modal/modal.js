@@ -13,9 +13,15 @@ const Modal = props => {
     <div id="modal">
       <h3>{title}</h3>
 
+      <hr className="divider" />
+
       <div id="modal-content">{content}</div>
 
-      <button id="modalBtn" onClick={props.onClick}>Okay</button>
+      <div id="buttons">
+        <button id="modalBtn" className="btn" onClick={props.onClick}>
+          Okay
+        </button>
+      </div>
     </div>
   )
 }
