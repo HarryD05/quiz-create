@@ -8,7 +8,7 @@
   width: 480px;
   padding: 1rem;
   z-index: 100; //Keeps the modal infront of all content
-  background-color: #ffffff;
+  background-color: #DAE8FC;
   text-align: left;
 
   h3 {
@@ -22,6 +22,8 @@
 
   .divider {
     margin: 1rem 0;
+    border: solid 1px black;
+    background-color: black;
   }
 
   #buttons {
@@ -31,6 +33,11 @@
     #modalBtn {
       margin-top: 1rem;
       padding: 8px;
+      background: #FFFFFF;
+
+      &:hover {
+        background-color: #F0F0F0;
+      }
     }
   }
 

@@ -4,6 +4,7 @@ import React, { useState, useContext } from 'react';
 //Importing context and services
 import AuthService from '../services/AuthService';
 import { AuthContext } from '../context/AuthContext';
+import { ModalContext } from '../context/ModalContext';
 
 //Importing styling
 import './pages.scss';
@@ -16,6 +17,7 @@ const Authentication = props => {
 
   //Setting up context
   const authContext = useContext(AuthContext);
+  const modalContext = useContext(ModalContext);
 
   //Toggle login/signup
   const toggleLogin = () => {
@@ -30,12 +32,28 @@ const Authentication = props => {
     });
   }
 
-  const login = async user => {
+  const login = async (user, isFromSignup) => {
     try {
       const loginResult = await AuthService.login(user);
 
       if (loginResult) {
-        alert('Successful');
+        if (isFromSignup) {
+          modalContext.updateModal({
+            title: 'Success', content: (
+              <>
+                <p>Signup successful, your account has been made and you have now been redirected your homepage.</p>
+              </>
+            )
+          });
+        } else {
+          modalContext.updateModal({
+            title: 'Success', content: (
+              <>
+                <p>Login successful, you have now been redirected your homepage.</p>
+              </>
+            )
+          });
+        }
 
         const { token } = loginResult;
 
@@ -44,13 +62,31 @@ const Authentication = props => {
         if (currentUser) {
           await authContext.login(token, currentUser);
         } else {
-          alert('Error with process, try again');
+          modalContext.updateModal({
+            title: 'Error', content: (
+              <>
+                <p>There was an error logging you in, your account has been created so now please login.</p>
+              </>
+            )
+          });
         }
       } else {
-        alert('Error with process, try again');
+        modalContext.updateModal({
+          title: 'Error', content: (
+            <>
+              <p>There was an error logging you in - your username and/or password was incorrect.</p>
+            </>
+          )
+        });
       }
     } catch (error) {
-      alert('Error with process, try again');
+      modalContext.updateModal({
+        title: 'Error', content: (
+          <>
+            <p>Your login didn't process correctly, please refresh the page and log in again.</p>
+          </>
+        )
+      });
 
       throw error;
     }
@@ -64,20 +100,30 @@ const Authentication = props => {
     try {
       //Send request to backend
       if (isLogin) {
-        await login({ username: user.username, password: user.password });
+        await login({ username: user.username, password: user.password }, false);
       } else {
         const signupData = await AuthService.signup(user);
 
         if (signupData) {
-          await login({ username: user.username, password: user.password, role: user.role });
-
-          alert('Successful');
+          await login({ username: user.username, password: user.password, role: user.role }, true);
         } else {
-          alert('Error with process, try again');
+          modalContext.updateModal({
+            title: 'Error', content: (
+              <>
+                <p>Your signup didn't process correctly, your username already exists.</p>
+              </>
+            )
+          });
         }
       }
     } catch (error) {
-      alert('Error with process, try again');
+      modalContext.updateModal({
+        title: 'Error', content: (
+          <>
+            <p>Your sign up didn't process correctly, please refresh the page and sign up again.</p>
+          </>
+        )
+      });
 
       throw error;
     }
