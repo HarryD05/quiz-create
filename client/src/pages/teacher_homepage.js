@@ -1,12 +1,28 @@
 //React dependencies 
-import React from 'react';
+import React, { useContext } from 'react';
+
+//Importing the contexts
+import { AuthContext } from './../context/AuthContext';
 
 //Teacher homepage functional component
 const TeacherHomepage = props => {
+  //Setting up the authcontext so the details of the teacher
+  //user can be accessed
+  const authContext = useContext(AuthContext);
+
   return (
     <div id="teacher-homepage">
-      <h2>Teacher homepage</h2>
-      <p>This page with be the welcome page for teachers</p>
+      <p id="welcome-msg">Welcome {authContext.user.username}</p>
+
+      <div id="thp-tables">
+        <div id="classes">
+          <h3>Classes placeholder</h3>
+        </div>
+
+        <div id="students">
+          <h3>Students placeholder</h3>
+        </div>
+      </div>
     </div>
   );
 }

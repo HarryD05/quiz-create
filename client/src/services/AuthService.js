@@ -53,6 +53,45 @@ export default {
             _id
             username
             role
+            classes {
+              _id
+              name
+              subject
+              joiningCode
+              students {
+                _id
+                username
+              }
+              results {
+                _id
+                marks
+                timeTaken
+                date
+                answers
+                hints
+                student {
+                  _id
+                  username
+                }
+                assignment {
+                  _id
+                  title
+                  dueDate
+                  maxMarks
+                }
+              }
+              assignments {
+                _id
+                title
+                description
+                dueDate
+                maxMarks
+                questions {
+                  _id
+                  question
+                }
+              }
+            }
           }
         }
       `

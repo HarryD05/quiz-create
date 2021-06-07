@@ -91,11 +91,8 @@
   }
 }
 
-//styling for the authentication page
-#auth {
-  max-width: calc(80% - 4rem);
-  width: 250px; 
-  
+//Base styling for each main div 
+%main {
   margin: auto;
   margin-top: 6rem;
 
@@ -105,6 +102,15 @@
 
   box-shadow: #43475545 0px 0px 0.25em, 
               #5a7dbc0d 0px 0.25em 1em;
+}
+
+//styling for the authentication page
+#auth {
+  @extend %main; //gives the main page styling 
+  //(white background, shadow etc.)
+
+  max-width: calc(80% - 4rem);
+  width: 250px; 
 
   #options {
     width: 100%;
@@ -141,4 +147,33 @@
       border-left: 1px solid silver;
     }
   }
+}
+
+#teacher-homepage {
+  @extend %main; //gives the main page styling 
+  //(white background, shadow etc.)
+
+  max-width: calc(80% - 4rem);
+  width: 640px; 
+
+  #welcome-msg {
+    text-align: left;
+    margin-bottom: 1rem;
+  }
+
+  #thp-tables {
+    display: grid;
+    grid-template-columns: 50% 50%;
+
+    #classes {
+      border-right: 1px solid black;
+      height: 200px;
+    }
+
+    #students {
+      border-left: 1px solid black;
+      height: 200px;
+    }
+  }
+  
 }
