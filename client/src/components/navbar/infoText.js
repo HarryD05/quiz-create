@@ -15,6 +15,11 @@ const getInfoText = path => {
       </ul>);
       break;
 
+    case '/teacher/home':
+      title = 'Teacher homepage';
+      content = (<p>Coming soon...</p>);
+      break;
+
     default:
       title = 'Unknown';
       content = (<p>No info for this page!</p>);

@@ -165,14 +165,27 @@
     display: grid;
     grid-template-columns: 50% 50%;
 
+    .table {
+      margin: 1rem 0;
+      text-align: left;
+
+      td {
+        padding: 2px;
+      }
+
+      .left {
+        font-weight: bold;
+      }
+    }
+
     #classes {
       border-right: 1px solid black;
-      height: 200px;
+      padding-right: 2rem;
     }
 
     #students {
       border-left: 1px solid black;
-      height: 200px;
+      padding-left: 2rem;
     }
   }
   
