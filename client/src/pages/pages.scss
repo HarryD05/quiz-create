@@ -95,6 +95,7 @@
 %main {
   margin: auto;
   margin-top: 6rem;
+  margin-bottom: 2rem;
 
   background: white;
   padding: 2rem;
@@ -159,34 +160,67 @@
   #welcome-msg {
     text-align: left;
     margin-bottom: 1rem;
+    font-weight: 700;
   }
 
   #thp-tables {
+    p {
+      margin-bottom: 1rem;
+    }
+
     display: grid;
     grid-template-columns: 50% 50%;
 
     .table {
       margin: 1rem 0;
-      text-align: left;
+      table-layout: fixed;
+      width: 100%;
 
-      td {
-        padding: 2px;
-      }
+      tbody {
+        width: 100%;
 
-      .left {
-        font-weight: bold;
+        td {
+          padding: 2px;
+          height: 3em;
+         
+        }
+
+        .left {
+          font-weight: 500;
+          width: 50%;
+          text-align: left;
+        }
+        .right {
+          text-align: right;
+        }
       }
+    }
+
+    .btn {
+      height: 3em;
+      margin: 8px;
     }
 
     #classes {
       border-right: 1px solid black;
       padding-right: 2rem;
+
+      #class-buttons {
+        display: flex;
+        align-items: stretch;
+        flex-wrap: wrap-reverse;
+        justify-content: center;
+      }
     }
 
     #students {
       border-left: 1px solid black;
       padding-left: 2rem;
+
+      #student-buttons {
+        display: flex;
+        justify-content: center;
+      }
     }
   }
-  
 }

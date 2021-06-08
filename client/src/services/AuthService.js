@@ -78,6 +78,11 @@ export default {
                   title
                   dueDate
                   maxMarks
+                  questions {
+                    topic
+                    correct
+                    marks
+                  }
                 }
               }
               assignments {

@@ -17,7 +17,7 @@ const AssignmentResultSchema = new Schema({
     required: [true, 'Answers required']
   },
   hints: {
-    type: [Number],
+    type: [Boolean],
     required: [true, 'Hints required (can be blank array)']
   },
   timeTaken: {
