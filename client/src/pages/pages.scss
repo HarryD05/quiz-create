@@ -207,8 +207,12 @@
       #class-buttons {
         display: flex;
         align-items: stretch;
-        flex-wrap: wrap-reverse;
+        flex-wrap: wrap;
         justify-content: center;
+
+        .btn {
+          width: 7rem;
+        }
       }
     }
 
@@ -228,11 +232,23 @@
     @media (max-width: 880px) {
       grid-template-columns: 100%;
 
-      .table {
+      table {
         tbody {
-          td {
-            height: 1em;
-          }
+          tr {
+            td {
+              border-bottom: 1px dashed gray;
+
+              &:last-child {
+                border-left: 1px dashed gray;
+              }
+            }
+
+            &:last-child {
+              td {
+                border-bottom: none;
+              }
+            }
+          } 
         }
       }
 
@@ -246,8 +262,8 @@
         #class-buttons {
           display: flex;
           align-items: stretch;
-          flex-wrap: wrap-reverse;
-          justify-content: space-between;
+          flex-wrap: wrap;
+          justify-content: center;
         }
       }
 
