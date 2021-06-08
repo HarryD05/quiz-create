@@ -182,7 +182,6 @@
         td {
           padding: 2px;
           height: 3em;
-         
         }
 
         .left {
@@ -220,6 +219,44 @@
       #student-buttons {
         display: flex;
         justify-content: center;
+      }
+    }
+
+    /*if the screen is smaller than 880px wide 
+    (make tables vertically stacked instead of 
+    horizontally stacked)*/
+    @media (max-width: 880px) {
+      grid-template-columns: 100%;
+
+      .table {
+        tbody {
+          td {
+            height: 1em;
+          }
+        }
+      }
+
+      #classes {
+        border:none;
+        border-bottom: 1px solid black;
+
+        padding: 0;
+        padding-bottom: 2rem;
+
+        #class-buttons {
+          display: flex;
+          align-items: stretch;
+          flex-wrap: wrap-reverse;
+          justify-content: space-between;
+        }
+      }
+
+      #students {
+        border: none;
+        border-top: 1px solid black;
+
+        padding: 0;
+        padding-top: 2rem;
       }
     }
   }

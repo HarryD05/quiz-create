@@ -13,9 +13,41 @@
   box-shadow: 0 0 8px 2px #00000065; //adds a shadow below the
   //navbar making the UI less flat
 
-  img {
-    height: 50px; //logo image always 50px tall
-    margin: 4px; //4px of whitespace around image
+  #main {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    .disabled {
+      visibility: hidden;
+    }
+
+    .btn {
+      width: 5rem;
+    }
+
+    #home-btn {
+      margin-left: 1rem;
+
+      &:hover {
+        background-color: #e7e7e7;
+      }
+    }
+
+    #logout-btn {
+      margin-right: 1rem;
+
+      &:hover {
+        background-color: #ff9f9f;
+      }
+    }
+
+    //image styling
+    img {
+      height: 50px; //logo image always 50px tall
+      margin: 4px; //4px of whitespace around image
+    }
   }
 
   #helpBtn {
