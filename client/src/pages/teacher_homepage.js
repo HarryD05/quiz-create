@@ -368,9 +368,9 @@ const TeacherHomepage = props => {
           </table>
 
           <div id="class-buttons">
-            <button className="btn" onClick={alert('not yet setup')}>See all assignments</button>
-            <button className="btn" onClick={alert('not yet setup')}>Set new assignment</button>
-            <button className="btn" onClick={alert('not yet setup')}>Create new class</button>
+            <button className="btn" onClick={() => alert('not yet setup')}>See all assignments</button>
+            <button className="btn" onClick={() => alert('not yet setup')}>Set new assignment</button>
+            <button className="btn" onClick={() => alert('not yet setup')}>Create new class</button>
           </div>
         </div>
 
@@ -417,7 +417,7 @@ const TeacherHomepage = props => {
           </table>
 
           <div id="student-buttons">
-            <button className="btn" onClick={alert('not yet setup')}>See all student's assignments</button>
+            <button className="btn" onClick={() => alert('not yet setup')}>See all student's assignments</button>
           </div>
         </div>
       </div>
