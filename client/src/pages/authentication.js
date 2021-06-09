@@ -41,7 +41,7 @@ const Authentication = props => {
           modalContext.updateModal({
             title: 'Success', content: (
               <>
-                <p>Signup successful, your account has been made and you have now been redirected your homepage.</p>
+                <p>Signup successful, your account has been made and you have now been redirected to your homepage.</p>
               </>
             )
           });
@@ -49,7 +49,7 @@ const Authentication = props => {
           modalContext.updateModal({
             title: 'Success', content: (
               <>
-                <p>Login successful, you have now been redirected your homepage.</p>
+                <p>Login successful, you have now been redirected to your homepage.</p>
               </>
             )
           });
@@ -65,7 +65,7 @@ const Authentication = props => {
           modalContext.updateModal({
             title: 'Error', content: (
               <>
-                <p>There was an error logging you in, your account has been created so now please login.</p>
+                <p>There was an error logging you in, but your account has been created so you can now login.</p>
               </>
             )
           });

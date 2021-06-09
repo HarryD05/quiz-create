@@ -36,7 +36,7 @@ const Navbar = () => {
   //don't display correctly when page swaps (e.g. logout on auth page)
 
   //Force rerender constantly so correct buttons show
-  setInterval(forceUpdate, 100);
+  setInterval(forceUpdate, 1000);
 
   //function called whenever screen is resized to check if 
   //logo needs to change size
