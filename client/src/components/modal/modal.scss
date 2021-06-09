@@ -9,6 +9,7 @@
   padding: 1rem;
   z-index: 100; //Keeps the modal infront of all content
   background-color: #DAE8FC;
+  border-radius: 8px;
   text-align: left;
 
   h3 {
@@ -53,6 +54,12 @@
   //modal will lock to the top left corner, not centre
   @media (max-width: 600px) {
     left: calc(10vw);
+  }
+
+  #student-assignments, #class-assignments {
+    .student-assignment-card, .class-assignment-card {
+      margin-top: 1rem;
+    }
   }
 }
 

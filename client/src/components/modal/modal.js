@@ -19,7 +19,7 @@ const Modal = props => {
 
       <div id="buttons">
         <button id="modalBtn" className="btn" onClick={props.onClick}>
-          Okay
+          Close
         </button>
       </div>
     </div>

@@ -35,6 +35,9 @@ const Navbar = () => {
   //used to force re-render of navbar, as otherwise buttons in navbar
   //don't display correctly when page swaps (e.g. logout on auth page)
 
+  //Force rerender constantly so correct buttons show
+  setInterval(forceUpdate, 100);
+
   //function called whenever screen is resized to check if 
   //logo needs to change size
   const onResize = () => {
@@ -57,7 +60,6 @@ const Navbar = () => {
 
   const logoutButton = () => {
     authContext.logout();
-    setTimeout(forceUpdate, 1);
   }
 
   const homeButton = () => {
@@ -68,8 +70,6 @@ const Navbar = () => {
     } else if (path === '/student/quiz') {
       window.history.back();
     }
-
-    setTimeout(forceUpdate, 10);
   }
 
   //if the page isn't the authenitcation page, render a logout button

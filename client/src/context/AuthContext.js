@@ -1,4 +1,8 @@
+//importing react dependencies
 import React, { createContext, useState } from 'react';
+
+//importing services to make api calls
+import AuthService from '../services/AuthService';
 
 export const AuthContext = createContext();
 
@@ -18,9 +22,20 @@ export default (props) => {
     setUser(null);
   }
 
+  const updateUser = async () => {
+    if (token === null) return;
+
+    try {
+      const currentUser = await AuthService.currentUser(token);
+      setUser(currentUser);
+    } catch (error) {
+      throw error;
+    }
+  }
+
   return (
     <div>
-      <AuthContext.Provider value={{ token, setToken, user, setUser, login, logout }}>
+      <AuthContext.Provider value={{ token, setToken, user, setUser, login, logout, updateUser }}>
         {children}
       </AuthContext.Provider>
     </div>

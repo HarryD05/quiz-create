@@ -3,7 +3,11 @@ import React, { useContext, useState } from 'react';
 import Select from 'react-select';
 
 //Importing the contexts
-import { AuthContext } from './../context/AuthContext';
+import { AuthContext } from '../context/AuthContext';
+import { ModalContext } from '../context/ModalContext';
+
+//Importing services (for api calls)
+import ClassService from '../services/ClassService';
 
 //Teacher homepage functional component
 const TeacherHomepage = props => {
@@ -11,10 +15,16 @@ const TeacherHomepage = props => {
   //user can be accessed
   const authContext = useContext(AuthContext);
 
+  //Settuping up modal context so modal/popups can be used
+  const modalContext = useContext(ModalContext);
+
   //Setting up state to store current class/student
   const [currentClass, setCurrentClass] = useState(null);
   const [currentStudent, setCurrentStudent] = useState(null);
-
+  const [newClassInfo, setNewClassInfo] = useState(
+    { name: '', qualification: '', subject: '', joiningCode: '' }
+  );
+  const [key, setKey] = useState(0);
 
   const getClassNames = user => {
     if (user === null) {
@@ -221,7 +231,7 @@ const TeacherHomepage = props => {
         }
 
         //if correct answer then add marks to the topics total marks
-        if (answer == question.correct) {
+        if (answer === question.correct) {
           output[question.topic].marks += question.marks;
         }
 
@@ -320,8 +330,122 @@ const TeacherHomepage = props => {
     return `${bestTopic} (${bestPercentage}%)`;
   }
 
+  //Button onClick functions
+  //Redirects teacher to quiz creation page
+  const toQuizCreation = () => {
+    props.history.push('/teacher/create');
+    //changes path of url 
+  }
+
+  //Opens modal showing classes assignments
+  const showAssignmentsModal = () => {
+    if (currentClass === null) {
+      modalContext.updateModal({
+        title: 'Class assignments/results',
+        content: <p>Please select a class...</p>
+      });
+    } else {
+      modalContext.updateModal({
+        title: `${currentClass.name}'s assignments/results`,
+        content: <div id="class-assignments">
+          {currentClass.assignments.map(assignment => {
+            return (<div className="class-assignment-card">
+              <h3>{assignment.title}</h3>
+              <ul>
+                <li><b>Due date</b> - {new Date(Number(assignment.dueDate)).toLocaleString()}</li>
+                <li><b>Missing</b> - NA</li>
+                <li><b>Average score</b> - NA</li>
+                <li><b>Weakest question</b> - NA</li>
+              </ul>
+            </div>)
+          })}
+        </div>
+      });
+    }
+  }
+
+  const handleChange = e => {
+    setNewClassInfo({
+      ...newClassInfo,
+      [e.target.name]: e.target.value
+    });
+  }
+
+  const handleSubmit = async e => {
+    e.preventDefault(); //stops page reloading
+
+    //making the create class api call
+    try {
+      //Input sanitation
+      const classInput = {
+        name: newClassInfo.name.toUpperCase(),
+        subject:
+          newClassInfo.subject[0].toUpperCase() +
+          newClassInfo.subject.slice(1).toLowerCase(),
+        qualification: newClassInfo.qualification.toUpperCase(),
+        joiningCode: newClassInfo.joiningCode
+      }
+
+      const classResult = await ClassService.createClass(classInput, authContext.token);
+
+      modalContext.clearModal();
+
+      if (classResult) {
+        modalContext.updateModal({
+          title: 'Success',
+          content: <p>Class successfully made</p>
+        });
+
+        document.getElementById('class-form').reset(); //clears form
+        await authContext.updateUser();
+        //refreshes the page so the class is selectable in the above selector
+
+      } else {
+        modalContext.updateModal({
+          title: 'Error',
+          content: <p>Something went wrong, try again (your joiningCode needs to be unique)</p>
+        });
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  //Opens modal to show selected students assignments
+  const showStudentAssignmentsModal = () => {
+    if (currentClass === null) {
+      modalContext.updateModal({
+        title: 'Student assignments/results',
+        content: <p>Please select a student...</p>
+      });
+    } else {
+      console.log(getStudentResults());
+
+      modalContext.updateModal({
+        title: `${currentStudent.username}'s assignments/results`,
+        content: <div id="student-assignments">
+          {currentClass.assignments.map(assignment => {
+            return (<div className="student-assignment-card">
+              <h3>{assignment.title}</h3>
+              <ul>
+                <li><b>Completed</b> - NA</li>
+                <li><b>Score</b> - NA</li>
+                <li><b>Time taken</b> - NA</li>
+                <li><b>Hints used</b> - NA</li>
+              </ul>
+            </div>)
+          })}
+        </div>
+      });
+    }
+  }
+
+  const updateData = () => {
+    setKey(key + 1);
+  }
+
   return (
-    <div id="teacher-homepage">
+    <div id="teacher-homepage" key={key}>
       <p id="welcome-msg">Welcome {authContext.user.username}</p>
 
       <div id="thp-tables">
@@ -368,9 +492,8 @@ const TeacherHomepage = props => {
           </table>
 
           <div id="class-buttons">
-            <button className="btn" onClick={() => alert('not yet setup')}>See all assignments</button>
-            <button className="btn" onClick={() => alert('not yet setup')}>Set new assignment</button>
-            <button className="btn" onClick={() => alert('not yet setup')}>Create new class</button>
+            <button className="btn" onClick={showAssignmentsModal}>See all assignments</button>
+            <button className="btn" onClick={toQuizCreation}>Set new assignment</button>
           </div>
         </div>
 
@@ -417,10 +540,40 @@ const TeacherHomepage = props => {
           </table>
 
           <div id="student-buttons">
-            <button className="btn" onClick={() => alert('not yet setup')}>See all student's assignments</button>
+            <button className="btn" onClick={showStudentAssignmentsModal}>See all student's assignments</button>
           </div>
         </div>
       </div>
+
+      <div id="create-class">
+        <h3>Create new class</h3>
+        <form id="class-form" onSubmit={handleSubmit}>
+          <div className="form-control">
+            <input type="text" name="name" onChange={handleChange} autoComplete="off" required />
+            <label htmlFor="name">Class name</label>
+          </div>
+
+          <div className="form-control">
+            <input type="text" name="qualification" onChange={handleChange} autoComplete="off" required />
+            <label htmlFor="qualification">Qualification</label>
+          </div>
+
+          <div className="form-control">
+            <input type="text" name="subject" onChange={handleChange} autoComplete="off" required />
+            <label htmlFor="subject">Subject</label>
+          </div>
+
+          <div className="form-control">
+            <input type="text" name="joiningCode" onChange={handleChange} autoComplete="off" required />
+            <label htmlFor="joiningCode">Joining code</label>
+          </div>
+
+          <div className="form-actions">
+            <button type="submit" id="submit" className="btn">Create class</button>
+          </div>
+        </form>
+      </div>
+
     </div >
   );
 }

@@ -27,7 +27,7 @@
     &:focus ~ label,
     &:valid ~ label {
       transform: translateY(-20px);
-      font-size: 15px;
+      /*font-size: 15px;*/
       color: #1d61e9;
     }
 
@@ -76,6 +76,7 @@
 .btn {
   outline: none;
   border: none;
+  border-radius: 4px;
   background: #f0f0f0;
   color: black;
   text-align: center;
@@ -159,9 +160,10 @@
 
   #welcome-msg {
     text-align: left;
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
     font-weight: 700;
   }
+
 
   #thp-tables {
     p {
@@ -226,6 +228,8 @@
       }
     }
 
+  
+
     /*if the screen is smaller than 880px wide 
     (make tables vertically stacked instead of 
     horizontally stacked)*/
@@ -238,11 +242,13 @@
             td {
               border-bottom: 1px dashed gray;
 
+              /*right column has left border (centre)*/
               &:last-child {
                 border-left: 1px dashed gray;
               }
             }
 
+            /*bottom row doesn't need border below*/
             &:last-child {
               td {
                 border-bottom: none;
@@ -275,5 +281,9 @@
         padding-top: 2rem;
       }
     }
+  }
+
+  #create-class {
+    margin-top: 2rem;
   }
 }
