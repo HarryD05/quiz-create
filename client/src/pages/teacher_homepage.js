@@ -452,7 +452,7 @@ const TeacherHomepage = props => {
         <div id="classes">
           <p>Your Classes</p>
 
-          <Select options={getClassNames(authContext.user)} placeholder='Select class...' onChange={selectClass} isSearchable />
+          <Select options={getClassNames(authContext.user)} placeholder='Select class...' onChange={selectClass} />
 
           <table className="table">
             <tbody >
@@ -500,7 +500,7 @@ const TeacherHomepage = props => {
         <div id="students">
           <p>Your Students</p>
 
-          <Select options={getStudentNames(authContext.user)} placeholder='Select student...' onChange={selectStudent} isSearchable />
+          <Select options={getStudentNames(authContext.user)} placeholder='Select student...' onChange={selectStudent} />
 
           <table className="table">
             <tbody >
