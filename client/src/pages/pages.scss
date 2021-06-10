@@ -285,5 +285,26 @@
 
   #create-class {
     margin-top: 2rem;
+    
+    #class-form {
+      width: 100%;
+
+      .form-control {
+        width: 320px;
+        max-width: 80%;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .form-actions {  
+        width: 100%;
+        text-align: center !important;
+
+        .btn {
+          width: 8rem !important;
+          height: 3em !important;
+        }
+      }
+    }
   }
 }
