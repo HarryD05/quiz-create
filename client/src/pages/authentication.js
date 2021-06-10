@@ -37,24 +37,6 @@ const Authentication = props => {
       const loginResult = await AuthService.login(user);
 
       if (loginResult) {
-        if (isFromSignup) {
-          modalContext.updateModal({
-            title: 'Success', content: (
-              <>
-                <p>Signup successful, your account has been made and you have now been redirected to your homepage.</p>
-              </>
-            )
-          });
-        } else {
-          modalContext.updateModal({
-            title: 'Success', content: (
-              <>
-                <p>Login successful, you have now been redirected to your homepage.</p>
-              </>
-            )
-          });
-        }
-
         const { token } = loginResult;
 
         const currentUser = await AuthService.currentUser(token);
@@ -62,13 +44,15 @@ const Authentication = props => {
         if (currentUser) {
           await authContext.login(token, currentUser);
         } else {
-          modalContext.updateModal({
-            title: 'Error', content: (
-              <>
-                <p>There was an error logging you in, but your account has been created so you can now login.</p>
-              </>
-            )
-          });
+          if (isFromSignup) {
+            modalContext.updateModal({
+              title: 'Error', content: (
+                <>
+                  <p>There was an error logging you in, but your account has been created so you can now login.</p>
+                </>
+              )
+            });
+          }
         }
       } else {
         modalContext.updateModal({

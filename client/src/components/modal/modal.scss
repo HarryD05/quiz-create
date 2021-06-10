@@ -18,6 +18,9 @@
 
   ul {
     list-style-type: square;
+  }
+
+  ol, ul {
     margin-left: 20px;
   }
 
@@ -58,7 +61,8 @@
 
   #student-assignments, #class-assignments {
     .student-assignment-card, .class-assignment-card {
-      margin-top: 1rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid grey;
     }
   }
 }

@@ -79,6 +79,7 @@ export default {
                   dueDate
                   maxMarks
                   questions {
+                    question
                     topic
                     correct
                     marks
@@ -91,10 +92,6 @@ export default {
                 description
                 dueDate
                 maxMarks
-                questions {
-                  _id
-                  question
-                }
               }
             }
           }

@@ -24,7 +24,6 @@ const TeacherHomepage = props => {
   const [newClassInfo, setNewClassInfo] = useState(
     { name: '', qualification: '', subject: '', joiningCode: '' }
   );
-  const [key, setKey] = useState(0);
 
   const getClassNames = user => {
     if (user === null) {
@@ -71,7 +70,7 @@ const TeacherHomepage = props => {
 
   //Retrieves the next assignment due in 
   const getNextAssignment = () => {
-    if (currentClass === null) return 'NA';
+    if (currentClass === null) return 'N/A';
 
     let nextAssignment = null;
     let smallestDiff = 100000000000000000;
@@ -84,12 +83,13 @@ const TeacherHomepage = props => {
       }
     }
 
-    return (nextAssignment === null ? 'NA' : nextAssignment);
+    return (nextAssignment === null ? 'N/A' : nextAssignment);
   }
 
   //Gets average from all class' assignment results
   const getClassAverage = () => {
-    if (currentClass === null) return 'NA';
+    if (currentClass === null) return 'N/A';
+    if (currentClass.results.length === 0) return 'No results yet';
 
     //addup percentages of each result then find average percentage
     let total = 0;
@@ -104,7 +104,7 @@ const TeacherHomepage = props => {
 
   //Counts number of assignments not complete
   const getMissingAssignments = () => {
-    if (currentClass === null) return 'NA';
+    if (currentClass === null) return 'N/A';
 
     const totalAssignments = currentClass.assignments.length * currentClass.students.length;
 
@@ -118,10 +118,11 @@ const TeacherHomepage = props => {
 
   //Gets average from student's results
   const getStudentAverage = () => {
-    if (currentStudent === null) return 'NA';
+    if (currentStudent === null) return 'N/A';
 
     //Get results which are from the selected student
     let studentResults = getStudentResults();
+    if (studentResults.length === 0) return 'No results yet';
 
     //addup percentages of each result then find average percentage
     let total = 0;
@@ -131,15 +132,16 @@ const TeacherHomepage = props => {
       count++;
     }
 
-    return (count === 0 ? 'No results' : `${((total / count) * 100).toFixed(0)}%`);
+    return `${((total / count) * 100).toFixed(0)}%`;
   }
 
   //Counts number of assignments student completed
   const getStudentCompleted = () => {
-    if (currentStudent === null) return 'NA';
+    if (currentStudent === null) return 'N/A';
 
     //Get results which are from the selected student
     let studentResults = getStudentResults();
+    if (studentResults.length === 0) return 'No results yet';
 
     const totalAssignments = currentClass.assignments.length;
 
@@ -148,10 +150,11 @@ const TeacherHomepage = props => {
 
   //Counts number of assignments student missing
   const getStudentMissing = () => {
-    if (currentStudent === null) return 'NA';
+    if (currentStudent === null) return 'N/A';
 
     //Get results which are from the selected student
     let studentResults = getStudentResults();
+    if (studentResults.length === 0) return 'No results yet';
 
     const totalAssignments = currentClass.assignments.length;
 
@@ -160,10 +163,11 @@ const TeacherHomepage = props => {
 
   //Returns the average time taken for student's assignments
   const averageTime = () => {
-    if (currentStudent === null) return 'NA';
+    if (currentStudent === null) return 'N/A';
 
     //Get results which are from the selected student
     let studentResults = getStudentResults();
+    if (studentResults.length === 0) return 'No results yet';
 
     let totalTime = 0;
     let count = 0;
@@ -174,15 +178,17 @@ const TeacherHomepage = props => {
       }
     }
 
-    return (count === 0 ? 'No data for time taken' : `${((totalTime / count) * 100).toFixed(0)} seconds`);
+    if (count === 0) return 'No times recorded';
+    return `${((totalTime / count) * 100).toFixed(0)} seconds`;
   }
 
   //Works out the percentage of questions hints used by student
   const hintsUsed = () => {
-    if (currentStudent === null) return 'NA';
+    if (currentStudent === null) return 'N/A';
 
     //Get results which are from the selected student
     let studentResults = getStudentResults();
+    if (studentResults.length === 0) return 'No results yet';
 
     let hints = 0;
     let total = 0;
@@ -198,10 +204,11 @@ const TeacherHomepage = props => {
   }
 
   const blankAnswers = () => {
-    if (currentStudent === null) return 'NA';
+    if (currentStudent === null) return 'N/A';
 
     //Get results which are from the selected student
     let studentResults = getStudentResults();
+    if (studentResults.length === 0) return 'No results yet';
 
     let blank = 0;
     let total = 0;
@@ -250,7 +257,7 @@ const TeacherHomepage = props => {
 
   //Gets the lowest scoring topic for the selected class
   const getClassPoorestTopic = () => {
-    if (currentClass === null) return 'NA';
+    if (currentClass === null) return 'N/A';
     if (currentClass.results.length === 0) return 'No results yet';
 
     const topicList = getTopicsRanked(currentClass.results);
@@ -269,7 +276,7 @@ const TeacherHomepage = props => {
 
   //Gets the highest scoring topic for the current class
   const getClassBestTopic = () => {
-    if (currentClass === null) return 'NA';
+    if (currentClass === null) return 'N/A';
     if (currentClass.results.length === 0) return 'No results yet';
 
     const topicList = getTopicsRanked(currentClass.results);
@@ -288,7 +295,7 @@ const TeacherHomepage = props => {
 
   //Gets the lowest scoring topic for the selected student
   const getStudentPoorestTopic = () => {
-    if (currentStudent === null) return 'NA';
+    if (currentStudent === null) return 'N/A';
 
     //getting the students results
     const studentResults = getStudentResults();
@@ -310,7 +317,7 @@ const TeacherHomepage = props => {
 
   //Gets the highest scoring topic for the selected student
   const getStudentBestTopic = () => {
-    if (currentStudent === null) return 'NA';
+    if (currentStudent === null) return 'N/A';
 
     //getting the students results
     const studentResults = getStudentResults();
@@ -335,33 +342,6 @@ const TeacherHomepage = props => {
   const toQuizCreation = () => {
     props.history.push('/teacher/create');
     //changes path of url 
-  }
-
-  //Opens modal showing classes assignments
-  const showAssignmentsModal = () => {
-    if (currentClass === null) {
-      modalContext.updateModal({
-        title: 'Class assignments/results',
-        content: <p>Please select a class...</p>
-      });
-    } else {
-      modalContext.updateModal({
-        title: `${currentClass.name}'s assignments/results`,
-        content: <div id="class-assignments">
-          {currentClass.assignments.map(assignment => {
-            return (<div className="class-assignment-card">
-              <h3>{assignment.title}</h3>
-              <ul>
-                <li><b>Due date</b> - {new Date(Number(assignment.dueDate)).toLocaleString()}</li>
-                <li><b>Missing</b> - NA</li>
-                <li><b>Average score</b> - NA</li>
-                <li><b>Weakest question</b> - NA</li>
-              </ul>
-            </div>)
-          })}
-        </div>
-      });
-    }
   }
 
   const handleChange = e => {
@@ -411,27 +391,122 @@ const TeacherHomepage = props => {
     }
   }
 
-  //Opens modal to show selected students assignments
-  const showStudentAssignmentsModal = () => {
+  //Opens modal showing classes assignments
+  const showAssignmentsModal = () => {
+    //Function returns the results linked to the assignment passed into the function
+    const getAssignmentResults = (results, assignmentTitle) => {
+      return [...results].filter(result => result.assignment.title === assignmentTitle);
+    }
+
+    //Function returns the students that have completed the assignment passed into the function
+    const missingStudents = assignment => {
+      const completedAssignments = getAssignmentResults(currentClass.results, assignment.title);
+      if (completedAssignments.length === 0) return 'No results yet';
+
+      let students = [...currentClass.students];
+      students = students.map(student => student.username);
+
+      completedAssignments.forEach(completed => {
+        students.splice(students.indexOf(completed.student.username), 1);
+      });
+
+      return students.toString().replaceAll(',', ', ');
+    }
+
+    //Function returns the average score from the results of the assignment passed into the function
+    const getAverageResult = assignment => {
+      const completedAssignments = getAssignmentResults(currentClass.results, assignment.title);
+      if (completedAssignments.length === 0) return 'No results yet';
+
+      //addup percentages of each result then find average percentage
+      let total = 0;
+      let count = 0;
+      for (let result of completedAssignments) {
+        total += result.marks / assignment.maxMarks;
+        count++;
+      }
+
+      return `${((total / count) * 100).toFixed(0)}%`;
+    }
+
+    //Returns all scores ranked (as list items)
+    const scoresRanked = assignment => {
+      const completedAssignments = getAssignmentResults(currentClass.results, assignment.title);
+      if (completedAssignments.length === 0) return <li>No results yet</li>;
+
+      let students = [];
+
+      //loop through all results
+      for (let result of completedAssignments) {
+        students.push({
+          username: result.student.username,
+          mark: result.marks,
+          score: Number(((result.marks / assignment.maxMarks) * 100).toFixed(0))
+        });
+      }
+
+      students.sort((a, b) => b.score - a.score);
+
+      return students.map(student => {
+        return <li key={student.username}>{student.username} - {student.mark}/{assignment.maxMarks} ({student.score}%)</li>
+      });
+    }
+
+    //Returns all questions with their average (as list items)
+    const questionsSummarised = assignment => {
+      const completedAssignments = getAssignmentResults(currentClass.results, assignment.title);
+      if (completedAssignments.length === 0) return <li>No results yet</li>;
+
+      let questions = [];
+      let index = 1;
+      completedAssignments[0].assignment.questions.forEach(q => {
+        questions.push({
+          index,
+          question: q.question,
+          maxMarks: q.marks,
+          total: 0
+        });
+        index++;
+      })
+
+      //loop through all results
+      for (let result of completedAssignments) {
+        for (let i = 0; i < questions.length; i++) {
+          if (result.answers[i] === result.assignment.questions[i].correct) {
+            questions[i].total += result.assignment.questions[i].marks;
+          }
+        }
+      }
+
+      return questions.map(question => {
+        return <li key={question.index}>{question.question} - {Math.round((question.total / completedAssignments.length) * 100) / 100}/{question.maxMarks}</li>
+      });
+    }
+
     if (currentClass === null) {
       modalContext.updateModal({
-        title: 'Student assignments/results',
-        content: <p>Please select a student...</p>
+        title: 'Class assignments/results',
+        content: <p>Please select a class...</p>
       });
     } else {
-      console.log(getStudentResults());
-
       modalContext.updateModal({
-        title: `${currentStudent.username}'s assignments/results`,
-        content: <div id="student-assignments">
+        title: `${currentClass.name}'s assignments/results`,
+        content: <div id="class-assignments">
           {currentClass.assignments.map(assignment => {
-            return (<div className="student-assignment-card">
+            return (<div className="class-assignment-card" key={assignment._id}>
               <h3>{assignment.title}</h3>
               <ul>
-                <li><b>Completed</b> - NA</li>
-                <li><b>Score</b> - NA</li>
-                <li><b>Time taken</b> - NA</li>
-                <li><b>Hints used</b> - NA</li>
+                <li><b>Due date</b> - {new Date(Number(assignment.dueDate)).toLocaleString()}</li>
+                <li><b>Average</b> - {getAverageResult(assignment)}</li>
+                <li><b>Not completed</b> - {missingStudents(assignment)}</li>
+                <li><b>Completed</b></li>
+                <ol>
+                  {scoresRanked(assignment)}
+                </ol>
+                <li><b>Questions (and average mark)</b></li>
+                <ol>
+                  {questionsSummarised(assignment)}
+                </ol>
               </ul>
             </div>)
           })}
@@ -440,12 +515,121 @@ const TeacherHomepage = props => {
     }
   }
 
-  const updateData = () => {
-    setKey(key + 1);
+  //Opens modal to show selected students assignments
+  const showStudentAssignmentsModal = () => {
+    //Function returns the student's result for the assignment
+    const getResult = assignment => {
+      let studentResults = getStudentResults();
+      if (studentResults.length === 0) return null;
+
+      //Check if a result is linked to the passes in assignment
+      const completedResult = studentResults.filter(result => result.assignment.title === assignment.title);
+
+      if (completedResult.length === 0) return null;
+      return completedResult[0];
+    }
+
+    //Works out if the assignment passed in is completed
+    const isCompleted = assignment => {
+      //Get results which are from the selected student
+      const completedResult = getResult(assignment);
+      if (completedResult === null) return 'NO';
+
+      return 'YES'
+    }
+
+    //Gets the student's score for the assignment
+    const getScore = assignment => {
+      //Get results which are from the selected student
+      const completedResult = getResult(assignment);
+      if (completedResult === null) return 'N/A';
+
+      return (completedResult ?
+        `${completedResult.marks}/${completedResult.assignment.maxMarks} (${((completedResult.marks / completedResult.assignment.maxMarks).toFixed(2) * 100)}%)` :
+        'N/A'
+      );
+    }
+
+    //Gets the student's time taken from the assignment
+    const getTimeTaken = assignment => {
+      //Get results which are from the selected student
+      const completedResult = getResult(assignment);
+
+      console.log(completedResult);
+
+      if (completedResult === null) return 'N/A';
+      else if (completedResult.timeTaken === null) return 'Not recorded';
+      return `${completedResult.timeTaken} seconds`;
+    }
+
+    //Gets the student's hints taken from the assignment
+    const getHintsUsed = assignment => {
+      //Get results which are from the selected student
+      const completedResult = getResult(assignment);
+      if (completedResult === null) return 'N/A';
+
+      let hints = [];
+      let index = 1;
+      completedResult.hints.forEach(usedHint => {
+        if (usedHint) hints.push(`Q${index}`);
+
+        index++;
+      });
+
+      if (hints.length === 0) return 'No hints used';
+      return hints.toString().replaceAll(',', ', ');
+    }
+
+    //Returns the students answers to the questions as list items
+    const getQuestions = assignment => {
+      //Get results which are from the selected student
+      const completedResult = getResult(assignment);
+      if (completedResult === null) return 'N/A';
+
+      console.log(completedResult);
+
+      let index = -1;
+      return completedResult.answers.map(answer => {
+        index++;
+        if (answer === completedResult.assignment.questions[index].correct) {
+          return <li key={index}>{answer} - CORRECT {(completedResult.hints[index] ? '(Hint used)' : '')}</li>
+        } else {
+          return <li key={index}>{answer} - INCORRECT {(completedResult.hints[index] ? '(Hint used)' : '')}</li>
+        }
+      });
+    }
+
+    if (currentClass === null || currentStudent === null) {
+      modalContext.updateModal({
+        title: 'Student assignments/results',
+        content: <p>Please select a student...</p>
+      });
+    } else {
+      modalContext.updateModal({
+        title: `${currentStudent.username}'s assignments/results`,
+        content: <div id="student-assignments">
+          {currentClass.assignments.map(assignment => {
+            return (<div className="student-assignment-card" key={assignment._id}>
+              <h3>{assignment.title}</h3>
+              <ul>
+                <li><b>Completed</b> - {isCompleted(assignment)}</li>
+                <li><b>Score</b> - {getScore(assignment)}</li>
+                <li><b>Time taken</b> - {getTimeTaken(assignment)}</li>
+                <li><b>Hints used</b> - {getHintsUsed(assignment)}</li>
+                <li><b>Answers</b></li>
+                <ol >
+                  {getQuestions(assignment)}
+                </ol>
+              </ul>
+            </div>)
+          })}
+        </div>
+      });
+    }
   }
 
   return (
-    <div id="teacher-homepage" key={key}>
+    <div id="teacher-homepage" >
       <p id="welcome-msg">Welcome {authContext.user.username}</p>
 
       <div id="thp-tables">
@@ -457,12 +641,16 @@ const TeacherHomepage = props => {
           <table className="table">
             <tbody >
               <tr>
+                <td className="left">Joining code</td>
+                <td className="right">{currentClass ? currentClass.joiningCode : 'N/A'}</td>
+              </tr>
+              <tr>
                 <td className="left">Num. of students</td>
-                <td className="right">{(currentClass ? currentClass.students.length : 'NA')}</td>
+                <td className="right">{(currentClass ? currentClass.students.length : 'N/A')}</td>
               </tr>
               <tr>
                 <td className="left">Num. of assignments</td>
-                <td className="right">{currentClass ? currentClass.assignments.length : 'NA'}</td>
+                <td className="right">{currentClass ? currentClass.assignments.length : 'N/A'}</td>
               </tr>
               <tr>
                 <td className="left">Next assignment due</td>
@@ -483,10 +671,6 @@ const TeacherHomepage = props => {
               <tr>
                 <td className="left">Best topic</td>
                 <td className="right">{getClassBestTopic()}</td>
-              </tr>
-              <tr>
-                <td className="left">Joining code</td>
-                <td className="right">{currentClass ? currentClass.joiningCode : 'NA'}</td>
               </tr>
             </tbody>
           </table>
