@@ -25,26 +25,21 @@
   }
 
   #close-button {
-    //position relative to top corner of screen
-    position: fixed; 
+    //position relative to top right of 
+    //the header element
+    position: absolute; 
     background: transparent;
+    top: 12px;
+    right: 12px;
+
+    //Removes the default button styling
     border: none;
     outline: none;
-
-    //positions cross just to right of modal
-    top: calc(10vh + 12px);
-    right: calc(50% - (240px + 1rem) - 32px);
 
     //makes cross smaller
     img {
       width: 16px;
       height: 16px;
-    }
-
-    //if screen small the cross moves to the top
-    //left corner inside the modal (so stays on screen)
-    @media (max-width: 632px) {
-      left: calc(10vw + 8px);
     }
 
     margin: 0;

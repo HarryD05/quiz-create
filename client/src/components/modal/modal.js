@@ -14,13 +14,13 @@ const Modal = props => {
 
   return (
     <div id="modal">
-      <button id="close-button" onClick={props.onClick}>
-        <img src={CrossSVG} alt="cross" />
-      </button>
-
       <div id="main">
         <div id="header">
           <h3>{title}</h3>
+
+          <button id="close-button" onClick={props.onClick}>
+            <img src={CrossSVG} alt="cross" />
+          </button>
         </div>
 
         <div id="modal-content">
