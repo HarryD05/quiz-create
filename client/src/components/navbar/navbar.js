@@ -30,13 +30,11 @@ const Navbar = () => {
   //Setting up state
   const [isSmallLogo, setIsSmallLogo] = useState(checkLogoSize);
 
-  const [, updateState] = useState();
-  const forceUpdate = useCallback(() => updateState({}), []);
-  //used to force re-render of navbar, as otherwise buttons in navbar
-  //don't display correctly when page swaps (e.g. logout on auth page)
-
-  //Force rerender constantly so correct buttons show
-  setInterval(forceUpdate, 1000);
+  //whenever incremented the navbar rerenders (linked to the key)
+  //attribute of the main element - so buttons change correctly
+  const [key, setKey] = useState(0);
+  //called whenver the url changes
+  window.addEventListener('popstate', () => setKey(key + 1));
 
   //function called whenever screen is resized to check if 
   //logo needs to change size
@@ -98,7 +96,7 @@ const Navbar = () => {
   }
 
   return (
-    <div id="navbar">
+    <div id="navbar" key={key}>
       <div id="main">
         {renderHomeButton()}
         <img src={(isSmallLogo ? QuizLogoSmallImg : QuizLogoImg)} alt="QuizCreate logo" />

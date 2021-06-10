@@ -1,6 +1,9 @@
 //Import react dependency
 import React from 'react';
 
+//Importing assets 
+import CrossSVG from '../../assets/cross.svg';
+
 //Importing styling
 import './modal.scss';
 
@@ -11,16 +14,18 @@ const Modal = props => {
 
   return (
     <div id="modal">
-      <h3>{title}</h3>
+      <button id="close-button" onClick={props.onClick}>
+        <img src={CrossSVG} alt="cross" />
+      </button>
 
-      <hr className="divider" />
+      <div id="main">
+        <div id="header">
+          <h3>{title}</h3>
+        </div>
 
-      <div id="modal-content">{content}</div>
-
-      <div id="buttons">
-        <button id="modalBtn" className="btn" onClick={props.onClick}>
-          Close
-        </button>
+        <div id="modal-content">
+          {content}
+        </div>
       </div>
     </div>
   )
