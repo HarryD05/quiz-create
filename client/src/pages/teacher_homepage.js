@@ -34,7 +34,8 @@ const TeacherHomepage = props => {
 
     //looping through teacher's classes to extract the names
     for (let i = 0; i < user.classes.length; i++) {
-      names.push({ label: user.classes[i].name, value: i });
+      const classI = user.classes[i]; //details of the class at index i in the user's class list
+      names.push({ label: `${classI.name} (${classI.qualification} ${classI.subject})`, value: i });
     }
 
     return names;
@@ -383,7 +384,7 @@ const TeacherHomepage = props => {
       } else {
         modalContext.updateModal({
           title: 'Error',
-          content: <p>Something went wrong, try again (your joiningCode needs to be unique)</p>
+          content: <p>Something went wrong, try again (your joining code needs to be unique).</p>
         });
       }
     } catch (error) {

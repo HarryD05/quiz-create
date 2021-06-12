@@ -57,6 +57,7 @@ export default {
               _id
               name
               subject
+              qualification
               joiningCode
               students {
                 _id
