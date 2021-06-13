@@ -25,6 +25,15 @@ const TeacherHomepage = props => {
     { name: '', qualification: '', subject: '', joiningCode: '' }
   );
 
+  //Returns if the submission was made after the dueDate
+  const isResultLate = result => {
+    const submitDate = new Date(result.date);
+    const deadline = new Date(result.assignment.dueDate);
+
+    return (submitDate - deadline > 0);
+  }
+
+  //Returns all class names in the correct format from the user 
   const getClassNames = user => {
     if (user === null) {
       return null;
@@ -84,7 +93,7 @@ const TeacherHomepage = props => {
       }
     }
 
-    return (nextAssignment === null ? 'N/A' : nextAssignment);
+    return (nextAssignment === null ? 'No upcoming assignments' : nextAssignment);
   }
 
   //Gets average from all class' assignment results
@@ -109,7 +118,31 @@ const TeacherHomepage = props => {
 
     const totalAssignments = currentClass.assignments.length * currentClass.students.length;
 
-    return (totalAssignments - currentClass.results.length) + "/" + totalAssignments;
+    return (totalAssignments - currentClass.results.length);
+  }
+
+  //Counts number of assignments completed
+  const getClassSubmitted = () => {
+    if (currentClass === null) return 'N/A';
+
+    return currentClass.results.length;
+  }
+
+  //Counts number of assignments completed by submitted post due date
+  const getLateSubmissions = () => {
+    if (currentClass === null) return 'N/A';
+
+    const results = currentClass.results;
+
+    if (results.length === 0) return 'No results yet';
+
+    //Loop through all results and count late results
+    const lateNum = [...results].reduce((accumulator, current) => {
+      if (isResultLate(current)) return accumulator + 1;
+      return accumulator;
+    }, 0);
+
+    return `${lateNum}/${results.length}`;
   }
 
   //Getting results that are from the current student
@@ -147,6 +180,23 @@ const TeacherHomepage = props => {
     const totalAssignments = currentClass.assignments.length;
 
     return studentResults.length + "/" + totalAssignments;
+  }
+
+  //Counts number of assignments submitted that were late 
+  //submitted by the selected student
+  const getLateAssignments = () => {
+    if (currentStudent === null) return 'N/A';
+
+    const results = getStudentResults();
+    if (results.length === 0) return 'No results yet';
+
+    //Loop through all results and count late results
+    const lateNum = [...results].reduce((accumulator, current) => {
+      if (isResultLate(current)) return accumulator + 1;
+      return accumulator;
+    }, 0);
+
+    return `${lateNum}/${results.length}`;
   }
 
   //Counts number of assignments student missing
@@ -221,6 +271,22 @@ const TeacherHomepage = props => {
     }
 
     return `${blank}/${total}`;
+  }
+
+  //Return assignment with greatest score
+  const getBestAssignment = () => {
+    if (currentStudent === null) return 'N/A';
+
+    //Get results which are from the selected student
+    let studentResults = getStudentResults();
+    if (studentResults.length === 0) return 'No results yet';
+
+    //Rank results 
+    const resultsRanked = [...studentResults].sort((a, b) =>
+      (b.marks / b.assignment.maxMarks) - (a.marks / a.assignment.maxMarks)
+    );
+
+    return resultsRanked[0].assignment.title;
   }
 
   //Ranks topics based on their average result
@@ -439,17 +505,24 @@ const TeacherHomepage = props => {
 
       //loop through all results
       for (let result of completedAssignments) {
+        const isLate = isResultLate(result);
+
         students.push({
           username: result.student.username,
           mark: result.marks,
-          score: Number(((result.marks / assignment.maxMarks) * 100).toFixed(0))
+          score: Number(((result.marks / assignment.maxMarks) * 100).toFixed(0)),
+          date: new Date(result.date).toLocaleString(),
+          isLate
         });
       }
 
       students.sort((a, b) => b.score - a.score);
 
       return students.map(student => {
-        return <li key={student.username}>{student.username} - {student.mark}/{assignment.maxMarks} ({student.score}%)</li>
+        return <li key={student.username}>
+          {student.username} - {student.mark}/{assignment.maxMarks} ({student.score}%)
+          - {student.date} {student.isLate ? '[LATE]' : '[ON TIME]'}
+        </li>
       });
     }
 
@@ -498,7 +571,6 @@ const TeacherHomepage = props => {
               <h3>{assignment.title}</h3>
               <ul>
                 <li><b>Due date</b> - {new Date(Number(assignment.dueDate)).toLocaleString()}</li>
-                <li><b>Average</b> - {getAverageResult(assignment)}</li>
                 <li><b>Not completed</b> - {missingStudents(assignment)}</li>
                 <li><b>Completed</b></li>
                 <ol>
@@ -508,6 +580,7 @@ const TeacherHomepage = props => {
                 <ol>
                   {questionsSummarised(assignment)}
                 </ol>
+                <li><b>Average</b> - {getAverageResult(assignment)}</li>
               </ul>
             </div>)
           })}
@@ -536,7 +609,12 @@ const TeacherHomepage = props => {
       const completedResult = getResult(assignment);
       if (completedResult === null) return 'NO';
 
-      return 'YES'
+      //Checking is the assignment was late
+      if (isResultLate(completedResult)) {
+        return 'YES [LATE]';
+      }
+
+      return 'YES [ON TIME]'
     }
 
     //Gets the student's score for the assignment
@@ -551,12 +629,20 @@ const TeacherHomepage = props => {
       );
     }
 
+    //Gets the date the student completed the assignment
+    const getDate = assignment => {
+      //Get results which are from the selected student
+      const completedResult = getResult(assignment);
+
+      if (completedResult === null) return 'N/A';
+      return new Date(completedResult.date).toLocaleString();
+    }
+
+
     //Gets the student's time taken from the assignment
     const getTimeTaken = assignment => {
       //Get results which are from the selected student
       const completedResult = getResult(assignment);
-
-      console.log(completedResult);
 
       if (completedResult === null) return 'N/A';
       else if (completedResult.timeTaken === null) return 'Not recorded';
@@ -587,8 +673,6 @@ const TeacherHomepage = props => {
       const completedResult = getResult(assignment);
       if (completedResult === null) return 'N/A';
 
-      console.log(completedResult);
-
       let index = -1;
       return completedResult.answers.map(answer => {
         index++;
@@ -614,6 +698,7 @@ const TeacherHomepage = props => {
               <h3>{assignment.title}</h3>
               <ul>
                 <li><b>Completed</b> - {isCompleted(assignment)}</li>
+                <li><b>Date</b> - {getDate(assignment)}</li>
                 <li><b>Score</b> - {getScore(assignment)}</li>
                 <li><b>Time taken</b> - {getTimeTaken(assignment)}</li>
                 <li><b>Hints used</b> - {getHintsUsed(assignment)}</li>
@@ -666,6 +751,14 @@ const TeacherHomepage = props => {
                 <td className="right">{getMissingAssignments()}</td>
               </tr>
               <tr>
+                <td className="left">Assignments submitted</td>
+                <td className="right">{(getClassSubmitted())}</td>
+              </tr>
+              <tr>
+                <td className="left">Late submissions</td>
+                <td className="right">{getLateSubmissions()}</td>
+              </tr>
+              <tr>
                 <td className="left">Poorest topic</td>
                 <td className="right">{getClassPoorestTopic()}</td>
               </tr>
@@ -694,12 +787,16 @@ const TeacherHomepage = props => {
                 <td className="right">{getStudentAverage()}</td>
               </tr>
               <tr>
+                <td className="left">Missing assignments</td>
+                <td className="right">{getStudentMissing()}</td>
+              </tr>
+              <tr>
                 <td className="left">Completed assignments</td>
                 <td className="right">{getStudentCompleted()}</td>
               </tr>
               <tr>
-                <td className="left">Missing assignments</td>
-                <td className="right">{getStudentMissing()}</td>
+                <td className="left">Late submissions</td>
+                <td className="right">{getLateAssignments()}</td>
               </tr>
               <tr>
                 <td className="left">Average time per question</td>
@@ -712,6 +809,10 @@ const TeacherHomepage = props => {
               <tr>
                 <td className="left">Questions left blank</td>
                 <td className="right">{blankAnswers()}</td>
+              </tr>
+              <tr>
+                <td className="left">Best assignment</td>
+                <td className="right">{getBestAssignment()}</td>
               </tr>
               <tr>
                 <td className="left">Poorest topic</td>

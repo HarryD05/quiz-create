@@ -1,5 +1,5 @@
 //React dependencies 
-import React, { useContext, useState, useCallback } from 'react';
+import React, { useContext, useState } from 'react';
 
 //Function imports from external files
 import getInfoText from './infoText';
