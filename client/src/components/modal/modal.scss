@@ -97,6 +97,16 @@
     .student-assignment-card, .class-assignment-card {
       padding: 1rem 0;
       border-bottom: 1px solid grey;
+
+      #class-results-table {
+        border-collapse: collapse;
+        text-align: center;
+
+        tr, th, td {
+          border: 1px solid black;
+          padding: 2px;
+        }
+      }
     }
   }
 }

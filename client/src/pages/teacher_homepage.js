@@ -24,6 +24,18 @@ const TeacherHomepage = props => {
   const [newClassInfo, setNewClassInfo] = useState(
     { name: '', qualification: '', subject: '', joiningCode: '' }
   );
+  const [isSmall, setIsSmall] = useState(window.visualViewport.width < 600);
+
+  //variable in state when updated the page re-renders
+  const [key, setKey] = useState(0);
+
+  //Returns if the screen is less than 600px
+  const checkIsSmall = () => {
+    setIsSmall(window.visualViewport.width < 600);
+    setKey(key + 1);
+  }
+
+  window.addEventListener('resize', checkIsSmall);
 
   //Returns if the submission was made after the dueDate
   const isResultLate = result => {
@@ -518,12 +530,41 @@ const TeacherHomepage = props => {
 
       students.sort((a, b) => b.score - a.score);
 
-      return students.map(student => {
-        return <li key={student.username}>
-          {student.username} - {student.mark}/{assignment.maxMarks} ({student.score}%)
-          - {student.date} {student.isLate ? '[LATE]' : '[ON TIME]'}
-        </li>
-      });
+      const renderAsList = () => {
+        return students.map(student => {
+          return <li key={student.username}>
+            {student.username} - {student.mark}/{assignment.maxMarks} ({student.score}%)
+            - {student.date} {student.isLate ? '[LATE]' : '[ON TIME]'}
+          </li>
+        });
+      }
+
+      const renderAsTable = () => {
+        return (<table id="class-results-table">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Student</th>
+              <th>Score</th>
+              <th>Date</th>
+              <th>On time?</th>
+            </tr>
+          </thead>
+          <tbody>
+            {students.map((student, index) => {
+              return (<tr key={index}>
+                <td>{index + 1}</td>
+                <td>{student.username}</td>
+                <td>{`${student.mark}/${assignment.maxMarks}`}</td>
+                <td>{student.date}</td>
+                <td>{student.isLate ? '[LATE]' : '[ON TIME]'}</td>
+              </tr>)
+            })}
+          </tbody>
+        </table>)
+      }
+
+      return (isSmall ? renderAsList() : renderAsTable());
     }
 
     //Returns all questions with their average (as list items)
@@ -715,7 +756,7 @@ const TeacherHomepage = props => {
   }
 
   return (
-    <div id="teacher-homepage" >
+    <div id="teacher-homepage" key={key}>
       <p id="welcome-msg">Welcome {authContext.user.username}</p>
 
       <div id="thp-tables">
