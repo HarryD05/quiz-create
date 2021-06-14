@@ -105,6 +105,10 @@ const TeacherHomepage = props => {
   const selectClass = e => {
     //e.value is the index of the class is the user's class list
     setCurrentClass(authContext.user.classes[e.value]);
+
+    //then deselect the currently selected student as they may 
+    //not be in the newly selected class
+    setCurrentStudent(null); //remove data from state
   }
 
   //Sets the student data to the newly selected student
@@ -623,25 +627,6 @@ const TeacherHomepage = props => {
       });
     }
 
-    //Updates the modalState state, can be called from 
-    //the modal component
-    const changeModalState = state => {
-      modalContext.updateModal({
-        title: `${currentClass.name}'s assignments/results`,
-        content: <div id="class-assignments">
-          <Select className="modal-selector" options={getAssignmentNames(currentClass.assignments)} onChange={handleClassAssignmentSelectorChange} updateModal={changeModalState} defaultValue={'All assignments'} />
-
-          {renderAssignmentList(state.classAssignment)}
-        </div>
-      });
-    }
-
-    //Have to use a normal function instead of an arrow function
-    //So this. can be accessed
-    function handleClassAssignmentSelectorChange(e) {
-      this.updateModal({ classAssignment: e.label });
-    }
-
     const renderAssignment = assignment => {
       return (<div className="class-assignment-card" key={assignment._id}>
         <h3>{assignment.title}</h3>
@@ -671,6 +656,27 @@ const TeacherHomepage = props => {
       }
     }
 
+    //Updates the modalState state, can be called from 
+    //the modal component
+    const changeModalState = state => {
+      modalContext.updateModal({
+        title: `${currentClass.name}'s assignments/results`,
+        content: <div id="class-assignments">
+          <Select className="modal-selector" options={getAssignmentNames(currentClass.assignments)}
+            onChange={handleClassAssignmentSelectorChange} updateModal={changeModalState} defaultValue={'All assignments'} />
+
+          {renderAssignmentList(state.classAssignment)}
+        </div>
+      });
+    }
+
+    //Have to use a normal function instead of an arrow function
+    //So this. can be accessed
+    function handleClassAssignmentSelectorChange(e) {
+      this.updateModal({ classAssignment: e.label });
+    }
+
+
     if (currentClass === null) {
       modalContext.updateModal({
         title: 'Class assignments/results',
@@ -686,7 +692,8 @@ const TeacherHomepage = props => {
         modalContext.updateModal({
           title: `${currentClass.name}'s assignments/results`,
           content: <div id="class-assignments">
-            <Select className="modal-selector" options={getAssignmentNames(currentClass.assignments)} onChange={handleClassAssignmentSelectorChange} updateModal={changeModalState} defaultValue={'All assignments'} />
+            <Select className="modal-selector" options={getAssignmentNames(currentClass.assignments)}
+              onChange={handleClassAssignmentSelectorChange} updateModal={changeModalState} defaultValue={'All assignments'} />
 
             {renderAssignmentList('All assignments')}
           </div>
@@ -828,7 +835,8 @@ const TeacherHomepage = props => {
       modalContext.updateModal({
         title: `${currentStudent.username}'s assignments/results`,
         content: <div id="student-assignments">
-          <Select className="modal-selector" options={getAssignmentNames(currentClass.assignments)} onChange={handleStudentAssignmentSelectorChange} updateModal={changeModalState} defaultValue={'All assignments'} />
+          <Select className="modal-selector" options={getAssignmentNames(currentClass.assignments)}
+            onChange={handleStudentAssignmentSelectorChange} updateModal={changeModalState} defaultValue={'All assignments'} />
 
           {renderAssignmentList(state.studentAssignment)}
         </div>
@@ -856,7 +864,8 @@ const TeacherHomepage = props => {
         modalContext.updateModal({
           title: `${currentStudent.username}'s assignments/results`,
           content: <div id="student-assignments">
-            <Select className="modal-selector" options={getAssignmentNames(currentClass.assignments)} onChange={handleStudentAssignmentSelectorChange} updateModal={changeModalState} defaultValue={'All assignments'} />
+            <Select className="modal-selector" options={getAssignmentNames(currentClass.assignments)}
+              onChange={handleStudentAssignmentSelectorChange} updateModal={changeModalState} defaultValue={'All assignments'} />
 
             {renderAssignmentList('All assignments')}
           </div>
@@ -873,7 +882,8 @@ const TeacherHomepage = props => {
         <div id="classes">
           <p>Your Classes</p>
 
-          <Select options={getClassNames(authContext.user)} placeholder='Select class...' onChange={selectClass} />
+          <Select options={getClassNames(authContext.user)}
+            placeholder='Select class...' onChange={selectClass} />
 
           <table className="table">
             <tbody >
@@ -929,7 +939,8 @@ const TeacherHomepage = props => {
         <div id="students">
           <p>Your Students</p>
 
-          <Select options={getStudentNames(authContext.user)} placeholder='Select student...' onChange={selectStudent} />
+          <Select id="student-selector" options={getStudentNames(authContext.user)}
+            placeholder='Select student...' onChange={selectStudent} />
 
           <table className="table">
             <tbody >

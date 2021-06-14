@@ -24,7 +24,7 @@ const getInfoText = path => {
           <li>Use the dropdown menu above the table to select one of your classes.</li>
           <li>The table below will update with the data linked to the selected class.</li>
           <li>The percentage next to the poorest/best topic is the average score this class achieves on questions of that topic.</li>
-          <li>The 'see all assignments' button will bring up a modal displaying each assignment you have for the selected class which outlines the due date, average score achieved, students who haven't completed the assignment, students who have completed the assignment (and their mark) and each question is displayed with the average mark achieved.</li>
+          <li>The 'see all assignments' button will bring up a popup displaying each assignment you have for the selected class which outlines the due date, average score achieved, students who haven't completed the assignment, students who have completed the assignment (and their mark) and each question is displayed with the average mark achieved. The popup has a dropdown menu where you can select which assignment you want to see, you can also select to see all assignments.</li>
           <li>The 'set new assignment' button will redirect you to the quiz creation page of the website.</li>
         </ul>
         <li>Your Students</li>
@@ -32,7 +32,7 @@ const getInfoText = path => {
           <li>Use the dropdown menu above the table to select one of your classes.</li>
           <li>The table below will update with the data linked to the selected student.</li>
           <li>The percentage next to the poorest/best topic is the average score this student achieves on questions of that topic.</li>
-          <li>The 'see all student's assignments' button will bring up a modal displaying each assignment you have set for this student which whether or not they have completed the assignment, their score, the time it took them (if you set the assignment to record the time), on which questions they used hints and their answers.</li>
+          <li>The 'see all student's assignments' button will bring up a popup displaying each assignment you have set for this student which whether or not they have completed the assignment, their score, the time it took them (if you set the assignment to record the time), on which questions they used hints and their answers. The popup has a dropdown menu where you can select which assignment you want to see, you can also select to see all assignments</li>
         </ul>
         <li>Create a new class</li>
         <ul>
