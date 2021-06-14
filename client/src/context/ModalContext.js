@@ -16,8 +16,8 @@ export default (props) => {
   //Public function used to update the info within the modal
   //Once this function is called the modal will be displayed
   const updateModal = (info_) => {
+    setInfo({ ...info_ });
     setIsModalShowing(true);
-    setInfo(info_);
   }
 
   //Public function used to remove the info within the modal
@@ -25,6 +25,14 @@ export default (props) => {
   const clearModal = () => {
     setIsModalShowing(false)
     setInfo({ title: '', content: '' });
+
+    const modalClose = new CustomEvent('modalClosed', {
+      bubbles: true,
+      cancelable: true,
+      composed: false
+    })
+
+    document.getElementById('main').dispatchEvent(modalClose);
   }
 
   return (

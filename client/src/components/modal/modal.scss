@@ -61,6 +61,8 @@
     position: fixed;
     top: 10vh;
     left: calc(50% - (240px + 1rem));
+
+    z-index: 200;
     
     //will always be the entire width of the modal
     max-width: calc(80vw);

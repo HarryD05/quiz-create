@@ -21,18 +21,19 @@ const TeacherHomepage = props => {
   //Setting up state to store current class/student
   const [currentClass, setCurrentClass] = useState(null);
   const [currentStudent, setCurrentStudent] = useState(null);
-  const [newClassInfo, setNewClassInfo] = useState(
-    { name: '', qualification: '', subject: '', joiningCode: '' }
-  );
+  const [newClassInfo, setNewClassInfo] = useState({
+    name: '', qualification: '', subject: '', joiningCode: ''
+  });
   const [isSmall, setIsSmall] = useState(window.visualViewport.width < 600);
 
   //variable in state when updated the page re-renders
   const [key, setKey] = useState(0);
+  const incrementKey = () => setKey(key + 1);
 
   //Returns if the screen is less than 600px
   const checkIsSmall = () => {
     setIsSmall(window.visualViewport.width < 600);
-    setKey(key + 1);
+    incrementKey();
   }
 
   window.addEventListener('resize', checkIsSmall);
@@ -51,15 +52,37 @@ const TeacherHomepage = props => {
       return null;
     } //Stop if user variable empty
 
-    const names = [];//array to hold class names
+    let names = [];//array to hold class names
+
+    //If no classes then any empty array returned
+    if (user.classes.length === 0) return [];
 
     //looping through teacher's classes to extract the names
-    for (let i = 0; i < user.classes.length; i++) {
-      const classI = user.classes[i]; //details of the class at index i in the user's class list
-      names.push({ label: `${classI.name} (${classI.qualification} ${classI.subject})`, value: i });
-    }
+    names = user.classes.map((class_, i) => {
+      return { label: `${class_.name} (${class_.qualification} ${class_.subject})`, value: i }
+    });
 
     return names;
+  }
+
+  //Returns object with assignments formatted for react-select 
+  const getAssignmentNames = assignments_ => {
+    if (assignments_ === null) {
+      return null;
+    } //Stop if user variable empty
+
+    let assignments = [];  //array to hold assignment names
+
+    if (assignments_.length === 0) return [{ label: 'All assignments', value: -1 }];
+
+    //looping through the assignments to extract the names
+    assignments = assignments_.map((assignment, i) => {
+      return { label: assignment.title, value: i }
+    });
+
+    //Return all assignments as well as all, which when selected
+    //means all assignments will be displayed
+    return [...assignments, { label: 'All assignments', value: -1 }];
   }
 
   //get the student list from the selected class
@@ -531,12 +554,14 @@ const TeacherHomepage = props => {
       students.sort((a, b) => b.score - a.score);
 
       const renderAsList = () => {
-        return students.map(student => {
-          return <li key={student.username}>
-            {student.username} - {student.mark}/{assignment.maxMarks} ({student.score}%)
-            - {student.date} {student.isLate ? '[LATE]' : '[ON TIME]'}
-          </li>
-        });
+        return (<ol>
+          {students.map(student => {
+            return <li key={student.username}>
+              {student.username} - {student.mark}/{assignment.maxMarks} ({student.score}%)
+              - {student.date} {student.isLate ? '[LATE]' : '[ON TIME]'}
+            </li>
+          })}
+        </ol>)
       }
 
       const renderAsTable = () => {
@@ -557,7 +582,7 @@ const TeacherHomepage = props => {
                 <td>{student.username}</td>
                 <td>{`${student.mark}/${assignment.maxMarks}`}</td>
                 <td>{student.date}</td>
-                <td>{student.isLate ? '[LATE]' : '[ON TIME]'}</td>
+                <td>{student.isLate ? 'LATE' : 'ON TIME'}</td>
               </tr>)
             })}
           </tbody>
@@ -598,35 +623,75 @@ const TeacherHomepage = props => {
       });
     }
 
+    //Updates the modalState state, can be called from 
+    //the modal component
+    const changeModalState = state => {
+      modalContext.updateModal({
+        title: `${currentClass.name}'s assignments/results`,
+        content: <div id="class-assignments">
+          <Select className="modal-selector" options={getAssignmentNames(currentClass.assignments)} onChange={handleClassAssignmentSelectorChange} updateModal={changeModalState} defaultValue={'All assignments'} />
+
+          {renderAssignmentList(state.classAssignment)}
+        </div>
+      });
+    }
+
+    //Have to use a normal function instead of an arrow function
+    //So this. can be accessed
+    function handleClassAssignmentSelectorChange(e) {
+      this.updateModal({ classAssignment: e.label });
+    }
+
+    const renderAssignment = assignment => {
+      return (<div className="class-assignment-card" key={assignment._id}>
+        <h3>{assignment.title}</h3>
+        <ul>
+          <li><b>Due date</b> - {new Date(Number(assignment.dueDate)).toLocaleString()}</li>
+          <li><b>Not completed</b> - {missingStudents(assignment)}</li>
+          <li><b>Completed</b></li>
+          {scoresRanked(assignment)}
+          <li><b>Questions (and average mark)</b></li>
+          <ol>
+            {questionsSummarised(assignment)}
+          </ol>
+          <li><b>Average</b> - {getAverageResult(assignment)}</li>
+        </ul>
+      </div>)
+    }
+
+    const renderAssignmentList = type => {
+      if (type === 'All assignments' || type === undefined) {
+        return currentClass.assignments.map(assignment => {
+          return renderAssignment(assignment);
+        })
+      } else {
+        //A specific assignment has been selected so find its details
+        const selectedAssignment = [...currentClass.assignments].filter(assignment => assignment.title === type)[0];
+        return renderAssignment(selectedAssignment);
+      }
+    }
+
     if (currentClass === null) {
       modalContext.updateModal({
         title: 'Class assignments/results',
         content: <p>Please select a class...</p>
       });
     } else {
-      modalContext.updateModal({
-        title: `${currentClass.name}'s assignments/results`,
-        content: <div id="class-assignments">
-          {currentClass.assignments.map(assignment => {
-            return (<div className="class-assignment-card" key={assignment._id}>
-              <h3>{assignment.title}</h3>
-              <ul>
-                <li><b>Due date</b> - {new Date(Number(assignment.dueDate)).toLocaleString()}</li>
-                <li><b>Not completed</b> - {missingStudents(assignment)}</li>
-                <li><b>Completed</b></li>
-                <ol>
-                  {scoresRanked(assignment)}
-                </ol>
-                <li><b>Questions (and average mark)</b></li>
-                <ol>
-                  {questionsSummarised(assignment)}
-                </ol>
-                <li><b>Average</b> - {getAverageResult(assignment)}</li>
-              </ul>
-            </div>)
-          })}
-        </div>
-      });
+      if (currentClass.assignments.length === 0) {
+        modalContext.updateModal({
+          title: `${currentClass.name}'s assignments/results`,
+          content: <p>No assignments set...</p>
+        });
+      } else {
+        modalContext.updateModal({
+          title: `${currentClass.name}'s assignments/results`,
+          content: <div id="class-assignments">
+            <Select className="modal-selector" options={getAssignmentNames(currentClass.assignments)} onChange={handleClassAssignmentSelectorChange} updateModal={changeModalState} defaultValue={'All assignments'} />
+
+            {renderAssignmentList('All assignments')}
+          </div>
+        });
+      }
     }
   }
 
@@ -725,33 +790,78 @@ const TeacherHomepage = props => {
       });
     }
 
+    //Returns the assignment card for the inputted assignment
+    const renderAssignment = assignment => {
+      return (<div className="student-assignment-card" key={assignment._id}>
+        <h3>{assignment.title}</h3>
+        <ul>
+          <li><b>Completed</b> - {isCompleted(assignment)}</li>
+          <li><b>Date</b> - {getDate(assignment)}</li>
+          <li><b>Score</b> - {getScore(assignment)}</li>
+          <li><b>Time taken</b> - {getTimeTaken(assignment)}</li>
+          <li><b>Hints used</b> - {getHintsUsed(assignment)}</li>
+          <li><b>Answers</b></li>
+          <ol >
+            {getQuestions(assignment)}
+          </ol>
+        </ul>
+      </div>)
+    }
+
+    //Returns the assignments selected by the teacher
+    const renderAssignmentList = type => {
+      //Render all assignments if all selected or nothing selected yet
+      if (type === 'All assignments' || type === undefined) {
+        return currentClass.assignments.map(assignment => {
+          return renderAssignment(assignment);
+        })
+      } else {
+        //A specific assignment has been selected so find its details
+        const selectedAssignment = [...currentClass.assignments].filter(assignment => assignment.title === type)[0];
+        return renderAssignment(selectedAssignment);
+      }
+    }
+
+    //Updates the modalState state, can be called from 
+    //the modal component
+    const changeModalState = state => {
+      modalContext.updateModal({
+        title: `${currentStudent.username}'s assignments/results`,
+        content: <div id="student-assignments">
+          <Select className="modal-selector" options={getAssignmentNames(currentClass.assignments)} onChange={handleStudentAssignmentSelectorChange} updateModal={changeModalState} defaultValue={'All assignments'} />
+
+          {renderAssignmentList(state.studentAssignment)}
+        </div>
+      });
+    }
+
+    //Have to use a normal function instead of an arrow function
+    //So this. can be accessed
+    function handleStudentAssignmentSelectorChange(e) {
+      this.updateModal({ studentAssignment: e.label });
+    }
+
     if (currentClass === null || currentStudent === null) {
       modalContext.updateModal({
         title: 'Student assignments/results',
         content: <p>Please select a student...</p>
       });
     } else {
-      modalContext.updateModal({
-        title: `${currentStudent.username}'s assignments/results`,
-        content: <div id="student-assignments">
-          {currentClass.assignments.map(assignment => {
-            return (<div className="student-assignment-card" key={assignment._id}>
-              <h3>{assignment.title}</h3>
-              <ul>
-                <li><b>Completed</b> - {isCompleted(assignment)}</li>
-                <li><b>Date</b> - {getDate(assignment)}</li>
-                <li><b>Score</b> - {getScore(assignment)}</li>
-                <li><b>Time taken</b> - {getTimeTaken(assignment)}</li>
-                <li><b>Hints used</b> - {getHintsUsed(assignment)}</li>
-                <li><b>Answers</b></li>
-                <ol >
-                  {getQuestions(assignment)}
-                </ol>
-              </ul>
-            </div>)
-          })}
-        </div>
-      });
+      if (currentClass.assignments.length === 0) {
+        modalContext.updateModal({
+          title: `${currentStudent.username}'s assignments/results`,
+          content: <p>No assignments set...</p>
+        });
+      } else {
+        modalContext.updateModal({
+          title: `${currentStudent.username}'s assignments/results`,
+          content: <div id="student-assignments">
+            <Select className="modal-selector" options={getAssignmentNames(currentClass.assignments)} onChange={handleStudentAssignmentSelectorChange} updateModal={changeModalState} defaultValue={'All assignments'} />
+
+            {renderAssignmentList('All assignments')}
+          </div>
+        });
+      }
     }
   }
 
