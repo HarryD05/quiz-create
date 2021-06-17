@@ -39,6 +39,44 @@
   }
 }
 
+//Styling for text areas, mirrors text input 
+.text-area {
+  position: static;
+  display: flex; 
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  text-align: left;
+
+  label {
+    position: static;
+    color: grey;
+    pointer-events: none;
+    width: 8rem;
+
+    transition: all 0.3s ease;
+  }
+
+  textarea {
+    resize: vertical;
+    outline: none;
+    border: 2px solid silver;
+    font-size: 17px;
+    
+    transition: border 0.3s ease;
+
+    &:focus ~ label,
+    &:valid ~ label {
+      color: #1d61e9;
+    }
+
+    //Makes the bottom border blue when 
+    //the user is typing
+    &:focus {
+      border: 2px solid #1d61e9;
+    }
+  }
+}
+
 //Styling for the role radio buttons
 .role {
   label, input {
@@ -228,8 +266,6 @@
       }
     }
 
-  
-
     /*if the screen is smaller than 880px wide 
     (make tables vertically stacked instead of 
     horizontally stacked)*/
@@ -305,6 +341,65 @@
           height: 3em !important;
         }
       }
+    }
+  }
+}
+
+#quiz-creation {
+  @extend %main; //gives the main page styling 
+  //(white background, shadow etc.)
+
+  max-width: calc(80% - 4rem);
+  width: 640px; 
+  
+  #assignment-form {
+    #assignment-details {
+      //line between top and bottom of page context
+      border-bottom: 2px dashed grey;
+
+      //Splitting the form to left and right side
+      display: grid;
+      grid-template-columns: 50% 50%;
+
+      .side {
+        padding: 1rem;
+      }
+
+      #right {
+        table {
+          margin: 1rem 0;
+          table-layout: fixed;
+          width: 100%;
+
+          tbody {
+            width: 100%;
+
+            td {
+              padding: 2px;
+              height: 2em;
+              text-align: left; 
+            }
+          }
+        }
+
+        #question-buttons {
+          display: flex;
+          justify-content: space-between;
+
+          .btn {
+            width: 45%;
+          }
+        }
+      }
+    }
+  }
+
+  #all-questions {
+    padding: 1rem;
+
+    #all-questions-header {
+      display: flex;
+      justify-content: space-between;
     }
   }
 }
