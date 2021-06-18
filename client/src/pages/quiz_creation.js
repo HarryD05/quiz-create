@@ -1,5 +1,6 @@
 //React dependencies 
 import React, { useState, useContext, useEffect } from 'react';
+import Select from 'react-select';
 
 //Importing contexts and services
 import { AuthContext } from '../context/AuthContext';
@@ -14,7 +15,24 @@ const QuizCreation = props => {
   //Setting up state
   const [currentQuestions, setCurrentQuestions] = useState([]);
   const [allQuestions, setAllQuestions] = useState([]);
+  const [newQuestionInput, setNewQuestionInput] = useState({
+    question: '', topic: '', hint: '', explanation: '', qtype: '', option1: '',
+    option2: '', option3: '', option4: '', correct: '', marks: ''
+  });
+  const [newAssignmentInput, setNewAssignmentInput] = useState({
+    title: '', description: ''
+  });
+  const [createQuestionFormShowing, setCreateQuestionFormShowing] = useState(false);
 
+  //Setting up the authcontext to get the selected class
+  //data so the assignment can be saved with the correct class
+  const authContext = useContext(AuthContext);
+
+  //Setting up the modalcontext so modals can be used
+  const modalContext = useContext(ModalContext);
+
+  //This function is called once when the component first loads to get all
+  //questions meaning the component isn't constantly making api calls (slow)
   useEffect(() => {
     async function fetchQuestions() {
       const questions = await QuestionService.questions();
@@ -24,18 +42,14 @@ const QuizCreation = props => {
         return;
       }
 
-      setAllQuestions(questions);
+      //Returns all the questions of the same subject of the selected class
+      setAllQuestions(questions.filter(question => {
+        return question.subject === authContext.selectedClass.subject
+      }));
     }
 
     fetchQuestions();
-  }, [])
-
-  //Setting up the authcontext to get the selected class
-  //data so the assignment can be saved with the correct class
-  const authContext = useContext(AuthContext);
-
-  //Setting up the modalcontext so modals can be used
-  const modalContext = useContext(ModalContext);
+  }, []);
 
   //Returns the class name in a descriptive format
   const getClassName = () => {
@@ -82,7 +96,7 @@ const QuizCreation = props => {
         <p><b>Answer:</b> {question.correct}</p>
         <p><b>Marks:</b> {question.marks}</p>
         <p><b>Explanation:</b> {question.explanation}</p>
-        <p><b>Hint:</b> {question.hint === null ? 'No hint' : question.hint}</p>
+        <p><b>Hint:</b> {question.hint === null || question.hint.replaceAll(' ', '') === '' ? 'No hint' : question.hint}</p>
       </button>
     })
   }
@@ -170,68 +184,233 @@ const QuizCreation = props => {
     })
   }
 
-  return (
-    <div id="quiz-creation" >
-      <h2>Create new assignment</h2>
+  //Onsbumit function for when the new question is submitted
+  const createQuestion = async e => {
+    e.preventDefault();
 
-      <form id="assignment-form" onSubmit={() => alert('not setup yet')}>
-        <div id="assignment-details">
+    const toTitleCase = text => {
+      return text[0].toUpperCase() + text.slice(1).toLowerCase();
+    }
 
-          <div id="left" className="side">
-            <div className="form-control">
-              <input type="text" name="title" autoComplete="off" required />
-              <label htmlFor="title">Title</label>
-            </div>
+    try {
+      const { question, topic, hint, explanation, marks } = newQuestionInput;
 
-            <div className="form-control text-area">
-              <textarea type="text" name="description" autoComplete="off" required />
-              <label htmlFor="description">Description</label>
-            </div>
+      let correct = newQuestionInput.correct;
+      let wrong = [];
 
-            <div className="form-control">
-              <input type="text" name="topic" autoComplete="off" required />
-              <label htmlFor="topic">Topic</label>
-            </div>
-          </div>
+      if (newQuestionInput.qtype === 'Multiple choice') {
+        const { option1, option2, option3, option4 } = newQuestionInput;
+        wrong = [option1, option2, option3, option4];
 
-          <div id="right" className="side">
-            <table>
-              <tbody>
-                <tr>
-                  <td>Selected class</td>
-                  <td>{getClassName()}</td>
-                </tr>
-                <tr>
-                  <td>Questions</td>
-                  <td>{returnQuestionCount()}</td>
-                </tr>
-                <tr>
-                  <td>Total marks</td>
-                  <td>{returnTotalMarks()}</td>
-                </tr>
-              </tbody>
-            </table>
+        const correctIndex = newQuestionInput.correct.split(' ')[1] - 1;
+        correct = wrong[correctIndex];
+        wrong.splice(correctIndex, 1);
+      }
 
-            <div id="question-buttons">
-              <button className="btn" type="button" onClick={openQuestionBankModal}>Add question from bank</button>
-              <button className="btn" type="button" onClick={() => alert('not setup yet')}>Create and add new question</button>
-            </div>
-          </div>
+      const newQuestion = await QuestionService.createQuestion({
+        question,
+        qualification: authContext.selectedClass.qualification.toUpperCase(),
+        subject: toTitleCase(authContext.selectedClass.subject),
+        qtype: (newQuestionInput.qtype === 'Short answer' ? 'short' : 'multichoice'),
+        topic: toTitleCase(topic),
+        hint,
+        explanation,
+        correct,
+        wrong,
+        marks: Number(marks),
+      }, authContext.token);
+
+      if (newQuestion) {
+        setCurrentQuestions([...currentQuestions, newQuestion]);
+        setCreateQuestionFormShowing(false);
+      } else {
+        modalContext.updateModal({
+          title: 'Error', content: (
+            <>
+              <p>There was an error saving your question to the database, please try again.</p>
+            </>
+          )
+        });
+      }
+
+    } catch (error) {
+      modalContext.updateModal({
+        title: 'Error', content: (
+          <>
+            <p>The question wasn't saved to the database, please try again.</p>
+          </>
+        )
+      });
+
+      throw error;
+    }
+  }
+
+  const handleQuestionChange = (e, dropdownName = null) => {
+    if (dropdownName === null) {
+      setNewQuestionInput({ ...newQuestionInput, [e.target.name]: e.target.value });
+    } else {
+      setNewQuestionInput({ ...newQuestionInput, [dropdownName]: e.label });
+    }
+  }
+
+  const handleAssignmentChange = e => {
+    setNewAssignmentInput({ ...newAssignmentInput, [e.target.name]: e.target.value });
+  }
+
+  const questionTypeOptions = [
+    { label: 'Short answer', value: 0 },
+    { label: 'Multiple choice', value: 1 }
+  ];
+
+  const correctOptions = [
+    { label: 'Option 1', value: 0 },
+    { label: 'Option 2', value: 1 },
+    { label: 'Option 3', value: 2 },
+    { label: 'Option 4', value: 3 }
+  ];
+
+  const renderAnswerInput = type => {
+    if (type === 'Short answer') {
+      return <div id="short-answer">
+        <div className="form-control">
+          <input type="text" name="correct" autoComplete="off" value={newQuestionInput.correct} onChange={handleQuestionChange} required />
+          <label htmlFor="correct">Answer</label>
+        </div>
+      </div>
+    } else if (type === 'Multiple choice') {
+      return <div id="multichoice">
+        <p>Leave option blank if not needed.</p>
+
+        <div className="form-control">
+          <input type="text" name="option1" autoComplete="off" value={newQuestionInput.option1} onChange={handleQuestionChange} required />
+          <label htmlFor="option1">Option 1</label>
+        </div>
+        <div className="form-control">
+          <input type="text" name="option2" autoComplete="off" value={newQuestionInput.option2} onChange={handleQuestionChange} required />
+          <label htmlFor="option2">Option 2</label>
+        </div>
+        <div className="form-control">
+          <input type="text" name="option3" autoComplete="off" value={newQuestionInput.option3} onChange={handleQuestionChange} required />
+          <label htmlFor="option3">Option 3</label>
+        </div>
+        <div className="form-control">
+          <input type="text" name="option4" autoComplete="off" value={newQuestionInput.option4} onChange={handleQuestionChange} required />
+          <label htmlFor="option4">Option 4</label>
         </div>
 
-        <div id="all-questions">
-          <div id="all-questions-header">
-            <h3>Current questions</h3>
-            <button className="btn" type="submit">Publish assignment</button>
+        <Select className="select" options={correctOptions} placeholder="Select correct answer..." form={newQuestionInput.correct} onChange={e => handleQuestionChange(e, 'correct')} />
+      </div>
+    }
+  }
+
+  const renderQuestionForm = () => {
+    return (
+      <div id="question-creation-page">
+        <div id="create-question-header">
+          <h3>Create new question</h3>
+          <button className="btn" type="button" onClick={() => setCreateQuestionFormShowing(false)}>Back</button>
+        </div>
+
+        <form id="create-question-details" onSubmit={createQuestion}>
+          <div className="form-control">
+            <input type="text" name="question" autoComplete="off" value={newQuestionInput.question} onChange={handleQuestionChange} required />
+            <label htmlFor="question">Question</label>
           </div>
 
-          <div id="current-questions">
-            {returnQuestions()}
+          <div className="form-control">
+            <input type="text" name="topic" autoComplete="off" value={newQuestionInput.topic} onChange={handleQuestionChange} required />
+            <label htmlFor="topic">Topic</label>
           </div>
-        </div>
-      </form>
-    </div>
-  )
+
+          <div className="form-control">
+            <input type="text" inputMode="numeric" name="marks" autoComplete="off" value={newQuestionInput.marks} onChange={handleQuestionChange} required />
+            <label htmlFor="marks">Marks</label>
+          </div>
+
+          <div className="form-control text-area">
+            <textarea type="text" name="hint" autoComplete="off" value={newQuestionInput.hint} onChange={handleQuestionChange} />
+            <label htmlFor="hint">Hint</label>
+          </div>
+
+          <div className="form-control text-area">
+            <textarea type="text" name="explanation" autoComplete="off" value={newQuestionInput.explanation} onChange={handleQuestionChange} required />
+            <label htmlFor="explanation">Explanation</label>
+          </div>
+
+          <Select className="select" options={questionTypeOptions} placeholder="Select question type..." form={newQuestionInput.qtype} onChange={e => handleQuestionChange(e, 'qtype')} />
+
+          {renderAnswerInput(newQuestionInput.qtype)}
+
+          <button id="submit-button" type="submit" className="btn">Add question</button>
+        </form >
+      </div>
+    )
+  }
+
+  const renderMainContent = () => {
+    return (
+      <div id="main-creation-page">
+        <h2>Create new assignment</h2>
+
+        <form id="assignment-form" onSubmit={() => alert('not setup yet')}>
+          <div id="assignment-details">
+
+            <div id="left" className="side">
+              <div className="form-control">
+                <input type="text" name="title" autoComplete="off" value={newAssignmentInput.title} onChange={handleAssignmentChange} required />
+                <label htmlFor="title">Title</label>
+              </div>
+
+              <div className="form-control text-area">
+                <textarea type="text" name="description" autoComplete="off" value={newAssignmentInput.description} onChange={handleAssignmentChange} required />
+                <label htmlFor="description">Description</label>
+              </div>
+            </div>
+
+            <div id="right" className="side">
+              <table>
+                <tbody>
+                  <tr>
+                    <td>Selected class</td>
+                    <td>{getClassName()}</td>
+                  </tr>
+                  <tr>
+                    <td>Questions</td>
+                    <td>{returnQuestionCount()}</td>
+                  </tr>
+                  <tr>
+                    <td>Total marks</td>
+                    <td>{returnTotalMarks()}</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div id="question-buttons">
+                <button className="btn" type="button" onClick={openQuestionBankModal}>Add question from bank</button>
+                <button className="btn" type="button" onClick={() => setCreateQuestionFormShowing(true)}>Create and add new question</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="all-questions">
+            <div id="all-questions-header">
+              <h3>Current questions</h3>
+              <button className="btn" type="submit">Publish assignment</button>
+            </div>
+
+            <div id="current-questions">
+              {returnQuestions()}
+            </div>
+          </div>
+        </form>
+      </div>
+    )
+  }
+
+  return <div id="quiz-creation">
+    {createQuestionFormShowing ? renderQuestionForm() : renderMainContent()}
+  </div>
 }
 
 export default QuizCreation;

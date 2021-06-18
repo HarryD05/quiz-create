@@ -61,6 +61,7 @@
     outline: none;
     border: 2px solid silver;
     font-size: 17px;
+    width: 100%;
     
     transition: border 0.3s ease;
 
@@ -351,7 +352,27 @@
 
   max-width: calc(80% - 4rem);
   width: 640px; 
-  
+
+  #question-creation-page {
+    .select {
+      margin: 1rem 0;
+    }
+
+    #submit-button {
+      margin-top: 1rem;
+      width: 16rem;
+    }
+
+    #create-question-header {
+      display: flex;
+      justify-content: space-between;
+
+      button {
+        width: 5rem;
+      }
+    }
+  }
+
   #assignment-form {
     #assignment-details {
       //line between top and bottom of page context
