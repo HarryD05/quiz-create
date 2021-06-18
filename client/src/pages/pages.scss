@@ -401,5 +401,49 @@
       display: flex;
       justify-content: space-between;
     }
+
+    #current-questions {
+      margin-top: 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      align-items: stretch;
+      flex-direction: row;
+
+      .question-card {
+        width: 195px;
+        padding: 8px;
+        margin-bottom: 6px;
+        margin-right: 6px;
+        border: 1px solid black;
+        border-radius: 8px;
+
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        align-content: flex-start;
+        text-align: left;
+
+        transition: all ease 0.3s;
+
+        h3 {
+          margin-bottom: 8px;
+        }
+
+        &.short {
+          background-color: #D5E8D4;
+        }
+
+        &.multichoice {
+          background-color: #E1D5E7;
+        }
+
+        &:hover {
+          filter: brightness(96%);
+          cursor: pointer;
+        }
+      }
+    }
   }
 }

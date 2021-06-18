@@ -444,10 +444,30 @@ const TeacherHomepage = props => {
   }
 
   //Button onClick functions
-  //Redirects teacher to quiz creation page
+  //Redirects teacher to quiz creation page when 'Set
+  //new assignment' button is pressed
   const toQuizCreation = () => {
+    //Checking if a class is currently selected
+    if (currentClass === null) {
+      //Modal to show if the user tries to set a new assignment
+      //when no class is selected
+      modalContext.updateModal({
+        title: 'Error',
+        content:
+          <p>To set an assignment you must have a class selected. Please select a class...</p>
+      });
+
+
+      return null; //Stops the user being redirected to the quiz creation page
+    }
+
     props.history.push('/teacher/create');
     //changes path of url 
+
+    //Then set the selectedClass in authContext to the 
+    //current class so the correct class data is available
+    //in the quiz creation page
+    authContext.setSelectedClass(currentClass);
   }
 
   const handleChange = e => {

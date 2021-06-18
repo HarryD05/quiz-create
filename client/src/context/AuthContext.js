@@ -9,9 +9,13 @@ export const AuthContext = createContext();
 export default (props) => {
   const { children } = props;
 
+  //Setting up the state, variables which will be stored
+  //in the context (accessible by other components)
   const [token, setToken] = useState(null);
   const [user, setUser] = useState(null);
+  const [selectedClass, setSelectedClass] = useState(null);
 
+  //Authentication functions
   const login = (token_, user_) => {
     setToken(token_);
     setUser(user_);
@@ -35,7 +39,12 @@ export default (props) => {
 
   return (
     <div>
-      <AuthContext.Provider value={{ token, setToken, user, setUser, login, logout, updateUser }}>
+      <AuthContext.Provider value={
+        {
+          token, setToken, user, setUser, login, logout, updateUser,
+          selectedClass, setSelectedClass
+        }
+      }>
         {children}
       </AuthContext.Provider>
     </div>
