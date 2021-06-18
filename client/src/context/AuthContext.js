@@ -37,12 +37,16 @@ export default (props) => {
     }
   }
 
+  const resetSelectedClass = () => {
+    setSelectedClass(null);
+  }
+
   return (
     <div>
       <AuthContext.Provider value={
         {
           token, setToken, user, setUser, login, logout, updateUser,
-          selectedClass, setSelectedClass
+          selectedClass, setSelectedClass, resetSelectedClass
         }
       }>
         {children}

@@ -1,5 +1,5 @@
 //React dependencies 
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import Select from 'react-select';
 
 //Importing the contexts
@@ -37,6 +37,12 @@ const TeacherHomepage = props => {
   }
 
   window.addEventListener('resize', checkIsSmall);
+
+  //The selected class is set to null when the teacher homepage is loaded
+  //as this is often if the teacher is returning from the quiz creation page
+  useEffect(() => {
+    authContext.resetSelectedClass();
+  }, []);
 
   //Returns if the submission was made after the dueDate
   const isResultLate = result => {
@@ -456,7 +462,6 @@ const TeacherHomepage = props => {
         content:
           <p>To set an assignment you must have a class selected. Please select a class...</p>
       });
-
 
       return null; //Stops the user being redirected to the quiz creation page
     }
