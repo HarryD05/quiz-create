@@ -32,23 +32,25 @@ const QuizCreation = props => {
   //Setting up the modalcontext so modals can be used
   const modalContext = useContext(ModalContext);
 
-  //This function is called once when the component first loads to get all
-  //questions meaning the component isn't constantly making api calls (slow)
-  useEffect(() => {
-    async function fetchQuestions() {
-      const questions = await QuestionService.questions();
 
-      if (questions === null) {
-        setAllQuestions([]);
-        return;
-      }
+  //Fetches all questions from the database 
+  const fetchQuestions = async () => {
+    const questions = await QuestionService.questions();
 
-      //Returns all the questions of the same subject of the selected class
-      setAllQuestions(questions.filter(question => {
-        return question.subject === authContext.selectedClass.subject
-      }));
+    if (questions === null) {
+      setAllQuestions([]);
+      return;
     }
 
+    //Returns all the questions of the same subject of the selected class
+    setAllQuestions(questions.filter(question => {
+      return question.subject === authContext.selectedClass.subject
+    }));
+  }
+
+  //This function is called once when the component first loads, to get all
+  //the questions meaning the component isn't constantly making api calls (slow)
+  useEffect(() => {
     fetchQuestions();
   }, []);
 
@@ -224,6 +226,7 @@ const QuizCreation = props => {
       if (newQuestion) {
         setCurrentQuestions([...currentQuestions, newQuestion]);
         setCreateQuestionFormShowing(false);
+        await fetchQuestions();
       } else {
         modalContext.updateModal({
           title: 'Error',
