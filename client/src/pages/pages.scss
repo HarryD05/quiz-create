@@ -41,6 +41,10 @@
 
 //Styling for text areas, mirrors text input 
 .text-area {
+  @media (max-width: 500px) {
+    flex-direction: column-reverse;
+  }
+
   position: static;
   display: flex; 
   flex-direction: row-reverse;
@@ -80,6 +84,10 @@
 }
 
 .time {
+  @media (max-width: 500px) {
+    flex-direction: column-reverse;
+  }
+
   margin-top: 1rem;
   position: static;
   display: flex; 
@@ -105,7 +113,7 @@
     outline: none;
     border: none;
     font-size: 16px;
-    width: 100%;
+    max-width: 100%;
     transition: none;
     overflow-x: visible;
   
@@ -408,6 +416,7 @@
     #create-question-header {
       display: flex;
       justify-content: space-between;
+      text-align: left;
 
       button {
         width: 5rem;
@@ -424,8 +433,19 @@
       display: grid;
       grid-template-columns: 50% 50%;
 
+      /*if the screen is smaller than 880px wide 
+      (make tables vertically stacked instead of 
+      horizontally stacked)*/
+      @media (max-width: 880px) {
+        grid-template-columns: 100%;
+      }
+
       .side {
-        padding: 1rem;
+        padding: 0.5rem;
+
+        @media (max-width: 880px) {
+          padding: 0.5rem 0;
+        }
       }
 
       #right {
@@ -437,10 +457,20 @@
           tbody {
             width: 100%;
 
-            td {
-              padding: 2px;
-              height: 2em;
-              text-align: left; 
+            tr {
+              td {
+                padding: 2px;
+                height: 2em;
+
+                &:first-child {
+                  text-align: left;
+                  font-weight: 500;
+                }
+
+                &:nth-child(2) {
+                  text-align: right;
+                }
+              }
             }
           }
         }
@@ -458,11 +488,17 @@
   }
 
   #all-questions {
-    padding: 1rem;
+    padding: 0.5rem;
+
+    @media (max-width: 880px) {
+      padding: 0;
+      padding-top: 0.5rem;
+    }
 
     #all-questions-header {
       display: flex;
       justify-content: space-between;
+      text-align: left;
     }
 
     #current-questions {

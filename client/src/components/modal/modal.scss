@@ -116,12 +116,16 @@
     #bank-header {
       display: flex;
       justify-content: space-between;
+      align-items: center;
+      text-align: left;
 
       input {
         outline: none;
         border: none;
         padding: 8px;
         border-radius: 4px;
+        height: 1rem;
+        max-width: 50%;
       }
     }
 
