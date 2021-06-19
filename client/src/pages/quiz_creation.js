@@ -5,6 +5,7 @@ import Select from 'react-select';
 //Importing contexts and services
 import { AuthContext } from '../context/AuthContext';
 import { ModalContext } from '../context/ModalContext';
+import AssignmentService from '../services/AssignmentService';
 import QuestionService from '../services/QuestionService';
 
 //Importing styling
@@ -20,7 +21,7 @@ const QuizCreation = props => {
     option2: '', option3: '', option4: '', correct: '', marks: ''
   });
   const [newAssignmentInput, setNewAssignmentInput] = useState({
-    title: '', description: ''
+    title: '', description: '', dueDate: ''
   });
   const [createQuestionFormShowing, setCreateQuestionFormShowing] = useState(false);
 
@@ -200,7 +201,7 @@ const QuizCreation = props => {
 
       if (newQuestionInput.qtype === 'Multiple choice') {
         const { option1, option2, option3, option4 } = newQuestionInput;
-        wrong = [option1, option2, option3, option4];
+        wrong = [option1.trim(), option2.trim(), option3.trim(), option4.trim()];
 
         const correctIndex = newQuestionInput.correct.split(' ')[1] - 1;
         correct = wrong[correctIndex];
@@ -208,13 +209,13 @@ const QuizCreation = props => {
       }
 
       const newQuestion = await QuestionService.createQuestion({
-        question,
-        qualification: authContext.selectedClass.qualification.toUpperCase(),
-        subject: toTitleCase(authContext.selectedClass.subject),
+        question: question.trim(),
+        qualification: authContext.selectedClass.qualification.toUpperCase().trim(),
+        subject: toTitleCase(authContext.selectedClass.subject).trim(),
         qtype: (newQuestionInput.qtype === 'Short answer' ? 'short' : 'multichoice'),
-        topic: toTitleCase(topic),
-        hint,
-        explanation,
+        topic: toTitleCase(topic).trim(),
+        hint: hint.trim(),
+        explanation: explanation.trim(),
         correct,
         wrong,
         marks: Number(marks),
@@ -225,21 +226,15 @@ const QuizCreation = props => {
         setCreateQuestionFormShowing(false);
       } else {
         modalContext.updateModal({
-          title: 'Error', content: (
-            <>
-              <p>There was an error saving your question to the database, please try again.</p>
-            </>
-          )
+          title: 'Error',
+          content: <p>There was an error saving your question to the database, please try again.</p>
         });
       }
 
     } catch (error) {
       modalContext.updateModal({
-        title: 'Error', content: (
-          <>
-            <p>The question wasn't saved to the database, please try again.</p>
-          </>
-        )
+        title: 'Error',
+        content: <p>The question wasn't saved to the database, please try again.</p>
       });
 
       throw error;
@@ -348,12 +343,66 @@ const QuizCreation = props => {
     )
   }
 
+  //Onsubmit function for assignment form, create assignment
+  const publishAssignment = async e => {
+    //stops the page reloading when the button is pressed
+    e.preventDefault();
+
+    //Showing error if no questions as assignment can't have 0 questions
+    if (currentQuestions.length === 0) {
+      modalContext.updateModal({
+        title: 'Error',
+        content: <p>Make sure you have questions in your assignment</p>
+      });
+
+      return; //stops the api call
+    }
+
+    //Clean assignment data so it can be sent in the API call
+    const assignmentData = {
+      title: newAssignmentInput.title.trim(),
+      description: newAssignmentInput.description.trim(),
+      dueDate: new Date(newAssignmentInput.dueDate).toISOString(),
+      maxMarks: returnTotalMarks(),
+      questions: currentQuestions.map(question => question._id),
+      classID: authContext.selectedClass._id
+    }
+
+    try {
+      //Send the API request and retrieve any data returned
+      const assignmentResult = await AssignmentService.createAssignment(assignmentData, authContext.token);
+
+      if (assignmentResult) {
+        //Redirect user back to homepage when assignment published
+        props.history.push('/teacher/home');
+
+        modalContext.updateModal({
+          title: 'Success',
+          content: <p>Assignment successfully published.</p>
+        })
+      } else {
+        modalContext.updateModal({
+          title: 'Error',
+          content: <p>There was an error saving your assignment to the database, please try again.</p>
+        });
+      }
+
+    } catch (error) {
+      modalContext.updateModal({
+        title: 'Error',
+        content: <p>The assignment wasn't published, please try again.</p>
+      });
+
+      throw error;
+    }
+  }
+
   const renderMainContent = () => {
     return (
       <div id="main-creation-page">
         <h2>Create new assignment</h2>
 
-        <form id="assignment-form" onSubmit={() => alert('not setup yet')}>
+        <form id="assignment-form" onSubmit={publishAssignment}>
           <div id="assignment-details">
 
             <div id="left" className="side">
@@ -365,6 +414,11 @@ const QuizCreation = props => {
               <div className="form-control text-area">
                 <textarea type="text" name="description" autoComplete="off" value={newAssignmentInput.description} onChange={handleAssignmentChange} required />
                 <label htmlFor="description">Description</label>
+              </div>
+
+              <div className="time">
+                <input type="datetime-local" name="dueDate" autoComplete="off" value={newAssignmentInput.dueDate} onChange={handleAssignmentChange} required />
+                <label htmlFor="dueDate">Due date</label>
               </div>
             </div>
 

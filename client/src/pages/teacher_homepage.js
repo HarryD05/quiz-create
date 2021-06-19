@@ -40,7 +40,9 @@ const TeacherHomepage = props => {
 
   //The selected class is set to null when the teacher homepage is loaded
   //as this is often if the teacher is returning from the quiz creation page
+  //The user is also updated so the most up to date data is being used
   useEffect(() => {
+    authContext.updateUser();
     authContext.resetSelectedClass();
   }, []);
 
