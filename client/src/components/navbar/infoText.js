@@ -48,7 +48,7 @@ const getInfoText = path => {
       title = 'Quiz creation page';
       content = (<ul>
         <li>Use this page to create a quiz for the class you had selected (you can check which class this is as it is displayed on the right of the page)</li>
-        <li>On the left side of the page there are 4 inputs: the assignment title, the description of the assignment, record time taken (blue tick is yes, blank is no) and the due date of the assignment (the excact time is ignored).</li>
+        <li>On the left side of the page there are 4 inputs: the assignment title, the description of the assignment, record time taken (blue tick is yes, blank is no) and the due date of the assignment (the exact time is ignored).</li>
         <li>On the right side there are 3 pieces of information about the assignment: the class it is for, the number of questions in the assignment currently and the current total marks of the assignment.</li>
         <li>Adding questions - there are 2 buttons to add questions...</li>
         <ul>
