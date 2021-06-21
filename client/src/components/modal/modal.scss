@@ -172,6 +172,31 @@
       }
     }
   }
+
+  #sure {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    
+    #buttons {
+      margin: auto;
+      margin-top: 1rem;
+      display: flex;
+      justify-content: space-around;
+      width: 50%;
+      min-width: 12rem;
+      
+      .btn {
+        width: 100%;
+        max-width: 5rem;
+
+        &:hover {
+          background-color: #e4e4e4;
+        }
+      }
+    }
+  }
 }
 
 #backdrop {

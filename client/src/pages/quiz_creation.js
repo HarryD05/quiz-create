@@ -400,12 +400,29 @@ const QuizCreation = props => {
     }
   }
 
+  //Opens the are you sure modal with yes or no
+  const openSureModal = e => {
+    e.preventDefault();
+
+    modalContext.updateModal({
+      title: 'Publish assignment',
+      content: <div id="sure">
+        <p>Are you sure?</p>
+
+        <div id="buttons">
+          <button type="button" className="btn" onClick={publishAssignment}>Yes</button>
+          <button type="button" className="btn" onClick={() => modalContext.clearModal()}>No</button>
+        </div>
+      </div>
+    })
+  }
+
   const renderMainContent = () => {
     return (
       <div id="main-creation-page">
         <h2>Create new assignment</h2>
 
-        <form id="assignment-form" onSubmit={publishAssignment}>
+        <form id="assignment-form" onSubmit={openSureModal}>
           <div id="assignment-details">
 
             <div id="left" className="side">
