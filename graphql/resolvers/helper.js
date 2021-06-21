@@ -7,7 +7,7 @@ const AssignmentResult = require("../../models/AssignmentResultModel");
 
 //Date helper
 const transformDate = date => {
-  return (date !== null) ? new Date(date).toISOString() : null;
+  return (date !== null) ? new Date(date) : null;
 }
 
 

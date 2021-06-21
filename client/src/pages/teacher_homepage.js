@@ -9,6 +9,12 @@ import { ModalContext } from '../context/ModalContext';
 //Importing services (for api calls)
 import ClassService from '../services/ClassService';
 
+const formatDate = date => {
+  const dateParts = date.toDateString().split(' ');
+
+  return `${dateParts[0]} ${dateParts[2]} ${dateParts[1]} ${dateParts[3]}`;
+}
+
 //Teacher homepage functional component
 const TeacherHomepage = props => {
   //Setting up the authcontext so the details of the teacher
@@ -48,8 +54,8 @@ const TeacherHomepage = props => {
 
   //Returns if the submission was made after the dueDate
   const isResultLate = result => {
-    const submitDate = new Date(result.date);
-    const deadline = new Date(result.assignment.dueDate);
+    const submitDate = new Date(Number(result.date));
+    const deadline = new Date(Number(result.assignment.dueDate));
 
     return (submitDate - deadline > 0);
   }
@@ -577,7 +583,7 @@ const TeacherHomepage = props => {
           username: result.student.username,
           mark: result.marks,
           score: Number(((result.marks / assignment.maxMarks) * 100).toFixed(0)),
-          date: new Date(result.date).toLocaleString(),
+          date: formatDate(new Date(Number(result.date))),
           isLate
         });
       }
@@ -658,7 +664,7 @@ const TeacherHomepage = props => {
       return (<div className="class-assignment-card" key={assignment._id}>
         <h3>{assignment.title}</h3>
         <ul>
-          <li><b>Due date</b> - {new Date(Number(assignment.dueDate)).toLocaleString()}</li>
+          <li><b>Due date</b> - {formatDate(new Date(Number(assignment.dueDate)))}</li>
           <li><b>Not completed</b> - {missingStudents(assignment)}</li>
           <li><b>Completed</b></li>
           {scoresRanked(assignment)}
@@ -775,7 +781,7 @@ const TeacherHomepage = props => {
       const completedResult = getResult(assignment);
 
       if (completedResult === null) return 'N/A';
-      return new Date(completedResult.date).toLocaleString();
+      return formatDate(new Date(Number(completedResult.date)));
     }
 
 

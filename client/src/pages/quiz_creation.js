@@ -82,10 +82,35 @@ const QuizCreation = props => {
       modalContext.clearModal();
     }
 
-    let questions = [];
-    if (filterWord === null) questions = [...allQuestions];
-    else {
-      questions = [...allQuestions].filter(question => question.question.search(filterWord) !== -1);
+    let questions = []; //Array will hold the questions to output
+
+    if (filterWord === null || filterWord === undefined) {
+      questions = [...allQuestions];
+    } else {
+      questions = [...allQuestions].filter(question => {
+        //Putting filter word into a case insensitive regular expression
+        //So when searching matching case isn't required
+        let filter = new RegExp(`${filterWord.trim()}`, 'i');
+
+        let found = false;
+
+        //Checking all data about the question for the filterword 
+        if (question.question.search(filter) !== -1) found = true;
+        else if (question.correct.search(filter) !== -1) found = true;
+        else if (question.explanation.search(filter) !== -1) found = true;
+        else if (question.hint) {
+          if (question.hint.search(filter) !== -1) found = true;
+        }
+        else if (question.topic.search(filter) !== -1) found = true;
+
+        return found;
+      });
+    }
+
+    //Checking if no questions found, if not then display this instead of 
+    //having a blank space 
+    if (questions.length === 0) {
+      return <p>No questions include the phrase "{filterWord}"</p>
     }
 
     //Return all questions in the database as a card
@@ -96,10 +121,12 @@ const QuizCreation = props => {
         <h3>{question.question}</h3>
 
         <p><b>Type:</b> {returnQuestionType(question)}</p>
+        <p><b>Topic:</b> {question.topic}</p>
         <p><b>Answer:</b> {question.correct}</p>
         <p><b>Marks:</b> {question.marks}</p>
         <p><b>Explanation:</b> {question.explanation}</p>
         <p><b>Hint:</b> {question.hint === null || question.hint.replaceAll(' ', '') === '' ? 'No hint' : question.hint}</p>
+        <i>Created by {question.creator.username}</i>
       </button>
     })
   }
@@ -181,6 +208,7 @@ const QuizCreation = props => {
         <p><b>({index + 1})</b> {question.question}</p>
 
         <p><b>Type:</b> {returnQuestionType(question)}</p>
+        <p><b>Topic:</b> {question.topic}</p>
         <p><b>Answer:</b> {question.correct}</p>
         <p><b>Marks:</b> {question.marks}</p>
       </button>
@@ -361,11 +389,16 @@ const QuizCreation = props => {
       return; //stops the api call
     }
 
+    //Getting a date string which is just the date with the time set to 00:00:00 with no timezone offset
+    const dateString = new Date(newAssignmentInput.dueDate).toLocaleDateString();
+    const dateParts = dateString.split('/');
+    const dateValue = new Date(`${dateParts[2]}-${dateParts[1]}-${dateParts[0]} 00:00:00 GMT+0000`);
+
     //Clean assignment data so it can be sent in the API call
     const assignmentData = {
       title: newAssignmentInput.title.trim(),
       description: newAssignmentInput.description.trim(),
-      dueDate: new Date(newAssignmentInput.dueDate).toISOString(),
+      dueDate: dateValue,
       maxMarks: returnTotalMarks(),
       questions: currentQuestions.map(question => question._id),
       classID: authContext.selectedClass._id
@@ -437,7 +470,7 @@ const QuizCreation = props => {
               </div>
 
               <div className="time">
-                <input type="datetime-local" name="dueDate" autoComplete="off" value={newAssignmentInput.dueDate} onChange={handleAssignmentChange} required />
+                <input type="date" name="dueDate" autoComplete="off" value={newAssignmentInput.dueDate} onChange={handleAssignmentChange} required />
                 <label htmlFor="dueDate">Due date</label>
               </div>
             </div>
