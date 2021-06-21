@@ -79,6 +79,7 @@ export default {
                   title
                   dueDate
                   maxMarks
+                  recordTime
                   questions {
                     question
                     topic
@@ -93,6 +94,7 @@ export default {
                 description
                 dueDate
                 maxMarks
+                recordTime
               }
             }
           }

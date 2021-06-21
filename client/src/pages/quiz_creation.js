@@ -21,7 +21,7 @@ const QuizCreation = props => {
     option2: '', option3: '', option4: '', correct: '', marks: ''
   });
   const [newAssignmentInput, setNewAssignmentInput] = useState({
-    title: '', description: '', dueDate: ''
+    title: '', description: '', recordTime: false, dueDate: ''
   });
   const [createQuestionFormShowing, setCreateQuestionFormShowing] = useState(false);
 
@@ -284,6 +284,10 @@ const QuizCreation = props => {
     setNewAssignmentInput({ ...newAssignmentInput, [e.target.name]: e.target.value });
   }
 
+  const handleCheckboxChange = e => {
+    setNewAssignmentInput({ ...newAssignmentInput, [e.target.name]: e.target.checked });
+  }
+
   const questionTypeOptions = [
     { label: 'Short answer', value: 0 },
     { label: 'Multiple choice', value: 1 }
@@ -400,6 +404,7 @@ const QuizCreation = props => {
       description: newAssignmentInput.description.trim(),
       dueDate: dateValue,
       maxMarks: returnTotalMarks(),
+      recordTime: newAssignmentInput.recordTime,
       questions: currentQuestions.map(question => question._id),
       classID: authContext.selectedClass._id
     }
@@ -467,6 +472,11 @@ const QuizCreation = props => {
               <div className="form-control text-area">
                 <textarea type="text" name="description" autoComplete="off" value={newAssignmentInput.description} onChange={handleAssignmentChange} required />
                 <label htmlFor="description">Description</label>
+              </div>
+
+              <div className="form-control check">
+                <input type="checkbox" name="recordTime" checked={newAssignmentInput.recordTime} onChange={handleCheckboxChange} required />
+                <label htmlFor="recordTime">Record time taken?</label>
               </div>
 
               <div className="time">

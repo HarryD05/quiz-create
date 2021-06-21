@@ -19,6 +19,10 @@ const AssignmentSchema = new Schema({
     type: Number,
     required: [true, 'Maximum marks required']
   },
+  recordTime: {
+    type: Boolean,
+    require: [true, 'Record time is required']
+  },
   questions: {
     type: [Schema.Types.ObjectId],
     ref: 'Question',

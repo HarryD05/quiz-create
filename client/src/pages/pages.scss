@@ -101,12 +101,6 @@
     pointer-events: none;
     width: 6rem;
     transition: color ease 0.3s;
-    
-    &:hover {
-      color: grey !important;
-      transform: translateY(0) !important;
-      bottom: 0;
-    }
   }
 
   input {
@@ -125,6 +119,43 @@
     &:focus ~ label,
     &:valid ~ label {
       color: #1d61e9;
+    }
+  }
+}
+
+.check {
+  margin-top: 1rem;
+  position: initial;
+  display: flex; 
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  text-align: left;
+
+  label {
+    position: initial;
+    color: grey;
+    pointer-events: none;
+    min-width: 6rem;
+    transition: color ease 0.3s;
+  }
+
+  input {
+    outline: none;
+    border: none;
+    font-size: 16px;
+    max-width: 100%;
+    transition: none;
+    margin: auto 0;
+    text-align: right;
+  
+    &:hover {
+      border: none !important;
+    }
+
+    &:focus ~ label,
+    &:valid ~ label {
+      color: #1d61e9;
+      transform: translateY(0);
     }
   }
 }

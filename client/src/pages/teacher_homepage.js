@@ -660,6 +660,29 @@ const TeacherHomepage = props => {
       });
     }
 
+    //returns the average time taken for the assignment
+    const getAverageTime = assignment => {
+      if (assignment.recordTime === false) {
+        return 'Times not recorded';
+      } else {
+        //Getting all the results of the passed in assignment
+        const completedAssignments = getAssignmentResults(currentClass.results, assignment.title);
+
+        let total = 0;
+        let count = 0;
+        completedAssignments.forEach(result => {
+          if (result.timeTaken !== null) {
+            total += result.timeTaken;
+            count++;
+          }
+        })
+
+        if (count === 0) return 'No times recorded yet';
+
+        return `${Math.round(total / count)}s`;
+      }
+    }
+
     const renderAssignment = assignment => {
       return (<div className="class-assignment-card" key={assignment._id}>
         <h3>{assignment.title}</h3>
@@ -672,7 +695,8 @@ const TeacherHomepage = props => {
           <ol>
             {questionsSummarised(assignment)}
           </ol>
-          <li><b>Average</b> - {getAverageResult(assignment)}</li>
+          <li><b>Average score</b> - {getAverageResult(assignment)}</li>
+          <li><b>Average time</b> - {getAverageTime(assignment)}</li>
         </ul>
       </div>)
     }

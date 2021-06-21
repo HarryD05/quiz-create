@@ -12,7 +12,7 @@ module.exports = {
 
       //Extracting input data from request
       const {
-        title, description, dueDate, maxMarks, questions, classID
+        title, description, dueDate, maxMarks, recordTime, questions, classID
       } = args.initAssignmentInput;
 
       const newAssignment = new Assignment({
@@ -20,6 +20,7 @@ module.exports = {
         description,
         dueDate: new Date(dueDate),
         maxMarks,
+        recordTime,
         questions,
         class: classID
       });

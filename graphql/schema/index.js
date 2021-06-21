@@ -43,6 +43,7 @@ module.exports = buildSchema(`
     description: String
     dueDate: String!
     maxMarks: Int!
+    recordTime: Boolean!
     questions: [Question]!
     class: Class!
   }
@@ -101,6 +102,7 @@ module.exports = buildSchema(`
     description: String
     dueDate: String!
     maxMarks: Int!
+    recordTime: Boolean!
     questions: [ID]!
     classID: ID!
   }
