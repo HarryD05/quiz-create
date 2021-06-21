@@ -48,11 +48,11 @@ const getInfoText = path => {
       title = 'Quiz creation page';
       content = (<ul>
         <li>Use this page to create a quiz for the class you had selected (you can check which class this is as it is displayed on the right of the page)</li>
-        <li>On the left side of the page there are 3 inputs: the assignment title, the description of the assignment and the due date (unfortunately the timezones are slightly wrong so if it isn't GMT+0 it will be slightly off e.g. 1 hour earlier if BST).</li>
+        <li>On the left side of the page there are 4 inputs: the assignment title, the description of the assignment, record time taken (blue tick is yes, blank is no) and the due date of the assignment (the excact time is ignored).</li>
         <li>On the right side there are 3 pieces of information about the assignment: the class it is for, the number of questions in the assignment currently and the current total marks of the assignment.</li>
         <li>Adding questions - there are 2 buttons to add questions...</li>
         <ul>
-          <li>Add question from bank - this will open a popup where all the questions ever made that are the same topic as the current class selected will be displayed, you can use the topright text input to search for key words in the question and if you click on a question it will be added to the current questions of the assignment.</li>
+          <li>Add question from bank - this will open a popup where all the questions ever made that are the same subject as the current class selected will be displayed, you can use the topright text input to search for key words in the question (including the topic, explanation and hint of the question) and if you click on a question it will be added to the current questions of the assignment.</li>
           <li>Create and add new question - this will open sub-page with a text form where you can input data to create a new question (the hint is optional) if you press back the question won't be saved and you will return to the main create assignment page or if you press add question the question will be saved to the database and added to you current questions of the assignment.</li>
         </ul>
         <li>Below horizontal lines all the current questions in the assignment are displayed, if you click on a question it will be removed from the list.</li>
