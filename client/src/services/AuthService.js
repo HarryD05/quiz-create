@@ -95,6 +95,13 @@ export default {
                 dueDate
                 maxMarks
                 recordTime
+                questions {
+                  question
+                  qtype
+                  marks
+                  correct
+                  wrong
+                }
               }
             }
           }

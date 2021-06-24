@@ -142,7 +142,7 @@ const transformAssignments = async assignmentIDs => {
     const assignments = await Assignment.find({ _id: { $in: assignmentIDs } });
 
     const result = await Promise.all(assignments.map(async assignmentData => {
-      const assignmentResult = await transformQuestion(assignmentData);
+      const assignmentResult = await transformAssignment(assignmentData);
       return assignmentResult;
     }));
 

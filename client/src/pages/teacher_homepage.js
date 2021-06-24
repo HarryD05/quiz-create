@@ -1,6 +1,7 @@
 //React dependencies 
 import React, { useContext, useState, useEffect } from 'react';
 import Select from 'react-select';
+import { CSVLink } from 'react-csv';
 
 //Importing the contexts
 import { AuthContext } from '../context/AuthContext';
@@ -199,8 +200,12 @@ const TeacherHomepage = props => {
   }
 
   //Getting results that are from the current student
-  const getStudentResults = () => {
-    return [...currentClass.results].filter(result => result.student.username === currentStudent.username);
+  const getStudentResults = specificStudent => {
+    if (specificStudent === null || specificStudent === undefined) {
+      return [...currentClass.results].filter(result => result.student.username === currentStudent.username);
+    } else {
+      return [...currentClass.results].filter(result => result.student.username === specificStudent.username);
+    }
   }
 
   //Gets average from student's results
@@ -931,6 +936,89 @@ const TeacherHomepage = props => {
     }
   }
 
+  //Returns the headers (first row of file) for the csv or the data (all student data)
+  const getClassExportData = isHeaders => {
+    //Return an empty array of csv data if no assignments or no class selected
+    if (currentClass === null || currentClass.assignments.length === 0) return [];
+
+    let headers, data = [];
+
+    //Helper function to format a percentage takes in mark and maximum available
+    const convertToPercentage = (mark, max) => {
+      return `${((mark / max).toFixed(2) * 100)}%`
+    }
+
+    //Helper function to get the percentage of hints used in an assignment
+    const getHints = result => {
+      let hints = result.hints.filter(hint => hint === true).length;
+      let questions = result.assignment.questions.length;
+
+      return convertToPercentage(hints, questions);
+    }
+
+    if (isHeaders) {
+      //If isHeader parameter is true then the headers of 
+      //the csv are being requested
+
+      headers = ["student"] //Student name is the first column
+
+      //3 columns for each assignment 
+      currentClass.assignments.forEach(assignment => {
+        headers.push(`${assignment.title} percentage`);
+        headers.push(`${assignment.title} time taken`);
+        headers.push(`${assignment.title} hints used`);
+      })
+    } else {
+      //If isHeader parameter is false then the data of 
+      //the csv is being requested
+
+      //Looping through all students
+      currentClass.students.forEach(student => {
+        const results = getStudentResults(student); //Getting all the students results
+
+        let output = [student.username]; //First item in row should be student's name
+
+        //Looping through all assignments (3 columns per assignment)
+        currentClass.assignments.forEach(assignment => {
+          //Getting the student's result for the current assignment
+          let assignmentResult = results.filter(result => result.assignment.title === assignment.title);
+
+          if (assignmentResult === null || assignmentResult.length === 0) {
+            //If no result found state that the assignment is missing
+            output = [...output, 'Missing', 'Missing', 'Missing'];
+          } else {
+            //Extracting the found result for the current assignment
+            const result = assignmentResult[0];
+
+            //Calculating the results data for the current assignment
+            const percentage = convertToPercentage(result.marks, assignment.maxMarks);
+            const timeTaken = (result.timeTaken === null ? 'Not recorded' : `${result.timeTaken}s`);
+            const hints = (result.hints === null ? 'N/A' : `${getHints(result)}`);
+
+            //Adding result data to data list
+            output = [
+              ...output, percentage, timeTaken, hints
+            ];
+          }
+        });
+
+        data = [...data, output];
+      })
+    }
+
+    return (isHeaders ? headers : data);
+  }
+
+  //Handles onClick for Export class data, if there is no class selected or the class
+  //selected has no assignments the file isn't downloaded if there is then the file downloads
+  const downloadClassData = e => {
+    if (currentClass === null || currentClass.assignments.length === 0) {
+      return false;
+    }
+
+    return true;
+  }
+
   return (
     <div id="teacher-homepage" key={key}>
       <p id="welcome-msg">Welcome {authContext.user.username}</p>
@@ -988,8 +1076,16 @@ const TeacherHomepage = props => {
           </table>
 
           <div id="class-buttons">
-            <button className="btn" onClick={showAssignmentsModal}>See all assignments</button>
-            <button className="btn" onClick={toQuizCreation}>Set new assignment</button>
+            <a className="btn" onClick={showAssignmentsModal}>See all assignments</a>
+            <a className="btn" onClick={toQuizCreation}>Set new assignment</a>
+            <CSVLink
+              headers={getClassExportData(true)}
+              data={getClassExportData(false)}
+              filename={(currentClass ? `${currentClass.name}Data.csv` : '')}
+              className="btn"
+              target="_blank"
+              onClick={downloadClassData}
+            >Export class data</CSVLink>
           </div>
         </div>
 
@@ -1045,7 +1141,7 @@ const TeacherHomepage = props => {
           </table>
 
           <div id="student-buttons">
-            <button className="btn" onClick={showStudentAssignmentsModal}>See all student's assignments</button>
+            <a className="btn" onClick={showStudentAssignmentsModal}>See all student's assignments</a>
           </div>
         </div>
       </div>

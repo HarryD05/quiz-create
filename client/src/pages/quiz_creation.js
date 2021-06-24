@@ -455,6 +455,136 @@ const QuizCreation = props => {
     })
   }
 
+  //Function that downloads the assignment as a word document
+  const exportAssignment = () => {
+    //Checking if assignment if reading, if not don't export
+    const { description, title } = newAssignmentInput;
+
+    //Checking if the title and description inputs have been filled in, if not the document isn't downloaded
+    if (description.replaceAll(' ', '') === '' || title.replaceAll(' ', '') === '') {
+      modalContext.updateModal({
+        title: 'Error',
+        content: <p>Make sure the assignment has a description and a title</p>
+      })
+      return;
+    }
+
+    //Checking if their are questions, if not the document isn't downloaded
+    if (currentQuestions.length === 0 || currentQuestions === null) {
+      modalContext.updateModal({
+        title: 'Error',
+        content: <p>Make sure the assignment has questions</p>
+      })
+      return;
+    }
+
+    //Converts assignment data to HTML
+    const formatAssignment = () => {
+      let questions = currentQuestions.map((q, index) => {
+        if (q.qtype === 'short') {
+          //If a short question just display the question with a line below to answer
+          return `
+              <b>(${index + 1}) ${q.question} [${q.marks}]</b>
+              <p>.....................................................................................................</p>
+            `
+        } else {
+          //Putting all 4 options in 1 list
+          let options = [...q.wrong, q.correct];
+
+          //Shuffle the options so that the position of the correct
+          //answer is random
+          let counter = options.length;
+
+          // While there are elements in the array
+          while (counter > 0) {
+            // Pick a random index
+            let index = Math.floor(Math.random() * counter);
+
+            // Decrease counter by 1
+            counter--;
+
+            // And swap the last element with it
+            let temp = options[counter];
+            options[counter] = options[index];
+            options[index] = temp;
+          }
+
+          //Returns the question and the 4 options as a list
+          return `
+              <b>(${index + 1}) ${q.question} [${q.marks}]</b>
+              <ol type="a">
+                <li>${options[0]}</li>
+                <li>${options[1]}</li>
+                <li>${options[2]}</li>
+                <li>${options[3]}</li>
+              </ol>           
+            `
+        }
+      }).join('<br />'); //joins all the questions with a new line inbetween each
+
+      //Returning the answer to each question as a list item
+      let answers = currentQuestions.map(q => {
+        return `<li>${q.correct} (${q.marks})</li>`;
+      }).join('');
+
+      //The HTML that will be converted to a word document
+      return `
+          <h1>${newAssignmentInput.title}</h1>
+          <i>${newAssignmentInput.description}</i>
+
+          <p>Name:  ...............................
+          Date:  ...............................
+          Class: ...............................</p>
+
+          <h2>Questions</h2>
+          <h3>Marks: ......../${returnTotalMarks()}</h3>
+          ${questions}
+          <br />
+
+          <h2>Answers</h2>
+          <ol>
+            ${answers}
+          </ol>
+        `;
+    }
+
+    //Function from Codeflix12 
+    //HTML that goes before the HTML for the quiz content
+    const preHtml = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+    <head><meta charset='utf-8'><title>Export HTML To Doc</title></head><body style="font-family: Arial, san-serif">`;
+
+    //HTML that goes before the HTML for the quiz content
+    const postHtml = "</body></html>";
+
+    //The entire HTML that will be converted to a word doc
+    const html = preHtml + formatAssignment() + postHtml;
+
+    const blob = new Blob(['\ufeff', html], {
+      type: 'application/msword'
+    });
+
+    const url = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(html)
+
+    const filename = `${title}.doc`;
+
+    const downloadLink = document.createElement("a");
+
+    document.body.appendChild(downloadLink);
+
+    //Downloading the file
+    if (navigator.msSaveOrOpenBlob) {
+      navigator.msSaveOrOpenBlob(blob, filename);
+    } else {
+      downloadLink.href = url;
+
+      downloadLink.download = filename;
+
+      downloadLink.click();
+    }
+
+    document.body.removeChild(downloadLink);
+  }
+
   const renderMainContent = () => {
     return (
       <div id="main-creation-page">
@@ -513,7 +643,11 @@ const QuizCreation = props => {
           <div id="all-questions">
             <div id="all-questions-header">
               <h3>Current questions</h3>
-              <button className="btn" type="submit">Publish assignment</button>
+
+              <div id="buttons">
+                <button className="btn" type="button" onClick={exportAssignment}>Export assignment</button>
+                <button className="btn" type="submit">Publish assignment</button>
+              </div>
             </div>
 
             <div id="current-questions">
