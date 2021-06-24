@@ -949,11 +949,11 @@ const TeacherHomepage = props => {
                 <td className="right">{currentClass ? currentClass.joiningCode : 'N/A'}</td>
               </tr>
               <tr>
-                <td className="left">Num. of students</td>
+                <td className="left">Students</td>
                 <td className="right">{(currentClass ? currentClass.students.length : 'N/A')}</td>
               </tr>
               <tr>
-                <td className="left">Num. of assignments</td>
+                <td className="left">Assignments</td>
                 <td className="right">{currentClass ? currentClass.assignments.length : 'N/A'}</td>
               </tr>
               <tr>
@@ -1022,7 +1022,7 @@ const TeacherHomepage = props => {
                 <td className="right">{averageTime()}</td>
               </tr>
               <tr>
-                <td className="left">Num. of hints used</td>
+                <td className="left">Hints used</td>
                 <td className="right">{hintsUsed()}</td>
               </tr>
               <tr>
