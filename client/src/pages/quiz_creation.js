@@ -17,7 +17,7 @@ const QuizCreation = props => {
   const [currentQuestions, setCurrentQuestions] = useState([]);
   const [allQuestions, setAllQuestions] = useState([]);
   const [newQuestionInput, setNewQuestionInput] = useState({
-    question: '', topic: '', hint: '', explanation: '', qtype: '', option1: '',
+    question: '', imageURL: '', topic: '', hint: '', explanation: '', qtype: '', option1: '',
     option2: '', option3: '', option4: '', correct: '', marks: ''
   });
   const [newAssignmentInput, setNewAssignmentInput] = useState({
@@ -126,6 +126,14 @@ const QuizCreation = props => {
         <p><b>Marks:</b> {question.marks}</p>
         <p><b>Explanation:</b> {question.explanation}</p>
         <p><b>Hint:</b> {question.hint === null || question.hint.replaceAll(' ', '') === '' ? 'No hint' : question.hint}</p>
+        <p><b>Image:</b> {
+          question.imageURL === null || question.imageURL.replaceAll(' ', '') === '' ?
+            'No image' :
+            <>
+              <img src={question.imageURL}></img>
+              <p id="image-text">Hover to see...</p>
+            </>
+        }</p>
         <i>Created by {question.creator.username}</i>
       </button>
     })
@@ -206,7 +214,14 @@ const QuizCreation = props => {
       return <button type="button" className={classes} key={index}
         onClick={removeQuestion.bind(this, index)}>
         <p><b>({index + 1})</b> {question.question}</p>
-
+        <p><b>Image:</b> {
+          question.imageURL === null || question.imageURL.replaceAll(' ', '') === '' ?
+            'No image' :
+            <>
+              <img src={question.imageURL}></img>
+              <p id="image-text">Hover to see...</p>
+            </>
+        }</p>
         <p><b>Type:</b> {returnQuestionType(question)}</p>
         <p><b>Topic:</b> {question.topic}</p>
         <p><b>Answer:</b> {question.correct}</p>
@@ -224,7 +239,7 @@ const QuizCreation = props => {
     }
 
     try {
-      const { question, topic, hint, explanation, marks } = newQuestionInput;
+      const { question, imageURL, topic, hint, explanation, marks } = newQuestionInput;
 
       let correct = newQuestionInput.correct;
       let wrong = [];
@@ -240,6 +255,7 @@ const QuizCreation = props => {
 
       const newQuestion = await QuestionService.createQuestion({
         question: question.trim(),
+        imageURL: imageURL.trim(),
         qualification: authContext.selectedClass.qualification.toUpperCase().trim(),
         subject: toTitleCase(authContext.selectedClass.subject).trim(),
         qtype: (newQuestionInput.qtype === 'Short answer' ? 'short' : 'multichoice'),
@@ -346,6 +362,11 @@ const QuizCreation = props => {
           <div className="form-control">
             <input type="text" name="question" autoComplete="off" value={newQuestionInput.question} onChange={handleQuestionChange} required />
             <label htmlFor="question">Question</label>
+          </div>
+
+          <div className="form-control">
+            <input type="url" name="imageURL" autoComplete="off" value={newQuestionInput.imageURL} onChange={handleQuestionChange} />
+            <label htmlFor="imageURL">Image URL</label>
           </div>
 
           <div className="form-control">
@@ -480,11 +501,23 @@ const QuizCreation = props => {
 
     //Converts assignment data to HTML
     const formatAssignment = () => {
+      //Returns the question with the correct format (question number, marks and picture)
+      const formatQuestion = (question, index) => {
+        if (question.imageURL === '' || question.imageURL === null) {
+          return `<b>(${index + 1}) ${question.question} [${question.marks}]</b>`
+        } else {
+          return `
+            <b>(${index + 1}) ${question.question} [${question.marks}]</b>
+            <img src=${question.imageURL} width="128px"></img>
+          `
+        }
+      }
+
       let questions = currentQuestions.map((q, index) => {
         if (q.qtype === 'short') {
           //If a short question just display the question with a line below to answer
           return `
-              <b>(${index + 1}) ${q.question} [${q.marks}]</b>
+              ${formatQuestion(q, index)}
               <p>.....................................................................................................</p>
             `
         } else {
@@ -511,7 +544,7 @@ const QuizCreation = props => {
 
           //Returns the question and the 4 options as a list
           return `
-              <b>(${index + 1}) ${q.question} [${q.marks}]</b>
+              ${formatQuestion(q, index)}
               <ol type="a">
                 <li>${options[0]}</li>
                 <li>${options[1]}</li>
@@ -605,7 +638,7 @@ const QuizCreation = props => {
               </div>
 
               <div className="form-control check">
-                <input type="checkbox" name="recordTime" checked={newAssignmentInput.recordTime} onChange={handleCheckboxChange} required />
+                <input type="checkbox" name="recordTime" checked={newAssignmentInput.recordTime} onChange={handleCheckboxChange} />
                 <label htmlFor="recordTime">Record time taken?</label>
               </div>
 

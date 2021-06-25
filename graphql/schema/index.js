@@ -29,6 +29,7 @@ module.exports = buildSchema(`
     subject: String! 
     topic: String!
     hint: String
+    imageURL: String
     explanation: String!
     qtype: String!
     wrong: [String]!
@@ -90,6 +91,7 @@ module.exports = buildSchema(`
     subject: String!
     topic: String!
     hint: String
+    imageURL: String
     explanation: String!
     qtype: String!
     wrong: [String]

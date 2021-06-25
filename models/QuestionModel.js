@@ -8,6 +8,9 @@ const QuestionSchema = new Schema({
     type: String,
     required: [true, 'Question required']
   },
+  imageURL: {
+    type: String
+  },
   hint: {
     type: String
   },

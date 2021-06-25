@@ -20,7 +20,7 @@ module.exports = {
 
       //Extracting input data from request
       const {
-        question, qualification, subject, topic, hint, explanation, qtype, wrong, correct, marks
+        question, qualification, subject, topic, hint, imageURL, explanation, qtype, wrong, correct, marks
       } = args.initQuestionInput;
 
       const newQuestion = new Question({
@@ -29,6 +29,7 @@ module.exports = {
         subject,
         topic,
         hint,
+        imageURL,
         explanation,
         qtype,
         wrong,

@@ -82,6 +82,7 @@ export default {
                   recordTime
                   questions {
                     question
+                    imageURL
                     topic
                     correct
                     marks
@@ -97,6 +98,7 @@ export default {
                 recordTime
                 questions {
                   question
+                  imageURL
                   qtype
                   marks
                   correct

@@ -568,6 +568,15 @@
           margin-bottom: 8px;
         }
 
+        img {
+          display: none;
+          width: 180px;
+        }
+
+        #image-text {
+          display: initial;
+        }
+
         &.short {
           background-color: #D5E8D4;
         }
@@ -579,6 +588,14 @@
         &:hover {
           filter: brightness(96%);
           cursor: pointer;
+
+          img {
+            display: initial;
+          }
+
+          #image-text {
+            display: none;
+          }
         }
       }
     }
