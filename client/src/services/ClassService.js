@@ -25,5 +25,37 @@ export default {
     };
 
     return await Service.sendRequest('createClass', requestBody, token);
+  },
+  setStudentLevel: async (info, token) => {
+    //Extracting the required data for the API call from the input
+    const { classID, studentID, level } = info;
+
+    //Creating the graphQL call
+    const requestBody = {
+      query: `
+        mutation setStudentLevel ($classID: ID!, $studentID: ID!, $level: String!) {
+          setStudentLevel (initLevelInput: {classID: $classID, studentID: $studentID, level: $level}) {
+            _id
+            name
+            high {
+              username
+            }
+            mid {
+              username
+            }
+            low {
+              username
+            }
+          }
+        }
+      `,
+      variables: {
+        classID,
+        studentID,
+        level
+      }
+    }
+
+    return await Service.sendRequest('setStudentLevel', requestBody, token);
   }
 }

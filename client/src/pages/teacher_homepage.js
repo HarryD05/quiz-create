@@ -34,6 +34,7 @@ const TeacherHomepage = props => {
   const [newClassInfo, setNewClassInfo] = useState({
     name: '', qualification: '', subject: '', joiningCode: ''
   });
+  const [attainmentLevel, setAttainmentLevel] = useState(null);
   const [isSmall, setIsSmall] = useState(window.visualViewport.width < 600);
 
   //variable in state when updated the page re-renders
@@ -209,11 +210,58 @@ const TeacherHomepage = props => {
 
   //Getting results that are from the current student
   const getStudentResults = specificStudent => {
+    if (currentStudent === null || currentClass === null) return [];
+
     if (specificStudent === null || specificStudent === undefined) {
       return [...currentClass.results].filter(result => result.student.username === currentStudent.username);
     } else {
       return [...currentClass.results].filter(result => result.student.username === specificStudent.username);
     }
+  }
+
+  const getStudentAttainment = () => {
+    if (currentStudent === null || currentClass === null) return 'N/A';
+
+    //Getting the high, mid and low attainment lists from the current class
+    const { high, mid, low, } = currentClass;
+
+    //Default case (if student not in any list)
+    let level = 'Not set';
+
+    if (high !== null && high !== undefined) {
+      if (high.length > 0) {
+        //Filtering the high list so only the currentStudent will remain if in list
+        const filteredHigh = high.filter(student => student._id === currentStudent._id);
+
+        if (filteredHigh.length === 1) {
+          level = 'High';
+        }
+      }
+    }
+
+    if (mid !== null && mid !== undefined) {
+      if (mid.length > 0) {
+        //Filtering the mid list so only the currentStudent will remain if in list
+        const filteredMid = mid.filter(student => student._id === currentStudent._id);
+
+        if (filteredMid.length === 1) {
+          level = 'Mid';
+        }
+      }
+    }
+
+    if (low !== null && low !== undefined) {
+      if (low.length > 0) {
+        //Filtering the low list so only the currentStudent will remain if in list
+        const filteredLow = low.filter(student => student._id === currentStudent._id);
+
+        if (filteredLow.length === 1) {
+          level = 'Low';
+        }
+      }
+    }
+
+    return level;
   }
 
   //Gets average from student's results
@@ -337,22 +385,6 @@ const TeacherHomepage = props => {
     }
 
     return `${blank}/${total}`;
-  }
-
-  //Return assignment with greatest score
-  const getBestAssignment = () => {
-    if (currentStudent === null) return 'N/A';
-
-    //Get results which are from the selected student
-    let studentResults = getStudentResults();
-    if (studentResults.length === 0) return 'No results yet';
-
-    //Rank results 
-    const resultsRanked = [...studentResults].sort((a, b) =>
-      (b.marks / b.assignment.maxMarks) - (a.marks / a.assignment.maxMarks)
-    );
-
-    return resultsRanked[0].assignment.title;
   }
 
   //Ranks topics based on their average result
@@ -1119,6 +1151,53 @@ const TeacherHomepage = props => {
     }
   }
 
+  //Handles change of attainment level selector
+  const handleAttainmentSelectorChange = e => {
+    setAttainmentLevel(e.label);
+  }
+
+  //Handles onclick for change attainment level, using normal function definition
+  //so can use .bind 
+  async function submitAttainmentChange() {
+    //If the attainment level isn't set then don't send the api call to set the 
+    //attainment level of the current studens
+    if (attainmentLevel === '' || attainmentLevel === null) return;
+
+    try {
+      //Formatting the data correctly to send the API request
+      const info = {
+        classID: currentClass._id,
+        studentID: currentStudent._id,
+        level: attainmentLevel.toLowerCase()
+      }
+
+      const updatedClass = await ClassService.setStudentLevel({
+        ...info
+      }, authContext.token);
+
+      if (updatedClass) {
+        setAttainmentLevel('');
+        authContext.updateUser();
+        setCurrentClass(null);
+        setCurrentStudent(null);
+        incrementKey();
+      } else {
+        modalContext.updateModal({
+          title: 'Error',
+          content: <p>There was an error updating the attainment level, please try again.</p>
+        });
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  const attainmentOptions = [
+    { label: 'High', value: 0 },
+    { label: 'Mid', value: 1 },
+    { label: 'Low', value: 2 }
+  ]
+
   return (
     <div id="teacher-homepage" key={key}>
       <p id="welcome-msg">Welcome {authContext.user.username}</p>
@@ -1200,7 +1279,7 @@ const TeacherHomepage = props => {
             <tbody >
               <tr>
                 <td className="left">Attainment level</td>
-                <td className="right">High</td>
+                <td className="right">{getStudentAttainment()}</td>
               </tr>
               <tr>
                 <td className="left">Average result</td>
@@ -1241,9 +1320,11 @@ const TeacherHomepage = props => {
             </tbody>
           </table>
 
+          <Select className="modal-selector" options={attainmentOptions} onChange={handleAttainmentSelectorChange} placeholder='Select attainment level...' />
+
           <div id="student-buttons">
+            <a className="btn" onClick={submitAttainmentChange}>Change attainment level</a>
             <a className="btn" onClick={showStudentAssignmentsModal}>See all student's assignments</a>
-            <a className="btn" onClick={() => alert('Not setup yet')}>Set attainment level</a>
           </div>
         </div>
       </div>

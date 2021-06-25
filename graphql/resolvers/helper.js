@@ -53,7 +53,10 @@ const transformClass = async classData => {
     teacher: transformUserById.bind(this, classData._doc.teacher),
     students: transformUsers.bind(this, classData._doc.students),
     assignments: transformAssignments.bind(this, classData._doc.assignments),
-    results: transformResults.bind(this, classData._doc.results)
+    results: transformResults.bind(this, classData._doc.results),
+    high: transformUsers.bind(this, classData._doc.high),
+    mid: transformUsers.bind(this, classData._doc.mid),
+    low: transformUsers.bind(this, classData._doc.low)
   }
 }
 

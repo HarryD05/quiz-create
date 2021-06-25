@@ -33,7 +33,10 @@ module.exports = {
         qualification,
         subject,
         joiningCode,
-        teacher: req.userId
+        teacher: req.userId,
+        high: [],
+        mid: [],
+        low: []
       });
 
       const result = await newClass.save(); //adding class to database
@@ -73,6 +76,59 @@ module.exports = {
       student.classes.push(result._id);
       await student.save();
 
+      return transformClassById(result._id);
+    } catch (error) {
+      throw error;
+    }
+  },
+  setStudentLevel: async (args, req) => {
+    try {
+      if (!req.isAuth) {
+        throw new Error('NOT AUTHENTICATED');
+      }
+
+      //Retrieving the class and student ID and desired level from the request
+      const { classID, studentID, level } = args.initLevelInput;
+
+      //Finding the linked class
+      const targetClass = await Class.findById(classID);
+
+      if (!targetClass) {
+        throw new Error('INVALID CLASS ID');
+      }
+
+      //Before adding the student into a list, need to check if the student
+      //is in a different attainmnet level list and remove them from it
+      if (targetClass.high.indexOf(studentID) !== -1) {
+        targetClass.high.splice(targetClass.high.indexOf(studentID), 1);
+      }
+
+      if (targetClass.mid.indexOf(studentID) !== -1) {
+        targetClass.mid.splice(targetClass.mid.indexOf(studentID), 1);
+      }
+
+      if (targetClass.low.indexOf(studentID) !== -1) {
+        targetClass.low.splice(targetClass.low.indexOf(studentID), 1);
+      }
+
+      //Adding the student to the correct attainment level
+      switch (level) {
+        case 'high':
+          targetClass.high.push(studentID);
+          break;
+
+        case 'mid':
+          targetClass.mid.push(studentID);
+          break;
+
+        case 'low':
+          targetClass.low.push(studentID);
+          break;
+      }
+
+      const result = await targetClass.save();
+
+      //Returning the updated class
       return transformClassById(result._id);
     } catch (error) {
       throw error;

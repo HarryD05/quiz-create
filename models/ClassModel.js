@@ -30,6 +30,18 @@ const ClassSchema = new Schema({
     type: [Schema.Types.ObjectId],
     ref: 'Student'
   },
+  high: {
+    type: [Schema.Types.ObjectId],
+    ref: 'Student'
+  },
+  mid: {
+    type: [Schema.Types.ObjectId],
+    ref: 'Student'
+  },
+  low: {
+    type: [Schema.Types.ObjectId],
+    ref: 'Student'
+  },
   assignments: {
     type: [Schema.Types.ObjectId],
     ref: 'Assignment'

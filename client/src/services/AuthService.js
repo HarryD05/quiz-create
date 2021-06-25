@@ -63,6 +63,18 @@ export default {
                 _id
                 username
               }
+              high {
+                _id
+                username
+              }
+              mid {
+                _id
+                username
+              }
+              low {
+                _id
+                username
+              }
               results {
                 _id
                 marks
