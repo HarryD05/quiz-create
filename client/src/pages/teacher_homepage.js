@@ -51,6 +51,7 @@ const TeacherHomepage = props => {
   useEffect(() => {
     authContext.updateUser();
     authContext.resetSelectedClass();
+    //eslint-disable-next-line
   }, []);
 
   //Returns if the submission was made after the dueDate

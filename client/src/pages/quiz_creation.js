@@ -52,6 +52,7 @@ const QuizCreation = props => {
   //the questions meaning the component isn't constantly making api calls (slow)
   useEffect(() => {
     fetchQuestions();
+    //eslint-disable-next-line
   }, []);
 
   //Returns the class name in a descriptive format
@@ -130,7 +131,7 @@ const QuizCreation = props => {
           question.imageURL === null || question.imageURL.replaceAll(' ', '') === '' ?
             'No image' :
             <>
-              <img src={question.imageURL}></img>
+              <img src={question.imageURL} alt={question.question + ' image'}></img>
               <p id="image-text">Hover to see...</p>
             </>
         }</p>
@@ -218,7 +219,7 @@ const QuizCreation = props => {
           question.imageURL === null || question.imageURL.replaceAll(' ', '') === '' ?
             'No image' :
             <>
-              <img src={question.imageURL}></img>
+              <img src={question.imageURL} alt={question.question + ' image'}></img>
               <p id="image-text">Hover to see...</p>
             </>
         }</p>
