@@ -1034,8 +1034,8 @@ const TeacherHomepage = props => {
   }
 
   //Generates a random rgb colour
-  const randomColour = () => {
-    return `rgb(${Math.round(Math.random() * 255)}, ${Math.round(Math.random() * 255)},  ${Math.round(Math.random() * 255)})`;
+  const randomColour = (alpha = 1) => {
+    return `rgb(${Math.round(Math.random() * 255)}, ${Math.round(Math.random() * 255)},  ${Math.round(Math.random() * 255)}, ${alpha})`;
   }
 
   //Functions to display charts of results in modal
@@ -1054,22 +1054,25 @@ const TeacherHomepage = props => {
     }
 
     //Returns a 2D array of all the students results
+    //Each array is a student then each item in the array is there result for an assignment
     const getResults = () => {
       const output = [];
-
       let i = 0;
       for (const student of currentClass.students) {
         let results = getStudentResults(student);
 
-        output.push([]);
+        output.push([]); //Making an array for each student to hold their assignment results
 
         let j = 0;
         for (const assignment of currentClass.assignments) {
+          //Getting the student's result that links to the current assignment
           let assignmentResult = results.filter(result => result.assignment.title === assignment.title);
 
+          //If no result found then their result is 0 (not completed)
           if (assignmentResult.length === 0) {
             output[i][j] = 0;
           } else {
+            //Getting their result as a percentage
             output[i][j] = Number((assignmentResult[0].marks / assignment.maxMarks).toFixed(2)) * 100;
           }
           j++;
@@ -1081,11 +1084,13 @@ const TeacherHomepage = props => {
     }
 
     if (currentClass === null) {
+      //Cannot display graphs about a class if there is no clas selected so show an error
       modalContext.updateModal({
         title: 'Error',
         content: <p>Please select a class...</p>
       });
     } else {
+      //If there is a class selected display the graphs for the selected class
       modalContext.updateModal({
         title: `${currentClass.name}'s assignments/results analysis`,
         content: <div id="classGraphs">
@@ -1095,7 +1100,7 @@ const TeacherHomepage = props => {
           <Graph
             type="Pie"
             data={getStatuses()}
-            colours={['#44ffb4', '#7a53fc', '#fc5353']}
+            colours={['#44ffb473', '#7a53fc73', '#fc535373']}
             labels={['On time', 'Late', 'Missing']}
           />
 
@@ -1109,23 +1114,6 @@ const TeacherHomepage = props => {
             colours={currentClass.students.map(() => randomColour())}
             labels={currentClass.assignments.map(assignment => assignment.title)}
           />
-        </div>
-      });
-    }
-  }
-
-  //current student results graphs
-  const showStudentGraphs = () => {
-    if (currentStudent === null) {
-      modalContext.updateModal({
-        title: 'Error',
-        content: <p>Please select a student...</p>
-      });
-    } else {
-      modalContext.updateModal({
-        title: `${currentStudent.username}'s assignments/results analysis`,
-        content: <div id="classGraphs">
-
         </div>
       });
     }
@@ -1211,6 +1199,10 @@ const TeacherHomepage = props => {
           <table className="table">
             <tbody >
               <tr>
+                <td className="left">Attainment level</td>
+                <td className="right">High</td>
+              </tr>
+              <tr>
                 <td className="left">Average result</td>
                 <td className="right">{getStudentAverage()}</td>
               </tr>
@@ -1239,10 +1231,6 @@ const TeacherHomepage = props => {
                 <td className="right">{blankAnswers()}</td>
               </tr>
               <tr>
-                <td className="left">Best assignment</td>
-                <td className="right">{getBestAssignment()}</td>
-              </tr>
-              <tr>
                 <td className="left">Poorest topic</td>
                 <td className="right">{getStudentPoorestTopic()}</td>
               </tr>
@@ -1255,7 +1243,7 @@ const TeacherHomepage = props => {
 
           <div id="student-buttons">
             <a className="btn" onClick={showStudentAssignmentsModal}>See all student's assignments</a>
-            <a className="btn" onClick={showStudentGraphs}>See student graphs</a>
+            <a className="btn" onClick={() => alert('Not setup yet')}>Set attainment level</a>
           </div>
         </div>
       </div>

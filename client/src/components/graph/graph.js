@@ -1,9 +1,6 @@
 //Import react dependency
 import React from 'react';
-import { Line, Bar, Pie } from 'react-chartjs-2';
-
-//Importing styling
-import './graph.scss';
+import { Line, Pie } from 'react-chartjs-2';
 
 //Creating the modal react component
 const Graph = props => {
@@ -11,23 +8,13 @@ const Graph = props => {
   const { labels, data, colours, type, lineLabels } = props;
 
   const renderGraph = () => {
+    //Initialising the variables that will be input as parameters 
+    //To the graph components
     let chartData = {};
     let options = {};
 
+    //Selects which type of graph to output based on the type input as a property
     switch (type) {
-      case 'Bar':
-        chartData = {
-          labels,
-          datasets: [{
-            data,
-            backgroundColor: colours
-          }]
-        }
-
-        return <Bar
-          data={chartData}
-        />
-
       case 'Pie':
         options = {
           radius: 100,
@@ -35,17 +22,21 @@ const Graph = props => {
           maintainAspectRatio: true
         }
 
+        //Formatting the data correctly for a pie chart
         chartData = {
           labels,
           datasets: [{
             data,
-            backgroundColor: colours
+            backgroundColor: colours,
+            borderColor: colours.map(colour => colour.slice(0, 7)),
+            borderWidth: 1
           }]
         }
 
-        return <Pie options={options} width={150} data={chartData} />
+        return <Pie className="pie" options={options} width={150} data={chartData} />
 
       case 'Line':
+        //Setting up the axis for the line graph
         options = {
           responsive: true,
           maintainAspectRatio: true,
@@ -72,11 +63,14 @@ const Graph = props => {
           }
         }
 
+        //Setting up the labels for the rows on the line graph, making sure they are only
+        //10 characters so they aren't too long (will overlap)
         chartData = {
           labels: labels.map(label => label.slice(0, 10) + '...'),
           datasets: []
         }
 
+        //Splitting the data into separate datasets so each student is a line
         for (let i = 0; i < data.length; i++) {
           chartData.datasets.push({
             label: lineLabels[i],
@@ -86,7 +80,7 @@ const Graph = props => {
           })
         }
 
-        return <Line height={150} data={chartData} options={options} />
+        return <Line className="line" height={150} data={chartData} options={options} />
 
       default:
     }
