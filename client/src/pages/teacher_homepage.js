@@ -210,7 +210,7 @@ const TeacherHomepage = props => {
 
   //Getting results that are from the current student
   const getStudentResults = specificStudent => {
-    if (currentStudent === null || currentClass === null) return [];
+    if (currentClass === null) return [];
 
     if (specificStudent === null || specificStudent === undefined) {
       return [...currentClass.results].filter(result => result.student.username === currentStudent.username);
@@ -219,8 +219,12 @@ const TeacherHomepage = props => {
     }
   }
 
-  const getStudentAttainment = () => {
-    if (currentStudent === null || currentClass === null) return 'N/A';
+  const getStudentAttainment = (specificStudent = null) => {
+    if (currentClass === null) return 'N/A';
+
+    const student = (specificStudent === null ? currentStudent : specificStudent);
+    console.log(student);
+    if (student === null) return 'N/A';
 
     //Getting the high, mid and low attainment lists from the current class
     const { high, mid, low, } = currentClass;
@@ -231,7 +235,7 @@ const TeacherHomepage = props => {
     if (high !== null && high !== undefined) {
       if (high.length > 0) {
         //Filtering the high list so only the currentStudent will remain if in list
-        const filteredHigh = high.filter(student => student._id === currentStudent._id);
+        const filteredHigh = high.filter(student_ => student_._id === student._id);
 
         if (filteredHigh.length === 1) {
           level = 'High';
@@ -242,7 +246,7 @@ const TeacherHomepage = props => {
     if (mid !== null && mid !== undefined) {
       if (mid.length > 0) {
         //Filtering the mid list so only the currentStudent will remain if in list
-        const filteredMid = mid.filter(student => student._id === currentStudent._id);
+        const filteredMid = mid.filter(student_ => student_._id === student._id);
 
         if (filteredMid.length === 1) {
           level = 'Mid';
@@ -253,7 +257,7 @@ const TeacherHomepage = props => {
     if (low !== null && low !== undefined) {
       if (low.length > 0) {
         //Filtering the low list so only the currentStudent will remain if in list
-        const filteredLow = low.filter(student => student._id === currentStudent._id);
+        const filteredLow = low.filter(student_ => student_._id === student._id);
 
         if (filteredLow.length === 1) {
           level = 'Low';
@@ -1001,7 +1005,8 @@ const TeacherHomepage = props => {
       //If isHeader parameter is true then the headers of 
       //the csv are being requested
 
-      headers = ["student"] //Student name is the first column
+      headers = ["student", "attainment level"]
+      //Student name is always the first column and attainment level second
 
       //3 columns for each assignment 
       currentClass.assignments.forEach(assignment => {
@@ -1017,7 +1022,8 @@ const TeacherHomepage = props => {
       currentClass.students.forEach(student => {
         const results = getStudentResults(student); //Getting all the students results
 
-        let output = [student.username]; //First item in row should be student's name
+        let output = [student.username, getStudentAttainment(student)];
+        //First items in row should be student's name and attainment level
 
         //Looping through all assignments (3 columns per assignment)
         currentClass.assignments.forEach(assignment => {
