@@ -364,7 +364,7 @@ const QuizCreation = props => {
             <label htmlFor="question">Question</label>
           </div>
 
-          <div className="form-control">
+          <div className="form-control nonrequired">
             <input type="url" name="imageURL" autoComplete="off" value={newQuestionInput.imageURL} onChange={handleQuestionChange} />
             <label htmlFor="imageURL">Image URL</label>
           </div>

@@ -27,7 +27,6 @@
     &:focus ~ label,
     &:valid ~ label {
       transform: translateY(-20px);
-      /*font-size: 15px;*/
       color: #1d61e9;
     }
 
@@ -36,6 +35,14 @@
     &:focus {
       border-bottom: 2px solid #1d61e9;
     }
+  }
+}
+
+.nonrequired {
+  label {
+    bottom: 4px;
+    color: #1d61e9;
+    transform: translateY(-20px);
   }
 }
 
