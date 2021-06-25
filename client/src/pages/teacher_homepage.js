@@ -291,7 +291,7 @@ const TeacherHomepage = props => {
     for (let result of studentResults) {
       if (result.timeTaken !== null) {
         totalTime += result.timeTaken;
-        count++;
+        count += result.assignment.questions.length;
       }
     }
 
