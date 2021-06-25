@@ -263,7 +263,7 @@ const QuizCreation = props => {
         topic: toTitleCase(topic).trim(),
         hint: hint.trim(),
         explanation: explanation.trim(),
-        correct,
+        correct: correct.toLowerCase(),
         wrong,
         marks: Number(marks),
       }, authContext.token);

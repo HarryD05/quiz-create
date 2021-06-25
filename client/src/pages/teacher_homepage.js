@@ -10,6 +10,9 @@ import { ModalContext } from '../context/ModalContext';
 //Importing services (for api calls)
 import ClassService from '../services/ClassService';
 
+//Importing components
+import Graph from '../components/graph/graph';
+
 const formatDate = date => {
   const dateParts = date.toDateString().split(' ');
 
@@ -184,7 +187,7 @@ const TeacherHomepage = props => {
   }
 
   //Counts number of assignments completed by submitted post due date
-  const getLateSubmissions = () => {
+  const getLateSubmissions = number => {
     if (currentClass === null) return 'N/A';
 
     const results = currentClass.results;
@@ -196,6 +199,10 @@ const TeacherHomepage = props => {
       if (isResultLate(current)) return accumulator + 1;
       return accumulator;
     }, 0);
+
+    if (number === true) {
+      return lateNum;
+    }
 
     return `${lateNum}/${results.length}`;
   }
@@ -289,7 +296,7 @@ const TeacherHomepage = props => {
     }
 
     if (count === 0) return 'No times recorded';
-    return `${((totalTime / count) * 100).toFixed(0)} seconds`;
+    return `${(totalTime / count).toFixed(0)} seconds`;
   }
 
   //Works out the percentage of questions hints used by student
@@ -364,7 +371,7 @@ const TeacherHomepage = props => {
         }
 
         //if correct answer then add marks to the topics total marks
-        if (answer === question.correct) {
+        if (answer.toLowerCase() === question.correct.toLowerCase()) {
           output[question.topic].marks += question.marks;
         }
 
@@ -555,6 +562,8 @@ const TeacherHomepage = props => {
         students.splice(students.indexOf(completed.student.username), 1);
       });
 
+      if (students.length === 0) return 'No students';
+
       return students.toString().replaceAll(',', ', ');
     }
 
@@ -662,7 +671,7 @@ const TeacherHomepage = props => {
       }
 
       return questions.map(question => {
-        return <li key={question.index}>{question.question} - {Math.round((question.total / completedAssignments.length) * 100) / 100}/{question.maxMarks}</li>
+        return <li key={question.index}>{question.question} - {(question.total / completedAssignments.length).toFixed(2)}/{question.maxMarks}</li>
       });
     }
 
@@ -738,7 +747,6 @@ const TeacherHomepage = props => {
     function handleClassAssignmentSelectorChange(e) {
       this.updateModal({ classAssignment: e.label });
     }
-
 
     if (currentClass === null) {
       modalContext.updateModal({
@@ -852,7 +860,7 @@ const TeacherHomepage = props => {
       let index = -1;
       return completedResult.answers.map(answer => {
         index++;
-        if (answer === completedResult.assignment.questions[index].correct) {
+        if (answer.toLowerCase() === completedResult.assignment.questions[index].correct.toLowerCase()) {
           return <li key={index}>{answer} - CORRECT {(completedResult.hints[index] ? '(Hint used)' : '')}</li>
         } else {
           return <li key={index}>{answer} - INCORRECT {(completedResult.hints[index] ? '(Hint used)' : '')}</li>
@@ -1014,10 +1022,113 @@ const TeacherHomepage = props => {
   //selected has no assignments the file isn't downloaded if there is then the file downloads
   const downloadClassData = e => {
     if (currentClass === null || currentClass.assignments.length === 0) {
+      modalContext.updateModal({
+        title: 'Error',
+        content: <p>Please select a class...</p>
+      });
+
       return false;
     }
 
     return true;
+  }
+
+  //Generates a random rgb colour
+  const randomColour = () => {
+    return `rgb(${Math.round(Math.random() * 255)}, ${Math.round(Math.random() * 255)},  ${Math.round(Math.random() * 255)})`;
+  }
+
+  //Functions to display charts of results in modal
+  //current class results graphs 
+  const showClassGraphs = () => {
+    //Returns the array for statuses
+    //[ontime, late, missing]
+    const getStatuses = () => {
+      const results = currentClass.results.length;
+      const late = getLateSubmissions(true);
+      const ontime = results - late;
+      const total = currentClass.assignments.length * currentClass.students.length;
+      const missing = total - results;
+
+      return [ontime, late, missing];
+    }
+
+    //Returns a 2D array of all the students results
+    const getResults = () => {
+      const output = [];
+
+      let i = 0;
+      for (const student of currentClass.students) {
+        let results = getStudentResults(student);
+
+        output.push([]);
+
+        let j = 0;
+        for (const assignment of currentClass.assignments) {
+          let assignmentResult = results.filter(result => result.assignment.title === assignment.title);
+
+          if (assignmentResult.length === 0) {
+            output[i][j] = 0;
+          } else {
+            output[i][j] = Number((assignmentResult[0].marks / assignment.maxMarks).toFixed(2)) * 100;
+          }
+          j++;
+        }
+        i++;
+      }
+
+      return output;
+    }
+
+    if (currentClass === null) {
+      modalContext.updateModal({
+        title: 'Error',
+        content: <p>Please select a class...</p>
+      });
+    } else {
+      modalContext.updateModal({
+        title: `${currentClass.name}'s assignments/results analysis`,
+        content: <div id="classGraphs">
+          <h3>Assignment statuses</h3>
+          <i>The number of assignments that are...</i>
+
+          <Graph
+            type="Pie"
+            data={getStatuses()}
+            colours={['#44ffb4', '#7a53fc', '#fc5353']}
+            labels={['On time', 'Late', 'Missing']}
+          />
+
+          <h3>All results</h3>
+          <i>Each line is the results of the student</i>
+
+          <Graph
+            type="Line"
+            data={getResults()}
+            lineLabels={currentClass.students.map(student => student.username)}
+            colours={currentClass.students.map(() => randomColour())}
+            labels={currentClass.assignments.map(assignment => assignment.title)}
+          />
+        </div>
+      });
+    }
+  }
+
+  //current student results graphs
+  const showStudentGraphs = () => {
+    if (currentStudent === null) {
+      modalContext.updateModal({
+        title: 'Error',
+        content: <p>Please select a student...</p>
+      });
+    } else {
+      modalContext.updateModal({
+        title: `${currentStudent.username}'s assignments/results analysis`,
+        content: <div id="classGraphs">
+
+        </div>
+      });
+    }
   }
 
   return (
@@ -1078,6 +1189,7 @@ const TeacherHomepage = props => {
 
           <div id="class-buttons">
             <a className="btn" onClick={showAssignmentsModal}>See all assignments</a>
+            <a className="btn" onClick={showClassGraphs}>See class graphs</a>
             <a className="btn" onClick={toQuizCreation}>Set new assignment</a>
             <CSVLink
               headers={getClassExportData(true)}
@@ -1143,6 +1255,7 @@ const TeacherHomepage = props => {
 
           <div id="student-buttons">
             <a className="btn" onClick={showStudentAssignmentsModal}>See all student's assignments</a>
+            <a className="btn" onClick={showStudentGraphs}>See student graphs</a>
           </div>
         </div>
       </div>

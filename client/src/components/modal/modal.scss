@@ -100,6 +100,10 @@
   }
 
   #student-assignments, #class-assignments {
+    .btn {
+      margin-top: 1rem;
+    }
+
     .student-assignment-card, .class-assignment-card {
       padding: 1rem 0;
       border-bottom: 1px solid grey;
