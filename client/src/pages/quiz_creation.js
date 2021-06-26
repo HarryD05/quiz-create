@@ -21,7 +21,8 @@ const QuizCreation = props => {
     option2: '', option3: '', option4: '', correct: '', marks: ''
   });
   const [newAssignmentInput, setNewAssignmentInput] = useState({
-    title: '', description: '', recordTime: false, dueDate: ''
+    title: '', description: '', recordTime: false, dueDate: '', expectedHigh: 0, expectedMid: 0,
+    expectedLow: 0
   });
   const [createQuestionFormShowing, setCreateQuestionFormShowing] = useState(false);
 
@@ -31,7 +32,6 @@ const QuizCreation = props => {
 
   //Setting up the modalcontext so modals can be used
   const modalContext = useContext(ModalContext);
-
 
   //Fetches all questions from the database 
   const fetchQuestions = async () => {
@@ -189,8 +189,15 @@ const QuizCreation = props => {
   }
 
   //Returns the total marks of all the current questions
-  const returnTotalMarks = () => {
-    if (currentQuestions.length === 0) return 'No questions yet...';
+  const returnTotalMarks = (number = false) => {
+    //If no questions then total marks is 0
+    if (currentQuestions.length === 0) {
+      //If the number parameter is set to true not false,
+      //then a number is always returns 
+      if (number) return 0;
+
+      return 'No questions yet...';
+    }
 
     return currentQuestions.reduce((accumulator, current) => {
       return accumulator + current.marks;
@@ -203,6 +210,12 @@ const QuizCreation = props => {
     questions.splice(clickedIndex, 1);
 
     setCurrentQuestions(questions);
+
+    //When a question in removed reset the expected results to 0 as the expected results
+    //may now be higher than the total marks
+    setNewAssignmentInput(
+      { ...newAssignmentInput, expectedHigh: 0, expectedMid: 0, expectedLow: 0 }
+    );
   }
 
   //Returns all the current questions as cards
@@ -415,6 +428,24 @@ const QuizCreation = props => {
       return; //stops the api call
     }
 
+    //Handling expected results
+    let expectedResults = []; //Default case, if expected results not specified
+    //then the expected results array is left empty
+
+    //Extracting the expected results from the user input
+    let { expectedHigh, expectedMid, expectedLow } = newAssignmentInput;
+
+    //Casting marks to numbers instead of strings so stored in database as numbers
+    expectedHigh = Number(expectedHigh);
+    expectedMid = Number(expectedMid);
+    expectedLow = Number(expectedLow);
+
+    if (expectedHigh !== 0 && expectedLow !== 0 && expectedLow !== 0) {
+      //If all the expected results have a value above 0 (have been specified)
+      //Then format them to be submitted to the assignment api call
+      expectedResults = [expectedLow, expectedMid, expectedHigh];
+    }
+
     //Getting a date string which is just the date with the time set to 00:00:00 with no timezone offset
     const dateString = new Date(newAssignmentInput.dueDate).toLocaleDateString();
     const dateParts = dateString.split('/');
@@ -428,7 +459,8 @@ const QuizCreation = props => {
       maxMarks: returnTotalMarks(),
       recordTime: newAssignmentInput.recordTime,
       questions: currentQuestions.map(question => question._id),
-      classID: authContext.selectedClass._id
+      classID: authContext.selectedClass._id,
+      expectedResults
     }
 
     try {
@@ -646,6 +678,22 @@ const QuizCreation = props => {
               <div className="time">
                 <input type="date" name="dueDate" autoComplete="off" value={newAssignmentInput.dueDate} onChange={handleAssignmentChange} required />
                 <label htmlFor="dueDate">Due date</label>
+              </div>
+
+              <div id="attainment-level">
+                <p>Attainment level expected results (marks)</p>
+                <div className="form-control">
+                  <input type="range" inputMode="numeric" min={0} max={Number(returnTotalMarks(true))} step={1} name="expectedHigh" value={newAssignmentInput.expectedHigh} onChange={handleAssignmentChange} />
+                  <label htmlFor="expectedHigh">High ({newAssignmentInput.expectedHigh})</label>
+                </div>
+                <div className="form-control">
+                  <input type="range" inputMode="numeric" min={0} max={Number(returnTotalMarks(true))} step={1} name="expectedMid" value={newAssignmentInput.expectedMid} onChange={handleAssignmentChange} />
+                  <label htmlFor="expectedMid">Mid ({newAssignmentInput.expectedMid})</label>
+                </div>
+                <div className="form-control">
+                  <input type="range" inputMode="numeric" min={0} max={Number(returnTotalMarks(true))} step={1} name="expectedLow" value={newAssignmentInput.expectedLow} onChange={handleAssignmentChange} />
+                  <label htmlFor="expectedLow">Low ({newAssignmentInput.expectedLow})</label>
+                </div>
               </div>
             </div>
 

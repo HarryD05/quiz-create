@@ -486,7 +486,7 @@
           padding: 0.5rem 0;
         }
       }
-
+      
       #right {
         table {
           margin: 1rem 0;
@@ -521,6 +521,15 @@
           .btn {
             width: 45%;
           }
+        }
+      }
+
+      #attainment-level {
+        text-align: left;
+        margin-top: 2rem;
+
+        p, input, label {
+          color: grey;
         }
       }
     }

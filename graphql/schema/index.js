@@ -50,6 +50,7 @@ module.exports = buildSchema(`
     recordTime: Boolean!
     questions: [Question]!
     class: Class!
+    expectedResults: [Int]
   }
 
   type AssignmentResult {
@@ -110,6 +111,7 @@ module.exports = buildSchema(`
     recordTime: Boolean!
     questions: [ID]!
     classID: ID!
+    expectedResults: [Int]
   }
 
   input InitResultInput {

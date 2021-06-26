@@ -23,6 +23,9 @@ const AssignmentSchema = new Schema({
     type: Boolean,
     require: [true, 'Record time is required']
   },
+  expectedResults: {
+    type: [Number]
+  },
   questions: {
     type: [Schema.Types.ObjectId],
     ref: 'Question',

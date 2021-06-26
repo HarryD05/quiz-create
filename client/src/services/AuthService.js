@@ -92,6 +92,7 @@ export default {
                   dueDate
                   maxMarks
                   recordTime
+                  expectedResults
                   questions {
                     question
                     imageURL
@@ -108,6 +109,7 @@ export default {
                 dueDate
                 maxMarks
                 recordTime
+                expectedResults
                 questions {
                   question
                   imageURL
