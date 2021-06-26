@@ -465,9 +465,6 @@
 
   #assignment-form {
     #assignment-details {
-      //line between top and bottom of page context
-      border-bottom: 2px dashed grey;
-
       //Splitting the form to left and right side
       display: grid;
       grid-template-columns: 50% 50%;
@@ -523,15 +520,32 @@
           }
         }
       }
+    }
+  }
 
-      #attainment-level {
-        text-align: left;
-        margin-top: 2rem;
+  #attainment-level {
+    width: 100%;
 
-        p, input, label {
-          color: grey;
-        }
-      }
+    //line between top and bottom of page context
+    border-bottom: 2px dashed grey;
+
+    #attainment-header {
+      width: 50%;
+      min-width: 200px;
+      margin: 1rem auto;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    #attainment-sliders {
+      width: 50%;
+      min-width: 200px;
+      margin: auto;
+      margin-bottom: 1rem;
+    }
+
+    p, input, label {
+      color: grey;
     }
   }
 
@@ -559,7 +573,7 @@
       margin-top: 1rem;
       display: flex;
       flex-wrap: wrap;
-      justify-content: flex-start;
+      justify-content: space-between;
       align-items: stretch;
       flex-direction: row;
 

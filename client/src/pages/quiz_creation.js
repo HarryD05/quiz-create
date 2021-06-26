@@ -25,6 +25,7 @@ const QuizCreation = props => {
     expectedLow: 0
   });
   const [createQuestionFormShowing, setCreateQuestionFormShowing] = useState(false);
+  const [expectedShowing, setExpectedShowing] = useState(false);
 
   //Setting up the authcontext to get the selected class
   //data so the assignment can be saved with the correct class
@@ -651,6 +652,24 @@ const QuizCreation = props => {
     document.body.removeChild(downloadLink);
   }
 
+  //Renders the 3 expected result sliders
+  const renderExpectedSliders = () => {
+    return <div id="attainment-sliders">
+      <div className="form-control">
+        <input type="range" inputMode="numeric" min={0} max={Number(returnTotalMarks(true))} step={1} name="expectedHigh" value={newAssignmentInput.expectedHigh} onChange={handleAssignmentChange} />
+        <label htmlFor="expectedHigh">High ({newAssignmentInput.expectedHigh}/{returnTotalMarks(true)})</label>
+      </div>
+      <div className="form-control">
+        <input type="range" inputMode="numeric" min={0} max={Number(returnTotalMarks(true))} step={1} name="expectedMid" value={newAssignmentInput.expectedMid} onChange={handleAssignmentChange} />
+        <label htmlFor="expectedMid">Mid ({newAssignmentInput.expectedMid}/{returnTotalMarks(true)})</label>
+      </div>
+      <div className="form-control">
+        <input type="range" inputMode="numeric" min={0} max={Number(returnTotalMarks(true))} step={1} name="expectedLow" value={newAssignmentInput.expectedLow} onChange={handleAssignmentChange} />
+        <label htmlFor="expectedLow">Low ({newAssignmentInput.expectedLow}/{returnTotalMarks(true)})</label>
+      </div>
+    </div>
+  }
+
   const renderMainContent = () => {
     return (
       <div id="main-creation-page">
@@ -658,7 +677,6 @@ const QuizCreation = props => {
 
         <form id="assignment-form" onSubmit={openSureModal}>
           <div id="assignment-details">
-
             <div id="left" className="side">
               <div className="form-control">
                 <input type="text" name="title" autoComplete="off" value={newAssignmentInput.title} onChange={handleAssignmentChange} required />
@@ -678,22 +696,6 @@ const QuizCreation = props => {
               <div className="time">
                 <input type="date" name="dueDate" autoComplete="off" value={newAssignmentInput.dueDate} onChange={handleAssignmentChange} required />
                 <label htmlFor="dueDate">Due date</label>
-              </div>
-
-              <div id="attainment-level">
-                <p>Attainment level expected results (marks)</p>
-                <div className="form-control">
-                  <input type="range" inputMode="numeric" min={0} max={Number(returnTotalMarks(true))} step={1} name="expectedHigh" value={newAssignmentInput.expectedHigh} onChange={handleAssignmentChange} />
-                  <label htmlFor="expectedHigh">High ({newAssignmentInput.expectedHigh})</label>
-                </div>
-                <div className="form-control">
-                  <input type="range" inputMode="numeric" min={0} max={Number(returnTotalMarks(true))} step={1} name="expectedMid" value={newAssignmentInput.expectedMid} onChange={handleAssignmentChange} />
-                  <label htmlFor="expectedMid">Mid ({newAssignmentInput.expectedMid})</label>
-                </div>
-                <div className="form-control">
-                  <input type="range" inputMode="numeric" min={0} max={Number(returnTotalMarks(true))} step={1} name="expectedLow" value={newAssignmentInput.expectedLow} onChange={handleAssignmentChange} />
-                  <label htmlFor="expectedLow">Low ({newAssignmentInput.expectedLow})</label>
-                </div>
               </div>
             </div>
 
@@ -722,21 +724,32 @@ const QuizCreation = props => {
             </div>
           </div>
 
-          <div id="all-questions">
-            <div id="all-questions-header">
-              <h3>Current questions</h3>
-
-              <div id="buttons">
-                <button className="btn" type="button" onClick={exportAssignment}>Export assignment</button>
-                <button className="btn" type="submit">Publish assignment</button>
-              </div>
+          <div id="attainment-level">
+            <div id="attainment-header">
+              <p>Attainment level expected results</p>
+              <button className="btn" type="button" onClick={() => setExpectedShowing(!expectedShowing)}>
+                {expectedShowing ? 'Hide' : 'Show'}
+              </button>
             </div>
 
-            <div id="current-questions">
-              {returnQuestions()}
-            </div>
+            {expectedShowing ? renderExpectedSliders() : null}
           </div>
         </form>
+
+        <div id="all-questions">
+          <div id="all-questions-header">
+            <h3>Current questions</h3>
+
+            <div id="buttons">
+              <button className="btn" type="button" onClick={exportAssignment}>Export assignment</button>
+              <button className="btn" type="submit">Publish assignment</button>
+            </div>
+          </div>
+
+          <div id="current-questions">
+            {returnQuestions()}
+          </div>
+        </div>
       </div>
     )
   }

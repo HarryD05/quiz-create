@@ -209,22 +209,32 @@ const TeacherHomepage = props => {
   }
 
   //Getting results that are from the current student
-  const getStudentResults = specificStudent => {
+  const getStudentResults = (specificStudent = null) => {
     if (currentClass === null) return [];
 
     if (specificStudent === null || specificStudent === undefined) {
-      return [...currentClass.results].filter(result => result.student.username === currentStudent.username);
+      if (currentStudent === null) return [];
+
+      return [...currentClass.results].filter(result => result.student._id === currentStudent._id);
     } else {
-      return [...currentClass.results].filter(result => result.student.username === specificStudent.username);
+      return [...currentClass.results].filter(result => result.student._id === specificStudent._id);
     }
   }
 
-  const getStudentAttainment = (specificStudent = null) => {
-    if (currentClass === null) return 'N/A';
+  //Returns the attainment level of a student as a word or number
+  const getStudentAttainment = (specificStudent = null, number = false) => {
+    //No class selected means that the attainment level of a student can't be returned
+    if (currentClass === null) return (number ? -1 : 'N/A');
 
-    const student = (specificStudent === null ? currentStudent : specificStudent);
-    console.log(student);
-    if (student === null) return 'N/A';
+    //Getting the student from either the paramater or the current student
+    let student = (specificStudent === null ? currentStudent : specificStudent);
+
+    //If there is no student then the attainment level of the student can't e returned
+    if (student === null) return (number ? -1 : 'N/A');
+
+    //If the data type of student isn't a string then it is an User object so the _id
+    //needs to be extracted
+    if (typeof (student) !== 'string') student = student._id;
 
     //Getting the high, mid and low attainment lists from the current class
     const { high, mid, low, } = currentClass;
@@ -235,7 +245,7 @@ const TeacherHomepage = props => {
     if (high !== null && high !== undefined) {
       if (high.length > 0) {
         //Filtering the high list so only the currentStudent will remain if in list
-        const filteredHigh = high.filter(student_ => student_._id === student._id);
+        const filteredHigh = high.filter(student_ => student_._id === student);
 
         if (filteredHigh.length === 1) {
           level = 'High';
@@ -246,7 +256,7 @@ const TeacherHomepage = props => {
     if (mid !== null && mid !== undefined) {
       if (mid.length > 0) {
         //Filtering the mid list so only the currentStudent will remain if in list
-        const filteredMid = mid.filter(student_ => student_._id === student._id);
+        const filteredMid = mid.filter(student_ => student_._id === student);
 
         if (filteredMid.length === 1) {
           level = 'Mid';
@@ -257,7 +267,7 @@ const TeacherHomepage = props => {
     if (low !== null && low !== undefined) {
       if (low.length > 0) {
         //Filtering the low list so only the currentStudent will remain if in list
-        const filteredLow = low.filter(student_ => student_._id === student._id);
+        const filteredLow = low.filter(student_ => student_._id === student);
 
         if (filteredLow.length === 1) {
           level = 'Low';
@@ -265,7 +275,96 @@ const TeacherHomepage = props => {
       }
     }
 
+    //If the number parameter the number corresponding to the attainment level
+    //is desired instead of the string
+    if (number) {
+      //if value not high, mid or low then return -1 for no level
+      if (level === 'Not set') return -1;
+
+      const levels = ['Low', 'Mid', 'High'];
+
+      return levels.indexOf(level);
+    }
+
     return level;
+  }
+
+  //Counts number of results that were greater than a student of their attainment
+  //level was expected to get
+  const expectedClassResults = () => {
+    if (currentClass === null) return 'N/A';
+
+    if (currentClass.results.length === 0) return 'No results yet';
+
+    if (currentClass.assignments.length === 0) return 'No assignments yet';
+
+    //Looping through all assignments to check if they have expected results
+    //If they do check if any results for that assignment have students with
+    //attainment levels if they do check if they have gotten below the mark expected
+    let failed = 0;
+    let totalValid = 0;
+    currentClass.assignments.forEach(assignment => {
+      //Check if assignment has expected results
+      if (assignment.expectedResults.length === 3) {
+        //Find any results linking to the current assignment
+        const assignmentResults = currentClass.results.filter(result => {
+          return result.assignment._id === assignment._id;
+        });
+
+        //Check if student has an attainment level, if they do check if they failed
+        assignmentResults.forEach(result => {
+          const level = getStudentAttainment(result.student._id, true);
+
+          if (level !== -1) {
+            totalValid += 1;
+
+            if (result.marks < assignment.expectedResults[level]) {
+              failed += 1;
+            }
+          }
+        })
+      }
+    })
+
+    if (totalValid === 0) return 'No assignments with expected results';
+    return `${failed}/${totalValid}`;
+  }
+
+  //Counts number of results that were greater than a student of their attainment
+  //level was expected to get
+  const expectedStudentResults = () => {
+    if (currentClass === null || currentStudent === null) return 'N/A';
+
+    //Gets all results that are linked to the current user
+    const results = getStudentResults();
+
+    if (results.length === 0) return 'No results yet';
+
+    //Getting the attainment level of the current student
+    const level = getStudentAttainment(currentStudent._id, true);
+    if (level === -1) {
+      //The student has no attainment level 
+      return 'Attainment level not set';
+    }
+
+    //Looping through all results then checking if the assignment has an expectedResult,
+    //If it does check if the student has an attainment level, if they do check if the 
+    //result is lower than the expected result
+    let failed = 0;
+    let totalValid = 0;
+    results.forEach(result => {
+      //Check if assignment has expected results
+      if (result.assignment.expectedResults.length === 3) {
+        totalValid += 1;
+
+        if (result.marks < result.assignment.expectedResults[level]) {
+          failed += 1;
+        }
+      }
+    })
+
+    if (totalValid === 0) return 'No assignments with expected results completed';
+    return `${failed}/${totalValid}`;
   }
 
   //Gets average from student's results
@@ -582,13 +681,13 @@ const TeacherHomepage = props => {
   //Opens modal showing classes assignments
   const showAssignmentsModal = () => {
     //Function returns the results linked to the assignment passed into the function
-    const getAssignmentResults = (results, assignmentTitle) => {
-      return [...results].filter(result => result.assignment.title === assignmentTitle);
+    const getAssignmentResults = (results, assignmentID) => {
+      return [...results].filter(result => result.assignment._id === assignmentID);
     }
 
     //Function returns the students that have completed the assignment passed into the function
     const missingStudents = assignment => {
-      const completedAssignments = getAssignmentResults(currentClass.results, assignment.title);
+      const completedAssignments = getAssignmentResults(currentClass.results, assignment._id);
       if (completedAssignments.length === 0) return 'No results yet';
 
       let students = [...currentClass.students];
@@ -605,7 +704,7 @@ const TeacherHomepage = props => {
 
     //Function returns the average score from the results of the assignment passed into the function
     const getAverageResult = assignment => {
-      const completedAssignments = getAssignmentResults(currentClass.results, assignment.title);
+      const completedAssignments = getAssignmentResults(currentClass.results, assignment._id);
       if (completedAssignments.length === 0) return 'No results yet';
 
       //addup percentages of each result then find average percentage
@@ -621,7 +720,7 @@ const TeacherHomepage = props => {
 
     //Returns all scores ranked (as list items)
     const scoresRanked = assignment => {
-      const completedAssignments = getAssignmentResults(currentClass.results, assignment.title);
+      const completedAssignments = getAssignmentResults(currentClass.results, assignment._id);
       if (completedAssignments.length === 0) return <li>No results yet</li>;
 
       let students = [];
@@ -631,6 +730,7 @@ const TeacherHomepage = props => {
         const isLate = isResultLate(result);
 
         students.push({
+          _id: result.student._id,
           username: result.student.username,
           mark: result.marks,
           score: Number(((result.marks / assignment.maxMarks) * 100).toFixed(0)),
@@ -652,13 +752,31 @@ const TeacherHomepage = props => {
         </ol>)
       }
 
+      const getExpectedScore = (assignment, student) => {
+        const level = getStudentAttainment(student, true);
+
+        if (level === -1) return 'N/A';
+
+        if (assignment.expectedResults.length !== 3) return 'Expected results not set';
+
+        if (student.mark < assignment.expectedResults[level]) {
+          return `Below (${assignment.expectedResults[level]}/${assignment.maxMarks})`;
+        } else if (student.mark === assignment.expectedResults[level]) {
+          return `Yes (${assignment.expectedResults[level]}/${assignment.maxMarks})`;
+        } else {
+          return `Above (${assignment.expectedResults[level]}/${assignment.maxMarks})`;
+        }
+      }
+
       const renderAsTable = () => {
         return (<table id="class-results-table">
           <thead>
             <tr>
               <th>Rank</th>
               <th>Student</th>
+              <th>Level</th>
               <th>Score</th>
+              <th>At expected?</th>
               <th>Date</th>
               <th>On time?</th>
             </tr>
@@ -668,7 +786,9 @@ const TeacherHomepage = props => {
               return (<tr key={index}>
                 <td>{index + 1}</td>
                 <td>{student.username}</td>
+                <td>{getStudentAttainment(student)}</td>
                 <td>{`${student.mark}/${assignment.maxMarks}`}</td>
+                <td>{getExpectedScore(assignment, student)}</td>
                 <td>{student.date}</td>
                 <td>{student.isLate ? 'LATE' : 'ON TIME'}</td>
               </tr>)
@@ -682,7 +802,7 @@ const TeacherHomepage = props => {
 
     //Returns all questions with their average (as list items)
     const questionsSummarised = assignment => {
-      const completedAssignments = getAssignmentResults(currentClass.results, assignment.title);
+      const completedAssignments = getAssignmentResults(currentClass.results, assignment._id);
       if (completedAssignments.length === 0) return <li>No results yet</li>;
 
       let questions = [];
@@ -717,7 +837,7 @@ const TeacherHomepage = props => {
         return 'Times not recorded';
       } else {
         //Getting all the results of the passed in assignment
-        const completedAssignments = getAssignmentResults(currentClass.results, assignment.title);
+        const completedAssignments = getAssignmentResults(currentClass.results, assignment._id);
 
         let total = 0;
         let count = 0;
@@ -817,7 +937,7 @@ const TeacherHomepage = props => {
       if (studentResults.length === 0) return null;
 
       //Check if a result is linked to the passes in assignment
-      const completedResult = studentResults.filter(result => result.assignment.title === assignment.title);
+      const completedResult = studentResults.filter(result => result.assignment._id === assignment._id);
 
       if (completedResult.length === 0) return null;
       return completedResult[0];
@@ -904,6 +1024,31 @@ const TeacherHomepage = props => {
       });
     }
 
+    //Returns whether the result is greater than the expected result
+    const getExpected = assignment => {
+      //Get results which are from the selected student
+      const completedResult = getResult(assignment);
+      if (completedResult === null) return 'N/A';
+
+      //If the expected result array doesn't have 3 items then the expected result isn't set
+      if (assignment.expectedResults.length !== 3) return 'Expected result not set';
+
+      //Getting the attainment level of the student as a number
+      const level = getStudentAttainment(currentStudent, true);
+
+      //If level is -1 then the attainment level isn't set yet
+      if (level === -1) return 'Attainment level not set';
+
+      //Checking if the result is greater than the expected standard
+      if (completedResult.marks < assignment.expectedResults[level]) {
+        return `Below, expected is: ${assignment.expectedResults[level]}/${assignment.maxMarks}`;
+      } else if (completedResult.marks === assignment.expectedResults[level]) {
+        return `Yes`;
+      } else {
+        return `Above, expected is: ${assignment.expectedResults[level]}/${assignment.maxMarks}`;
+      }
+    }
+
     //Returns the assignment card for the inputted assignment
     const renderAssignment = assignment => {
       return (<div className="student-assignment-card" key={assignment._id}>
@@ -912,6 +1057,7 @@ const TeacherHomepage = props => {
           <li><b>Completed</b> - {isCompleted(assignment)}</li>
           <li><b>Date</b> - {getDate(assignment)}</li>
           <li><b>Score</b> - {getScore(assignment)}</li>
+          <li><b>At expected?</b> - {getExpected(assignment)}</li>
           <li><b>Time taken</b> - {getTimeTaken(assignment)}</li>
           <li><b>Hints used</b> - {getHintsUsed(assignment)}</li>
           <li><b>Answers</b></li>
@@ -1028,7 +1174,7 @@ const TeacherHomepage = props => {
         //Looping through all assignments (3 columns per assignment)
         currentClass.assignments.forEach(assignment => {
           //Getting the student's result for the current assignment
-          let assignmentResult = results.filter(result => result.assignment.title === assignment.title);
+          let assignmentResult = results.filter(result => result.assignment._id === assignment._id);
 
           if (assignmentResult === null || assignmentResult.length === 0) {
             //If no result found state that the assignment is missing
@@ -1104,7 +1250,7 @@ const TeacherHomepage = props => {
         let j = 0;
         for (const assignment of currentClass.assignments) {
           //Getting the student's result that links to the current assignment
-          let assignmentResult = results.filter(result => result.assignment.title === assignment.title);
+          let assignmentResult = results.filter(result => result.assignment._id === assignment._id);
 
           //If no result found then their result is 0 (not completed)
           if (assignmentResult.length === 0) {
@@ -1250,6 +1396,10 @@ const TeacherHomepage = props => {
                 <td className="right">{getLateSubmissions()}</td>
               </tr>
               <tr>
+                <td className="left">Results below expected</td>
+                <td className="right">{expectedClassResults()}</td>
+              </tr>
+              <tr>
                 <td className="left">Poorest topic</td>
                 <td className="right">{getClassPoorestTopic()}</td>
               </tr>
@@ -1314,6 +1464,10 @@ const TeacherHomepage = props => {
               <tr>
                 <td className="left">Questions left blank</td>
                 <td className="right">{blankAnswers()}</td>
+              </tr>
+              <tr>
+                <td className="left">Results below expected</td>
+                <td className="right">{expectedStudentResults()}</td>
               </tr>
               <tr>
                 <td className="left">Poorest topic</td>
