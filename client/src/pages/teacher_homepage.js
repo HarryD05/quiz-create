@@ -752,6 +752,7 @@ const TeacherHomepage = props => {
         </ol>)
       }
 
+      //Returns whether the score is below, at or above the expected result
       const getExpectedScore = (assignment, student) => {
         const level = getStudentAttainment(student, true);
 
@@ -765,6 +766,18 @@ const TeacherHomepage = props => {
           return `Yes (${assignment.expectedResults[level]}/${assignment.maxMarks})`;
         } else {
           return `Above (${assignment.expectedResults[level]}/${assignment.maxMarks})`;
+        }
+      }
+
+      const getBelow = student => {
+        const level = getStudentAttainment(student._id, true);
+
+        if (level === -1) return '';
+
+        if (assignment.expectedResults.length !== 3) return '';
+
+        if (student.mark < assignment.expectedResults[level]) {
+          return 'below';
         }
       }
 
@@ -783,7 +796,7 @@ const TeacherHomepage = props => {
           </thead>
           <tbody>
             {students.map((student, index) => {
-              return (<tr key={index}>
+              return (<tr key={index} className={getBelow(student)}>
                 <td>{index + 1}</td>
                 <td>{student.username}</td>
                 <td>{getStudentAttainment(student)}</td>
@@ -1232,8 +1245,9 @@ const TeacherHomepage = props => {
   }
 
   //Generates a random rgb colour
-  const randomColour = (alpha = 1) => {
-    return `rgb(${Math.round(Math.random() * 255)}, ${Math.round(Math.random() * 255)},  ${Math.round(Math.random() * 255)}, ${alpha})`;
+  const randomColour = (alpha = 'FF') => {
+    let n = (Math.random() * 0xfffff * 1000000).toString(16);
+    return '#' + n.slice(0, 6) + alpha;
   }
 
   //Functions to display charts of results in modal
@@ -1259,19 +1273,21 @@ const TeacherHomepage = props => {
       for (const student of currentClass.students) {
         let results = getStudentResults(student);
 
-        output.push([]); //Making an array for each student to hold their assignment results
-
         let j = 0;
         for (const assignment of currentClass.assignments) {
           //Getting the student's result that links to the current assignment
           let assignmentResult = results.filter(result => result.assignment._id === assignment._id);
 
+          if (i === 0) {
+            output.push([]); //Making an array for each assignment to hold their assignment results
+          }
+
           //If no result found then their result is 0 (not completed)
           if (assignmentResult.length === 0) {
-            output[i][j] = 0;
+            output[j][i] = 0;
           } else {
             //Getting their result as a percentage
-            output[i][j] = Number((assignmentResult[0].marks / assignment.maxMarks).toFixed(2)) * 100;
+            output[j][i] = Number((assignmentResult[0].marks / assignment.maxMarks).toFixed(2)) * 100;
           }
           j++;
         }
@@ -1279,6 +1295,44 @@ const TeacherHomepage = props => {
       }
 
       return output;
+    }
+
+    //Returns the amount of students in each attainment level
+    const getLevels = () => {
+      //Getting the attainment level lists
+      const { high, mid, low } = currentClass;
+
+      return [high.length, mid.length, low.length];
+    }
+
+    //Returns the amount of below, at, above expected results for 
+    //each attainment level
+    const getAttainmentResults = () => {
+      const data = [
+        [0, 0, 0], [0, 0, 0], [0, 0, 0]
+      ];
+
+      //Getting all results
+      const results = currentClass.results;
+
+      //Looping through all results
+      for (const result of results) {
+        const studentLevel = getStudentAttainment(result.student._id, true);
+
+        //If the student has an attainment level add their result
+        if (studentLevel !== -1) {
+          //Check if result is below, at or above expected result
+          if (result.marks < result.assignment.expectedResults[studentLevel]) {
+            data[0][studentLevel] += 1;
+          } else if (result.marks === result.assignment.expectedResults[studentLevel]) {
+            data[1][studentLevel] += 1;
+          } else {
+            data[2][studentLevel] += 1;
+          }
+        }
+      }
+
+      return data;
     }
 
     if (currentClass === null) {
@@ -1294,23 +1348,52 @@ const TeacherHomepage = props => {
         content: <div id="classGraphs">
           <h3>Assignment statuses</h3>
           <i>The number of assignments that are...</i>
-
           <Graph
-            type="Pie"
+            type="Bar"
             data={getStatuses()}
             colours={['#44ffb473', '#7a53fc73', '#fc535373']}
-            labels={['On time', 'Late', 'Missing']}
+            labels={['Submitted on time', 'Submitted Late', 'Missing']}
+          />
+
+          <h3>Attainment levels</h3>
+          <i>Proportion of students in each attainment level</i>
+          <Graph
+            type="Pie"
+            data={getLevels()}
+            colours={['#44ffb473', '#7a53fc73', '#fc535373']}
+            labels={['High', 'Mid', 'Low']}
+          />
+
+          <h3>Attainment level results</h3>
+          <i>Amount of below, at and above expected result for assignments</i>
+          <Graph
+            type="GroupedBar"
+            data={getAttainmentResults()}
+            colours={['#fc535373', '#7a53fc73', '#44ffb473']}
+            labels={['Low', 'Mid', 'High']}
+            secondaryLabels={['Below expected', 'At expected', 'Above expected']}
+            xtitle={'Attainment level'}
+            ytitle={'Number of results'}
           />
 
           <h3>All results</h3>
-          <i>Each line is the results of the student</i>
-
           <Graph
-            type="Line"
+            type="GroupedBar"
             data={getResults()}
-            lineLabels={currentClass.students.map(student => student.username)}
-            colours={currentClass.students.map(() => randomColour())}
-            labels={currentClass.assignments.map(assignment => assignment.title)}
+            labels={currentClass.students.map(student => {
+              const level = getStudentAttainment(student);
+              let addition = '';
+              if (level === 'High' || level === 'Mid' || level === 'Low') {
+                addition = `(${level})`;
+              }
+
+              return `${student.username} ${addition}`;
+            })}
+            colours={currentClass.students.map(() => randomColour('73'))}
+            secondaryLabels={currentClass.assignments.map(assignment => assignment.title)}
+            yaxis={true}
+            xtitle={'Result (%)'}
+            ytitle={'Assignments'}
           />
         </div>
       });

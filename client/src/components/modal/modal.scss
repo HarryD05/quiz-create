@@ -106,7 +106,7 @@
 
     thead {
       tr {
-        background-color: rgb(183, 184, 255);
+        background-color: #b7b8ff;
         height: 2em;
       }
     }
@@ -114,7 +114,11 @@
     tbody {
       white-space: nowrap;
       tr:nth-child(even) {background-color: #e6e6e6;}
-      tr:nth-child(odd) {background-color: #f8f8f8}
+      tr:nth-child(odd) {background-color: #f8f8f8;}
+
+      tr.below {
+        background-color: #ff9f9f;
+      }
     }
   }
 
@@ -122,6 +126,8 @@
     .pie {
       max-height: 300px;
     }
+
+    margin-bottom: 1rem;
   }
 
   #student-assignments, #class-assignments {
