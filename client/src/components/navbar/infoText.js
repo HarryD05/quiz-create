@@ -25,7 +25,9 @@ const getInfoText = path => {
           <li>The table below will update with the data linked to the selected class.</li>
           <li>The percentage next to the poorest/best topic is the average score this class achieves on questions of that topic.</li>
           <li>The 'see all assignments' button will bring up a popup displaying each assignment you have for the selected class which outlines the due date, average score achieved, students who haven't completed the assignment, students who have completed the assignment (and their mark) and each question is displayed with the average mark achieved. The popup has a dropdown menu where you can select which assignment you want to see, you can also select to see all assignments.</li>
-          <li>The 'set new assignment' button will redirect you to the quiz creation page of the website.</li>
+          <li>The 'set new assignment' button will redirect you to the quiz creation page of the website, where you can create an assignment using questions from a bank of questions (all questions other teachers have made in your subject) or your own question then assign them to the selected class or print the quiz out instead.</li>
+          <li>The 'export class data' button will download a .csv file of the currently selected class' results.</li>
+          <li>The 'see class graphs' button will open a popup with a few graphs analysing the currently selected class's assignments and results.</li>
         </ul>
         <li>Your Students</li>
         <ul>
@@ -33,6 +35,7 @@ const getInfoText = path => {
           <li>The table below will update with the data linked to the selected student.</li>
           <li>The percentage next to the poorest/best topic is the average score this student achieves on questions of that topic.</li>
           <li>The 'see all student's assignments' button will bring up a popup displaying each assignment you have set for this student which whether or not they have completed the assignment, their score, the time it took them (if you set the assignment to record the time), on which questions they used hints and their answers. The popup has a dropdown menu where you can select which assignment you want to see, you can also select to see all assignments</li>
+          <li>The attainment level is used to categorise the class into levels especially useful for mixed ability groups, use the dropdown selector to update the currently selected student's attainment level (high, mid or low) by pressing the 'change attainment level' button below the dropdown menu.</li>
         </ul>
         <li>Create a new class</li>
         <ul>
