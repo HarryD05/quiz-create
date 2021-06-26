@@ -1156,9 +1156,10 @@ const TeacherHomepage = props => {
 
       //3 columns for each assignment 
       currentClass.assignments.forEach(assignment => {
-        headers.push(`${assignment.title} percentage`);
-        headers.push(`${assignment.title} time taken`);
-        headers.push(`${assignment.title} hints used`);
+        headers.push(`${assignment.title} - result`);
+        headers.push(`${assignment.title} - expected percentage (based on attainment level)`);
+        headers.push(`${assignment.title} - time taken`);
+        headers.push(`${assignment.title} - hints used`);
       })
     } else {
       //If isHeader parameter is false then the data of 
@@ -1168,8 +1169,11 @@ const TeacherHomepage = props => {
       currentClass.students.forEach(student => {
         const results = getStudentResults(student); //Getting all the students results
 
-        let output = [student.username, getStudentAttainment(student)];
+        let output = [student.username, getStudentAttainment(student._id)];
         //First items in row should be student's name and attainment level
+
+        //Getting the student's attainment level
+        const level = getStudentAttainment(student._id, true);
 
         //Looping through all assignments (3 columns per assignment)
         currentClass.assignments.forEach(assignment => {
@@ -1178,10 +1182,20 @@ const TeacherHomepage = props => {
 
           if (assignmentResult === null || assignmentResult.length === 0) {
             //If no result found state that the assignment is missing
-            output = [...output, 'Missing', 'Missing', 'Missing'];
+            output = [...output, 'Missing', 'Missing', 'Missing', 'Missing'];
           } else {
             //Extracting the found result for the current assignment
             const result = assignmentResult[0];
+
+            let expectedResult = '';
+            //Getting the expected result for the current assignment
+            if (level === -1) {
+              expectedResult = 'Attainment level not set';
+            } else if (assignment.expectedResults.length !== 3) {
+              expectedResult = 'Expected results not set';
+            } else {
+              expectedResult = convertToPercentage(assignment.expectedResults[level], assignment.maxMarks);
+            }
 
             //Calculating the results data for the current assignment
             const percentage = convertToPercentage(result.marks, assignment.maxMarks);
@@ -1190,7 +1204,7 @@ const TeacherHomepage = props => {
 
             //Adding result data to data list
             output = [
-              ...output, percentage, timeTaken, hints
+              ...output, percentage, expectedResult, timeTaken, hints
             ];
           }
         });
