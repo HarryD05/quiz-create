@@ -53,6 +53,29 @@ export default {
             _id
             username
             role
+            results {
+              _id
+              marks
+              timeTaken
+              date
+              answers
+              hints
+              assignment {
+                _id
+                title
+                dueDate
+                maxMarks
+                recordTime
+                expectedResults
+                questions {
+                  question
+                  imageURL
+                  topic
+                  correct
+                  marks
+                }
+              }
+            }
             classes {
               _id
               name
@@ -117,6 +140,12 @@ export default {
                   marks
                   correct
                   wrong
+                }
+                class {
+                  _id 
+                  name
+                  subject
+                  qualification
                 }
               }
             }

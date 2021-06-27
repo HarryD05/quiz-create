@@ -1,10 +1,148 @@
 //Importing the default styling from the index.scss page
 @import 'index'; 
 
+%card {
+  width: 100%;
+  border: 1px solid black;
+  border-radius: 8px;
+  padding: 8px;
+  text-align: left;
+  font-size: 14px;
+  background-color: #DAE8FC;
+  margin-bottom: 8px;
+
+  .heading {
+    text-align: center;
+    font-weight: 700;
+    border-bottom: 1px solid grey;
+    padding-bottom: 4px;
+    margin-bottom: 4px;
+  }
+
+  p {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .footer {
+    width: 100%;
+    text-align: center;
+  
+    .btn {
+      margin-top: 1em;
+      font-size: 14px;
+
+      &:hover {
+        background-color: #e4e4e4;
+      }
+    }
+  }
+}
+
+%top-input {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+
+  .form-control {
+    margin-top: 8px;
+    width: 100%;
+  }
+
+  .btn {
+    margin: auto;
+    margin-top: 8px;
+    height: 2em;
+  }
+}
+
 #student-homepage {
   @extend %main; //gives the main page styling 
   //(white background, shadow etc.)
 
   max-width: calc(80% - 4rem);
   width: 640px; 
+
+  #welcome-msg {
+    text-align: left;
+    margin-bottom: 2rem;
+    font-weight: 700;
+  }
+
+  #shp-main {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    text-align: left;
+
+    /*if the screen is smaller than 880px wide 
+    (make tables vertically stacked instead of 
+    horizontally stacked)*/
+    @media (max-width: 600px) {
+      grid-template-columns: 100%;
+
+      #assignments {
+        border-right: none !important;
+        border-bottom: 1px solid black;
+        padding-bottom: 2rem !important;
+      }
+
+      #classes {
+        padding-top: 2rem !important;
+        border-left: none !important;
+        border-top: 1px solid black;
+      }
+    }
+
+    .title {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    #assignments {
+      border-right: 1px solid black;
+      padding: 8px;
+
+      #search-assignments {
+        @extend %top-input;
+
+        .btn {
+          visibility: hidden;
+        }
+      }
+
+      #assignment-cards {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+
+        #assignment-card {
+          @extend %card;
+
+          &.missing {
+            background-color: #ff9f9f !important;
+          }
+        }
+      }
+    }
+
+    #classes {
+      border-left: 1px solid black;
+      padding: 8px;
+
+      #join-class {
+        @extend %top-input;
+      }
+
+      #class-cards {
+        display: flex;
+        justify-content: center;
+
+        #class-card {
+          @extend %card;
+        }
+      }
+    }
+  }
 }
