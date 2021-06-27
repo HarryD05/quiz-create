@@ -1,0 +1,47 @@
+//Importing the default styling from the index.scss page
+@import 'index'; 
+
+//styling for the authentication page
+#auth {
+  @extend %main; //gives the main page styling 
+  //(white background, shadow etc.)
+
+  max-width: calc(80% - 4rem);
+  width: 250px; 
+
+  #options {
+    width: 100%;
+    
+    display: grid;
+    grid-template-columns: 50% 50%;
+
+    .optionBtn {
+      outline: none;
+      border: none;
+      background-color: white;
+      border-bottom: 1px solid white;
+      font-size: 17px;
+    }
+
+    .current {
+      color: #1d61e9;
+    }
+
+    .other {
+      color: #838383;
+
+      &:hover {
+        color: black;
+        cursor: pointer;
+      }
+    }
+
+    #left {
+      border-right: 1px solid silver;
+    }
+
+    #right {
+      border-left: 1px solid silver;
+    }
+  }
+}

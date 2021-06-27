@@ -1,0 +1,10 @@
+//Importing the default styling from the index.scss page
+@import 'index'; 
+
+#student-homepage {
+  @extend %main; //gives the main page styling 
+  //(white background, shadow etc.)
+
+  max-width: calc(80% - 4rem);
+  width: 640px; 
+}

@@ -7,7 +7,8 @@ import { AuthContext } from '../context/AuthContext';
 import { ModalContext } from '../context/ModalContext';
 
 //Importing styling
-import './pages.scss';
+import './styling/index.scss';
+import './styling/auth.scss';
 
 //Authentication functional component
 const Authentication = props => {

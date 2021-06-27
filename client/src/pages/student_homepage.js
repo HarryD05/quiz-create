@@ -1,12 +1,21 @@
 //React dependencies 
-import React from 'react';
+import React, { useContext } from 'react';
+
+//Importing authContext so data about the current user can be accessed
+import { AuthContext } from '../context/AuthContext';
+
+//Importing styling
+import './styling/index.scss';
+import './styling/studenthomepage.scss';
 
 //Student homepage functional component
 const StudentHomepage = () => {
+  //Setting up the authContext
+  const authContext = useContext(AuthContext);
+
   return (
     <div id="student-homepage">
-      <h2>Student homepage</h2>
-      <p>This page with be the welcome page for students</p>
+      <h3>Welcome {authContext.user.username}</h3>
     </div>
   );
 }

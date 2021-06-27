@@ -1,0 +1,155 @@
+//Importing the default styling from the index.scss page
+@import 'index'; 
+
+#teacher-homepage {
+  @extend %main; //gives the main page styling 
+  //(white background, shadow etc.)
+
+  max-width: calc(80% - 4rem);
+  width: 640px; 
+
+  #welcome-msg {
+    text-align: left;
+    margin-bottom: 2rem;
+    font-weight: 700;
+  }
+
+
+  #thp-tables {
+    p {
+      margin-bottom: 1rem;
+    }
+
+    display: grid;
+    grid-template-columns: 50% 50%;
+
+    .table {
+      margin: 1rem 0;
+      table-layout: fixed;
+      width: 100%;
+
+      tbody {
+        width: 100%;
+
+        td {
+          padding: 2px;
+          height: 3em;
+        }
+
+        .left {
+          font-weight: 500;
+          width: 50%;
+          text-align: left;
+        }
+        .right {
+          text-align: right;
+        }
+      }
+    }
+
+    .btn {
+      max-height: 3em;
+      width: 7rem;
+      margin: 8px;
+    }
+
+    #classes {
+      border-right: 1px solid black;
+      padding-right: 2rem;
+
+      #class-buttons {
+        display: flex;
+        align-items: stretch;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+    }
+
+    #students {
+      border-left: 1px solid black;
+      padding-left: 2rem;
+
+      #student-buttons {
+        display: flex;
+        justify-content: center;
+      }
+    }
+
+    /*if the screen is smaller than 880px wide 
+    (make tables vertically stacked instead of 
+    horizontally stacked)*/
+    @media (max-width: 880px) {
+      grid-template-columns: 100%;
+
+      table {
+        tbody {
+          tr {
+            td {
+              border-bottom: 1px dashed gray;
+
+              /*right column has left border (centre)*/
+              &:last-child {
+                border-left: 1px dashed gray;
+              }
+            }
+
+            /*bottom row doesn't need border below*/
+            &:last-child {
+              td {
+                border-bottom: none;
+              }
+            }
+          } 
+        }
+      }
+
+      #classes {
+        border:none;
+        border-bottom: 1px solid black;
+
+        padding: 0;
+        padding-bottom: 2rem;
+
+        #class-buttons {
+          display: flex;
+          align-items: stretch;
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+      }
+
+      #students {
+        border: none;
+        border-top: 1px solid black;
+
+        padding: 0;
+        padding-top: 2rem;
+      }
+    }
+  }
+
+  #create-class {
+    margin-top: 2rem;
+    
+    #class-form {
+      width: 100%;
+
+      .form-control {
+        width: 320px;
+        max-width: 80%;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .form-actions {  
+        width: 100%;
+        text-align: center !important;
+
+        .btn {
+          width: 8rem !important;
+          height: 3em !important;
+        }
+      }
+    }
+  }
+}

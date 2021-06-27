@@ -1,6 +1,6 @@
 //Import react dependency
 import React from 'react';
-import { Line, Pie, Bar } from 'react-chartjs-2';
+import { Pie, Bar } from 'react-chartjs-2';
 
 //Creating the modal react component
 const Graph = props => {

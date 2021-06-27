@@ -13,6 +13,10 @@ import ClassService from '../services/ClassService';
 //Importing components
 import Graph from '../components/graph/graph';
 
+//Importing styling
+import './styling/index.scss';
+import './styling/teacherhomepage.scss';
+
 const formatDate = date => {
   const dateParts = date.toDateString().split(' ');
 

@@ -9,7 +9,8 @@ import AssignmentService from '../services/AssignmentService';
 import QuestionService from '../services/QuestionService';
 
 //Importing styling
-import './pages.scss';
+import './styling/index.scss';
+import './styling/quizcreation.scss';
 
 //Quiz creation functional component
 const QuizCreation = props => {
