@@ -284,8 +284,19 @@ const QuizCreation = props => {
       }, authContext.token);
 
       if (newQuestion) {
+        //Add question to curent questions
         setCurrentQuestions([...currentQuestions, newQuestion]);
+
+        //Reseting the new question form
+        setNewQuestionInput({
+          question: '', imageURL: '', topic: '', hint: '', explanation: '', qtype: '', option1: '',
+          option2: '', option3: '', option4: '', correct: '', marks: ''
+        });
+
+        //Returning to the main quiz creation page
         setCreateQuestionFormShowing(false);
+
+        //Refetching all the questions to update the question bank to include the new question
         await fetchQuestions();
       } else {
         modalContext.updateModal({
@@ -420,6 +431,9 @@ const QuizCreation = props => {
     //stops the page reloading when the button is pressed
     e.preventDefault();
 
+    console.log('called');
+    console.log(currentQuestions);
+
     //Showing error if no questions as assignment can't have 0 questions
     if (currentQuestions.length === 0) {
       modalContext.updateModal({
@@ -442,7 +456,7 @@ const QuizCreation = props => {
     expectedMid = Number(expectedMid);
     expectedLow = Number(expectedLow);
 
-    if (expectedHigh !== 0 && expectedLow !== 0 && expectedLow !== 0) {
+    if (expectedHigh !== 0 && expectedMid !== 0 && expectedLow !== 0) {
       //If all the expected results have a value above 0 (have been specified)
       //Then format them to be submitted to the assignment api call
       expectedResults = [expectedLow, expectedMid, expectedHigh];
@@ -497,6 +511,8 @@ const QuizCreation = props => {
   //Opens the are you sure modal with yes or no
   const openSureModal = e => {
     e.preventDefault();
+
+    console.log('called1');
 
     modalContext.updateModal({
       title: 'Publish assignment',
@@ -735,22 +751,23 @@ const QuizCreation = props => {
 
             {expectedShowing ? renderExpectedSliders() : null}
           </div>
-        </form>
 
-        <div id="all-questions">
-          <div id="all-questions-header">
-            <h3>Current questions</h3>
 
-            <div id="buttons">
-              <button className="btn" type="button" onClick={exportAssignment}>Export assignment</button>
-              <button className="btn" type="submit">Publish assignment</button>
+          <div id="all-questions">
+            <div id="all-questions-header">
+              <h3>Current questions</h3>
+
+              <div id="buttons">
+                <button className="btn" type="button" onClick={exportAssignment}>Export assignment</button>
+                <button className="btn" type="submit">Publish assignment</button>
+              </div>
+            </div>
+
+            <div id="current-questions">
+              {returnQuestions()}
             </div>
           </div>
-
-          <div id="current-questions">
-            {returnQuestions()}
-          </div>
-        </div>
+        </form>
       </div>
     )
   }

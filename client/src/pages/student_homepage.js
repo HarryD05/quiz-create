@@ -81,11 +81,7 @@ const StudentHomepage = () => {
       const completed = isCompleted(assignment);
 
       if (completed === false) {
-        if (new Date() - new Date(Number(assignment.dueDate)) > 0) {
-          return 'Missing';
-        } else {
-          return 'Not submitted yet';
-        }
+        return 'Not completed yet';
       }
 
       //If the assignment is completed then check if it was handed in late or not
@@ -122,17 +118,57 @@ const StudentHomepage = () => {
     return (
       <div id="assignment-card" className={checkMissing(assignment)}>
         <div className="heading">{assignment.title}</div>
-        <p><div>Status</div><div>{getStatus(assignment)}</div></p>
-        <p><div>Questions</div><div>{assignment.questions.length}</div></p>
-        <p><div>Marks</div><div>{totalMarks(assignment)}</div></p>
+        <p><div>Status</div><div className="right">{getStatus(assignment)}</div></p>
+        <p><div>Questions</div><div className="right">{assignment.questions.length}</div></p>
+        <p><div>Marks</div><div className="right">{totalMarks(assignment)}</div></p>
         <p>
           <div>Class</div>
-          <div>{assignment.class.name} ({assignment.class.qualification} {assignment.class.subject})</div>
+          <div className="right">{assignment.class.name} ({assignment.class.qualification} {assignment.class.subject})</div>
         </p>
-        <p><div>Due date</div><div>{formatDate(assignment.dueDate)}</div></p>
+        <p><div>Due date</div><div className="right">{formatDate(assignment.dueDate)}</div></p>
         <div className="footer">
-          <button className="btn">{isCompleted(assignment) ? 'See result' : 'Start assignment'}</button>
+          <button className="btn" className="right">{isCompleted(assignment) ? 'See result' : 'Start assignment'}</button>
         </div>
+      </div>
+    );
+  }
+
+  //Returns class cards for all the classes the student is in
+  const renderClassCards = () => {
+    //First get all the assignments by looping through every class
+    if (authContext.user.classes.length === 0) return 'No classes yet...';
+
+    return authContext.user.classes.map(class_ => renderClassCard(class_));
+  }
+
+  //Returns a class card with the data linked to the passed in class
+  const renderClassCard = class_ => {
+    //Returns the number of completed or incomplete assignments
+    const assignmentsCompleted = isCompleted => {
+      //Total number of assignments
+      const total = class_.assignments.length;
+
+      //Getting the results that link to the passed in class
+      const results = [...authContext.user.results].filter(result => {
+        return result.assignment.class._id === class_._id
+      });
+
+      //If looking for completed assignments just return the number of results
+      //the user has that are linked to this class
+      if (isCompleted) return results.length;
+
+      //if looking for incomplete assignments return the total - results 
+      return total - results.length;
+    }
+
+    return (
+      <div id="class-card">
+        <div className="heading">{class_.name} ({class_.qualification} {class_.subject})</div>
+        <p><div>Teacher</div><div>{class_.teacher.username}</div></p>
+        <p><div>Completed assignments</div><div className="right">{assignmentsCompleted(true)}</div></p>
+        <p><div>Assignments still to do</div><div className="right">{assignmentsCompleted(false)}</div></p>
+        <p><div>Best topic</div><div className="right">0</div></p>
+        <p><div>Weakest topic</div><div className="right">0</div></p>
       </div>
     );
   }
@@ -172,13 +208,7 @@ const StudentHomepage = () => {
           </div>
 
           <div id="class-cards">
-            <div id="class-card">
-              <div className="heading">Class name</div>
-              <p><div>Completed assignments</div><div>0</div></p>
-              <p><div>Missing assignments</div><div>0</div></p>
-              <p><div>Best topic</div><div>0</div></p>
-              <p><div>Weakest topic</div><div>0</div></p>
-            </div>
+            {renderClassCards()}
           </div>
         </div>
       </div>

@@ -74,6 +74,9 @@ export default {
                   correct
                   marks
                 }
+                class {
+                  _id
+                }
               }
             }
             classes {
@@ -82,6 +85,10 @@ export default {
               subject
               qualification
               joiningCode
+              teacher {
+                _id
+                username
+              }
               students {
                 _id
                 username
