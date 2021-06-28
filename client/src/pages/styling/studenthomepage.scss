@@ -19,6 +19,12 @@
     margin-bottom: 4px;
   }
 
+  .subheading {
+    text-align: center;
+    font-style: italic;
+    margin-bottom: 8px;
+  }
+
   p {
     display: flex;
     flex-direction: row;
@@ -107,6 +113,7 @@
     #assignments {
       border-right: 1px solid black;
       padding: 8px;
+      text-align: center;
 
       #search-assignments {
         @extend %top-input;

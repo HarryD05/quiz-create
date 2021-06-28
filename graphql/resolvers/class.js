@@ -67,6 +67,11 @@ module.exports = {
         throw new Error('INVALID JOINING CODE');
       }
 
+      //Checking if the student is already in the class
+      if (targetClass.students.indexOf(req.userId) !== -1) {
+        throw new Error('Already in class');
+      }
+
       //Adds student to class' student list
       targetClass.students.push(req.userId);
       const result = await targetClass.save();

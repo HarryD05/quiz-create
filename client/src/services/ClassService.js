@@ -26,6 +26,23 @@ export default {
 
     return await Service.sendRequest('createClass', requestBody, token);
   },
+  joinClass: async (joiningCode, token) => {
+    const requestBody = {
+      query: `
+        mutation joinClass ($joiningCode: String!) {
+          joinClass (joiningCode: $joiningCode) {
+            _id
+            name
+          }
+        }
+      `,
+      variables: {
+        joiningCode
+      }
+    };
+
+    return await Service.sendRequest('joinClass', requestBody, token);
+  },
   setStudentLevel: async (info, token) => {
     //Extracting the required data for the API call from the input
     const { classID, studentID, level } = info;

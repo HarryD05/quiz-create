@@ -1,10 +1,13 @@
 //React dependencies 
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 
 //Importing authContext so data about the current user can be accessed
 //and modalContext so modals can be displayed
 import { AuthContext } from '../context/AuthContext';
 import { ModalContext } from '../context/ModalContext';
+
+//Importing services to make class API calls
+import ClassService from '../services/ClassService';
 
 //Importing styling
 import './styling/index.scss';
@@ -15,6 +18,10 @@ const StudentHomepage = props => {
   //Setting up the contexts
   const authContext = useContext(AuthContext);
   const modalContext = useContext(ModalContext);
+
+  //Setting up state
+  const [searchKeyWord, setSearchKeyWord] = useState('');
+  const [joiningCode, setJoiningCode] = useState('');
 
   //Returns assignment cards for all assignments
   const renderAssignmentCards = () => {
@@ -36,6 +43,36 @@ const StudentHomepage = props => {
 
     //If there are no assignments then return that
     if (assignments.length === 0) return 'No assignments yet';
+
+    //Filtering the assignment list to check for the search key word
+    if (searchKeyWord !== '') {
+      assignments = [...assignments].filter(assignment => {
+        //Putting filter word into a case insensitive regular expression
+        //So when searching matching case isn't required
+        let filterWord = new RegExp(`${searchKeyWord.trim()}`, 'i');
+        let found = false;
+
+        //Checking all data about the assignment for the filterword 
+        if (assignment.title.search(filterWord) !== -1) found = true;
+        else if (assignment.description.search(filterWord) !== -1) found = true;
+        else if (assignment.class.subject.search(filterWord) !== -1) found = true;
+        else if (assignment.class.qualification.search(filterWord) !== -1) found = true;
+        else if (assignment.class.name.search(filterWord) !== -1) found = true;
+
+        //If filterword still not found check questions in the assignments 
+        if (found === false) {
+          assignment.questions.forEach(question => {
+            if (question.question.search(filterWord) !== -1) found = true;
+            else if (question.topic.search(filterWord) !== -1) found = true;
+          })
+        }
+
+        return found;
+      })
+    }
+
+    //If there are no assignments then return that
+    if (assignments.length === 0) return `No assignments match the key word "${searchKeyWord}"`;
 
     //Sorting the assignments by due date
     assignments.sort((a, b) => {
@@ -202,6 +239,8 @@ const StudentHomepage = props => {
     return (
       <div id="assignment-card" className={checkMissing(assignment)}>
         <div className="heading">{assignment.title}</div>
+        <div className="subheading">{assignment.description}</div>
+
         <p><div>Status</div><div className="right">{getStatus(assignment)}</div></p>
         <p><div>Questions</div><div className="right">{assignment.questions.length}</div></p>
         <p><div>Marks</div><div className="right">{totalMarks(assignment)}</div></p>
@@ -344,6 +383,51 @@ const StudentHomepage = props => {
     );
   }
 
+  //Handles input change of search assignments text input 
+  const handleAssignmentSearchChange = e => {
+    setSearchKeyWord(e.target.value);
+  }
+
+  //Handles input change of joining code text input 
+  const handleJoiningSearchChange = e => {
+    setJoiningCode(e.target.value);
+  }
+
+  //Handles onclick for join class button
+  const joinClass = async e => {
+    e.preventDefault(); //Stops the page from reloading
+
+    //Checking if a joining code has been input
+    if (joiningCode.replaceAll(' ', '') !== '') {
+      try {
+        //Make join class API call
+        const classResult = await ClassService.joinClass(joiningCode.replaceAll(' ', ''), authContext.token);
+
+        if (classResult) {
+          modalContext.updateModal({
+            title: 'Success',
+            content: <p>{classResult.name} successfully joined</p>
+          });
+
+          await authContext.updateUser();
+          //refreshes the page so the new class data can be seen
+        } else {
+          modalContext.updateModal({
+            title: 'Error',
+            content: <p>Something went wrong, try again.</p>
+          });
+        }
+      } catch (error) {
+        throw error;
+      }
+    } else {
+      modalContext.updateModal({
+        title: 'Error',
+        content: <p>Please input a class joining code.</p>
+      });
+    }
+  }
+
   return (
     <div id="student-homepage">
       <p id="welcome-msg">Welcome {authContext.user.username}</p>
@@ -354,7 +438,8 @@ const StudentHomepage = props => {
 
           <div id="search-assignments">
             <div className="form-control">
-              <input type="text" name="keyword" autoComplete="off" required />
+              <input type="text" name="keyword" autoComplete="off"
+                onChange={handleAssignmentSearchChange} required />
               <label htmlFor="keyword">Search assignments...</label>
             </div>
 
@@ -371,11 +456,12 @@ const StudentHomepage = props => {
 
           <div id="join-class">
             <div className="form-control">
-              <input type="text" name="joiningCode" autoComplete="off" required />
+              <input type="text" name="joiningCode" autoComplete="off"
+                onChange={handleJoiningSearchChange} value={joiningCode} required />
               <label htmlFor="joiningCode">Joining code</label>
             </div>
 
-            <button className="btn">Join class</button>
+            <button className="btn" onClick={joinClass}>Join class</button>
           </div>
 
           <div id="class-cards">

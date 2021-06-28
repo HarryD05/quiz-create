@@ -149,6 +149,7 @@ export default {
                   correct
                   wrong
                   explanation
+                  topic
                 }
                 class {
                   _id 
