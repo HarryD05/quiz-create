@@ -1,16 +1,29 @@
 //React dependencies 
-import React from 'react';
+import React, { useContext } from 'react';
+
+//Importing the contexts so current user data can be accessed and 
+//modals used
+import { AuthContext } from '../context/AuthContext';
+
+//Importing styling
+import './styling/index.scss';
+import './styling/quiz.scss';
 
 //Quiz taking page functional component
 const Quiz = props => {
-  return (
-    <div id="quiz" style={{ marginTop: '4rem' }}>
-      <h2>Quiz page</h2>
-      <p>This page with have the quiz taking UI - not started yet</p>
+  //Setting up the contexts
+  const authContext = useContext(AuthContext);
 
-      <i>Return to the student homepage by pressing the home button</i>
+  const renderMainContent = () => {
+    return <div id="quiz">
+      <h1>{authContext.assignment.title}</h1>
+      <i>{authContext.assignment.description}</i>
+
+      <p style={{ marginTop: '2rem' }}>This page isn't ready yet, please press the home button to return to the student homepage</p>
     </div>
-  );
+  }
+
+  return (authContext.assignment === null ? null : renderMainContent())
 }
 
 export default Quiz;

@@ -64,6 +64,26 @@ const getInfoText = path => {
       </ul>);
       break;
 
+    case '/student/home':
+      title = 'Student homepage';
+      content = (<ul>
+        <li>There are 2 main sections of the student homepage: the assignments section and the classes section.</li>
+        <li>Your assignments</li>
+        <ul>
+          <li>The left side of the homepage displays a list of all your assignments in order of due date.</li>
+          <li>If an assignment is red then you haven't completed it and the due date has passed so you need to complete it quickly.</li>
+          <li>You can use the search bar below the 'your assignments' heading to search for specific assignments, the word/phrase you input is checked against lots of data about each assignment including the assignment title and description, the questions etc.</li>
+          <li>Pressing the 'See results' button will open a popup giving some details about your result for that assignment including your answers and below an explanation of the correct answer.</li>
+          <li>Pressing the 'Complete assignment' button will redirect you to the quiz completion page where you can complete the quiz.</li>
+        </ul>
+
+        <li>Your classes</li>
+        <ul>
+          <li>The right side of the homepage displays a list of all the classes you are in with some information about each class.</li>
+          <li>You can use the text input below the 'Your classes' heading to input a class joining code given to you by a teacher allowing you to join a class, once you press join class the class will be added to your list and all the class' assignments will appear on the left side of the homepage.</li>
+        </ul>
+      </ul>)
+
     default:
       title = 'Unknown';
       content = (<p>No info for this page!</p>);
