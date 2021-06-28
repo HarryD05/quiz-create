@@ -63,11 +63,15 @@ const Navbar = () => {
   const homeButton = () => {
     const path = window.location.href.split('#')[1];
 
+    //Sends the user to the previous page (the homepage)
     if (path === '/teacher/create') {
       window.history.back();
     } else if (path === '/student/quiz') {
       window.history.back();
     }
+
+    //Clear the current assignment 
+    authContext.clearAssignment();
   }
 
   //if the page isn't the authenitcation page, render a logout button

@@ -129,6 +129,7 @@ export default {
                     topic
                     correct
                     marks
+                    explanation
                   }
                 }
               }
@@ -147,6 +148,7 @@ export default {
                   marks
                   correct
                   wrong
+                  explanation
                 }
                 class {
                   _id 

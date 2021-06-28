@@ -157,6 +157,28 @@
     }
   }
 
+  #assignment-result {
+    p {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+
+      .right {
+        text-align: right;
+      }
+    }
+
+    #answers {
+      .wrong {
+        color: #ce3232;
+      }
+
+      .correct {
+        color: #29973c;
+      }
+    }
+  }
+
   #question-bank {
     #bank-header {
       display: flex;

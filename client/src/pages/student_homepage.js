@@ -2,16 +2,19 @@
 import React, { useContext } from 'react';
 
 //Importing authContext so data about the current user can be accessed
+//and modalContext so modals can be displayed
 import { AuthContext } from '../context/AuthContext';
+import { ModalContext } from '../context/ModalContext';
 
 //Importing styling
 import './styling/index.scss';
 import './styling/studenthomepage.scss';
 
 //Student homepage functional component
-const StudentHomepage = () => {
-  //Setting up the authContext
+const StudentHomepage = props => {
+  //Setting up the contexts
   const authContext = useContext(AuthContext);
+  const modalContext = useContext(ModalContext);
 
   //Returns assignment cards for all assignments
   const renderAssignmentCards = () => {
@@ -54,12 +57,18 @@ const StudentHomepage = () => {
     }
 
     //Returns if the passed in assignment has been completed by the current student
-    const isCompleted = assignment => {
+    const isCompleted = (assignment, returnResult = false) => {
       //Filtering all the student's results to check for results that are for the 
       //passed in assignment
       const results = [...authContext.user.results].filter(result => {
         return result.assignment._id === assignment._id
       });
+
+      //If the return result parameter is passed in check if the result is available
+      //and if it is return the result
+      if (returnResult) {
+        if (results.length === 1) return results[0];
+      }
 
       //If the result is for the passed in assignment then there will be 1 result in the 
       //array so the statement is true if not the statement is flase (assignment not compete)
@@ -101,7 +110,7 @@ const StudentHomepage = () => {
 
     //Returns the string 'missing' if the assignment passed in doesn't have a result 
     //from the current student and its due date is passed
-    const checkMissing = assignment => {
+    const checkMissing = (assignment) => {
       //First check if the assignment is completed
       const completed = isCompleted(assignment);
 
@@ -115,6 +124,81 @@ const StudentHomepage = () => {
       return '';
     }
 
+    //Handles click, if assignment completed opens see result modal, if not redirects
+    //to the quiz completion page
+    function handleAssignmentClick(assignment) {
+      //Checking if the assignment is complete or not
+      const assignmentResult = isCompleted(assignment, true);
+
+      if (assignmentResult === false) {
+        //If assignment not completed redirect user to the assignment completion page
+        props.history.push('/student/quiz');
+
+        //Update the authContext to have the currentAssignment
+        authContext.updateAssignment(assignment);
+      } else {
+        //Returns the timetaken to complete the assignment if it is available
+        const getTime = () => {
+          return assignment.recordTime ? assignmentResult.timeTaken + 's' : 'Time not recorded';
+        }
+
+        //Counts the number of hints the student used for the current assignment
+        const getHints = () => {
+          return (assignmentResult.hints ?
+            `${[...assignmentResult.hints].filter(hint => hint === true).length}/${assignment.questions.length}` :
+            'N/A'
+          );
+        }
+
+        //Returns all the student's answer for the current assignment 
+        const getAnswers = () => {
+          //Returns wrong/correct for the answer so the answer can be colour coded
+          const getClass = (answer, index) => {
+            return (answer !== assignment.questions[index].correct ? 'wrong' : 'correct');
+          }
+
+          return assignmentResult.answers.map((answer_, index) => {
+            //Checking if the answer is blank
+            let answer = answer_;
+            if (answer.replaceAll(' ', '') === '') answer = '[Left blank]';
+
+            //Returning the question as a list element including the answer and explanation
+            return (<li>{assignment.questions[index].question}
+              <ul>
+                <li className={getClass(answer, index)}>You answered: {answer}</li>
+                <li>Explanation: {assignment.questions[index].explanation}</li>
+              </ul>
+            </li>)
+          })
+        }
+
+        //If assignment is completed then show the results modal
+        modalContext.updateModal({
+          title: `${assignment.title} result`,
+          content: <div id="assignment-result">
+            <p>
+              <div>Score</div>
+              <div className="right">{assignmentResult.marks}/{assignment.maxMarks}</div>
+            </p>
+            <p>
+              <div>Time taken</div>
+              <div className="right">{getTime()}</div>
+            </p>
+            <p>
+              <div>Hints used</div>
+              <div className="right">{getHints()}</div>
+            </p>
+
+            <p style={{ marginTop: '1rem' }}>Questions</p>
+            <ol id="answers">
+              {getAnswers()}
+            </ol>
+          </div>
+        })
+      }
+    }
+
+    //Returns the assignment card with all the assignment data 
     return (
       <div id="assignment-card" className={checkMissing(assignment)}>
         <div className="heading">{assignment.title}</div>
@@ -127,7 +211,9 @@ const StudentHomepage = () => {
         </p>
         <p><div>Due date</div><div className="right">{formatDate(assignment.dueDate)}</div></p>
         <div className="footer">
-          <button className="btn" className="right">{isCompleted(assignment) ? 'See result' : 'Start assignment'}</button>
+          <button className="btn" onClick={handleAssignmentClick.bind(this, assignment)}>
+            {isCompleted(assignment) ? 'See result' : 'Start assignment'}
+          </button>
         </div>
       </div>
     );
@@ -161,14 +247,99 @@ const StudentHomepage = () => {
       return total - results.length;
     }
 
+    //Returns an object of the user's topics with average mark 
+    const getTopicsRanked = results => {
+      let output = {};
+
+      //loop through all results
+      for (let result of results) {
+        for (let i = 0; i < result.answers.length; i++) {
+          const answer = result.answers[i];
+          const question = result.assignment.questions[i];
+
+          //adding the topic to the topic list if not yet in output object
+          if (question.topic in output === false) {
+            output[question.topic] = { marks: 0, maxMarks: 0, percentage: 0 };
+          }
+
+          //if correct answer then add marks to the topics total marks
+          if (answer.toLowerCase() === question.correct.toLowerCase()) {
+            output[question.topic].marks += question.marks;
+          }
+
+          //adding up the total possible marks for the topic
+          output[question.topic].maxMarks += question.marks;
+        }
+      }
+
+      //Finding the percentage for each topic (the marks/maximum marks)
+      for (let topic in output) {
+        output[topic].percentage = Number(((output[topic].marks / output[topic].maxMarks) * 100).toFixed(2));
+      }
+
+      return output;
+    }
+
+    //Gets the lowest scoring topic for the selected student
+    const getStudentPoorestTopic = () => {
+      //Checking that the user has results for this class
+      const classResults = [...authContext.user.results].filter(result => {
+        return result.assignment.class._id === class_._id
+      });
+
+      if (classResults.length === 0) return 'No results yet';
+
+      //Getting the average mark for each topic
+      const topicList = getTopicsRanked(classResults);
+
+      //Getting the topic with the lowest percentage
+      let poorestTopic = null;
+      let worstPercentage = 101;
+      for (let topic in topicList) {
+        if (topicList[topic].percentage <= worstPercentage) {
+          worstPercentage = topicList[topic].percentage;
+          poorestTopic = topic;
+        }
+      }
+
+      //Returning the poorest topic with its percentage
+      return `${poorestTopic} (${worstPercentage}%)`;
+    }
+
+    //Gets the highest scoring topic for the student
+    const getStudentBestTopic = () => {
+      //Checking that the user has results for this class
+      const classResults = [...authContext.user.results].filter(result => {
+        return result.assignment.class._id === class_._id
+      });
+
+      if (classResults.length === 0) return 'No results yet';
+
+      //Getting the average mark for each topic
+      const topicList = getTopicsRanked(classResults);
+
+      //Getting the topic with the highest percentage
+      let bestTopic = null;
+      let bestPercentage = -1;
+      for (let topic in topicList) {
+        if (topicList[topic].percentage >= bestPercentage) {
+          bestPercentage = topicList[topic].percentage;
+          bestTopic = topic;
+        }
+      }
+
+      //Returning the best topic with its percentage
+      return `${bestTopic} (${bestPercentage}%)`;
+    }
+
     return (
       <div id="class-card">
         <div className="heading">{class_.name} ({class_.qualification} {class_.subject})</div>
         <p><div>Teacher</div><div>{class_.teacher.username}</div></p>
         <p><div>Completed assignments</div><div className="right">{assignmentsCompleted(true)}</div></p>
         <p><div>Assignments still to do</div><div className="right">{assignmentsCompleted(false)}</div></p>
-        <p><div>Best topic</div><div className="right">0</div></p>
-        <p><div>Weakest topic</div><div className="right">0</div></p>
+        <p><div>Best topic</div><div className="right">{getStudentBestTopic()}</div></p>
+        <p><div>Weakest topic</div><div className="right">{getStudentPoorestTopic()}</div></p>
       </div>
     );
   }
