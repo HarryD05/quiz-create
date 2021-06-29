@@ -70,16 +70,18 @@ const getInfoText = path => {
         <li>There are 2 main sections of the student homepage: the assignments section and the classes section.</li>
         <li>Your assignments</li>
         <ul>
-          <li>The left side of the homepage displays a list of all your assignments in order of due date.</li>
+          <li>The left side of the homepage (or top half on a smaller device) displays a list of all your assignments in order of due date.</li>
           <li>If an assignment is red then you haven't completed it and the due date has passed so you need to complete it quickly.</li>
           <li>You can use the search bar below the 'Your assignments' heading to search for specific assignments, the word/phrase you input is checked against lots of data about each assignment including the assignment title and description, the questions etc.</li>
+          <li>You can use the 3 buttons below the search bar to select what assignments you want to see: all, completed or still to do (assignments that haven't been submitted yet).</li>
           <li>Pressing the 'See results' button will open a popup giving some details about your result for that assignment including your answers and below an explanation of the correct answer.</li>
           <li>Pressing the 'Complete assignment' button will redirect you to the quiz completion page where you can complete the quiz.</li>
         </ul>
         <li>Your classes</li>
         <ul>
-          <li>The right side of the homepage displays a list of all the classes you are in with some information about each class.</li>
+          <li>The right side of the homepage (or bottom half on a smaller device) displays a list of all the classes you are in with some information about each class.</li>
           <li>You can use the text input below the 'Your classes' heading to input a class joining code given to you by a teacher allowing you to join a class, once you press join class the class will be added to your list and all the class' assignments will appear on the left side of the homepage.</li>
+          <li>If you click on a class card it will select the class so only assignments from that class will be displayed in the 'Your assignments' list, to deselect the class just click on the class card again or click on another class.</li>
         </ul>
       </ul>);
       break;

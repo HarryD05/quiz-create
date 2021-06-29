@@ -22,6 +22,27 @@ const StudentHomepage = props => {
   //Setting up state
   const [searchKeyWord, setSearchKeyWord] = useState('');
   const [joiningCode, setJoiningCode] = useState('');
+  const [assignmentType, setAssignmentType] = useState('all');
+  const [selectedClass, setSelectedClass] = useState('');
+
+  //Returns if the passed in assignment has been completed by the current student
+  const isCompleted = (assignment, returnResult = false) => {
+    //Filtering all the student's results to check for results that are for the 
+    //passed in assignment
+    const results = [...authContext.user.results].filter(result => {
+      return result.assignment._id === assignment._id
+    });
+
+    //If the return result parameter is passed in check if the result is available
+    //and if it is return the result
+    if (returnResult) {
+      if (results.length === 1) return results[0];
+    }
+
+    //If the result is for the passed in assignment then there will be 1 result in the 
+    //array so the statement is true if not the statement is flase (assignment not compete)
+    return (results.length === 1);
+  }
 
   //Returns assignment cards for all assignments
   const renderAssignmentCards = () => {
@@ -74,6 +95,27 @@ const StudentHomepage = props => {
     //If there are no assignments then return that
     if (assignments.length === 0) return `No assignments match the key word "${searchKeyWord}"`;
 
+    //Now filtering based on the selected assignment type (from 3 buttons at top of page)
+    //(no if statement for 'All' as no assignments need to be filtered out)
+    if (assignmentType === 'completed') {
+      assignments = [...assignments].filter(assignment => {
+        return isCompleted(assignment) === true;
+      });
+    } else if (assignmentType === 'incomplete') {
+      assignments = [...assignments].filter(assignment => {
+        return isCompleted(assignment) === false;
+      });
+    }
+
+    //Now filtering based on the selected class id
+    if (selectedClass.replaceAll(' ', '') !== '') {
+      assignments = [...assignments].filter(assignment => {
+        return assignment.class._id === selectedClass;
+      });
+    }
+
+    if (assignments.length === 0) return `No assignments to display...`;
+
     //Sorting the assignments by due date
     assignments.sort((a, b) => {
       return new Date(Number(a.dueDate)) - new Date(Number(b.dueDate))
@@ -91,25 +133,6 @@ const StudentHomepage = props => {
 
       //Reording date string so its readable
       return `${dateParts[0]} ${dateParts[2]} ${dateParts[1]} ${dateParts[3]}`;
-    }
-
-    //Returns if the passed in assignment has been completed by the current student
-    const isCompleted = (assignment, returnResult = false) => {
-      //Filtering all the student's results to check for results that are for the 
-      //passed in assignment
-      const results = [...authContext.user.results].filter(result => {
-        return result.assignment._id === assignment._id
-      });
-
-      //If the return result parameter is passed in check if the result is available
-      //and if it is return the result
-      if (returnResult) {
-        if (results.length === 1) return results[0];
-      }
-
-      //If the result is for the passed in assignment then there will be 1 result in the 
-      //array so the statement is true if not the statement is flase (assignment not compete)
-      return (results.length === 1);
     }
 
     //Returns the total marks of all the questions in the assignment
@@ -371,15 +394,29 @@ const StudentHomepage = props => {
       return `${bestTopic} (${bestPercentage}%)`;
     }
 
+    //Handles on click for a class card
+    const selectClass = classID => {
+      if (selectedClass === classID) {
+        setSelectedClass('');
+      } else {
+        setSelectedClass(classID);
+      }
+    }
+
+    let btnClass = '';
+    if (selectedClass === class_._id) {
+      btnClass = 'selected';
+    }
+
     return (
-      <div id="class-card">
+      <button id="class-card" onClick={() => selectClass(class_._id)} className={btnClass}>
         <div className="heading">{class_.name} ({class_.qualification} {class_.subject})</div>
         <p><div>Teacher</div><div>{class_.teacher.username}</div></p>
         <p><div>Completed assignments</div><div className="right">{assignmentsCompleted(true)}</div></p>
         <p><div>Assignments still to do</div><div className="right">{assignmentsCompleted(false)}</div></p>
         <p><div>Best topic</div><div className="right">{getStudentBestTopic()}</div></p>
         <p><div>Weakest topic</div><div className="right">{getStudentPoorestTopic()}</div></p>
-      </div>
+      </button>
     );
   }
 
@@ -428,6 +465,20 @@ const StudentHomepage = props => {
     }
   }
 
+  //Getting the css class for the assignment select buttons currently selected 
+  //button will be darkened
+  const getAssignmentSearchClass = type => {
+    let base = 'btn'; //the base class for all buttons
+
+    //if the type of the button is the selected type add the selected class
+    if (type === assignmentType) {
+      return base + ' selected';
+    }
+
+    //if not the type then just return the base class
+    return base;
+  }
+
   return (
     <div id="student-homepage">
       <p id="welcome-msg">Welcome {authContext.user.username}</p>
@@ -443,7 +494,26 @@ const StudentHomepage = props => {
               <label htmlFor="keyword">Search assignments...</label>
             </div>
 
-            <button className="btn">Join class</button>
+            <div id="search-buttons">
+              <button
+                className={getAssignmentSearchClass('completed')}
+                onClick={() => setAssignmentType('completed')}
+              >
+                Completed
+              </button>
+              <button
+                className={getAssignmentSearchClass('incomplete')}
+                onClick={() => setAssignmentType('incomplete')}
+              >
+                Still to do
+              </button>
+              <button
+                className={getAssignmentSearchClass('all')}
+                onClick={() => setAssignmentType('all')}
+              >
+                All
+              </button>
+            </div>
           </div>
 
           <div id="assignment-cards">

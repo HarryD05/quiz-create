@@ -118,8 +118,20 @@
       #search-assignments {
         @extend %top-input;
 
-        .btn {
-          visibility: hidden;
+        #search-buttons {
+          display: flex;
+          justify-content: space-around;
+          flex-wrap: wrap;
+          flex-direction: row;
+          width: 100%;
+
+          .btn {
+            width: 80px;
+
+            &.selected {
+              background-color: #c2dbff;
+            }
+          }
         }
       }
 
@@ -153,6 +165,14 @@
 
         #class-card {
           @extend %card;
+
+          &.selected {
+            background-color: #c2dbff;
+          }
+
+          &:hover {
+            cursor: pointer;
+          }
         }
       }
     }
