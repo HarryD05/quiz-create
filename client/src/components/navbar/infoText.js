@@ -67,7 +67,8 @@ const getInfoText = path => {
     case '/student/home':
       title = 'Student homepage';
       content = (<ul>
-        <li>There are 2 main sections of the student homepage: the assignments section and the classes section.</li>
+        <li>At the top right hand corner of the page there is the 'See all results' button, this will open a popup with a bar graph of all your results and you can select a to only see results from a specific class using the drop down menu above the graph.</li>
+        <li>Below that there are 2 main sections: the assignments section and the classes section.</li>
         <li>Your assignments</li>
         <ul>
           <li>The left side of the homepage (or top half on a smaller device) displays a list of all your assignments in order of due date.</li>

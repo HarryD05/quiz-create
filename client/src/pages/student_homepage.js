@@ -1,5 +1,6 @@
 //React dependencies 
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
+import Select from 'react-select';
 
 //Importing authContext so data about the current user can be accessed
 //and modalContext so modals can be displayed
@@ -8,6 +9,9 @@ import { ModalContext } from '../context/ModalContext';
 
 //Importing services to make class API calls
 import ClassService from '../services/ClassService';
+
+//Importing components
+import Graph from '../components/graph/graph';
 
 //Importing styling
 import './styling/index.scss';
@@ -24,6 +28,13 @@ const StudentHomepage = props => {
   const [joiningCode, setJoiningCode] = useState('');
   const [assignmentType, setAssignmentType] = useState('all');
   const [selectedClass, setSelectedClass] = useState('');
+  const [modalSelectedClass, setModalSelectedClass] = useState(-1);
+  const [graphModalOpen, setGraphModelOpen] = useState(false);
+
+  //Whenever a modal is closed set the graph modal open state variable to closed
+  document.getElementById('main').addEventListener('modalClosed', () => {
+    setGraphModelOpen(false);
+  });
 
   //Returns if the passed in assignment has been completed by the current student
   const isCompleted = (assignment, returnResult = false) => {
@@ -150,7 +161,11 @@ const StudentHomepage = props => {
       const completed = isCompleted(assignment);
 
       if (completed === false) {
-        return 'Not completed yet';
+        if (new Date() - new Date(Number(assignment.dueDate)) > 0) {
+          return 'Overdue';
+        } else {
+          return 'Not submitted yet';
+        }
       }
 
       //If the assignment is completed then check if it was handed in late or not
@@ -260,7 +275,7 @@ const StudentHomepage = props => {
 
     //Returns the assignment card with all the assignment data 
     return (
-      <div id="assignment-card" className={checkMissing(assignment)}>
+      <div id="assignment-card" className={checkMissing(assignment)} key={assignment._id}>
         <div className="heading">{assignment.title}</div>
         <div className="subheading">{assignment.description}</div>
 
@@ -409,7 +424,7 @@ const StudentHomepage = props => {
     }
 
     return (
-      <button id="class-card" onClick={() => selectClass(class_._id)} className={btnClass}>
+      <button id="class-card" onClick={() => selectClass(class_._id)} className={btnClass} key={class_._id}>
         <div className="heading">{class_.name} ({class_.qualification} {class_.subject})</div>
         <p><div>Teacher</div><div>{class_.teacher.username}</div></p>
         <p><div>Completed assignments</div><div className="right">{assignmentsCompleted(true)}</div></p>
@@ -479,9 +494,146 @@ const StudentHomepage = props => {
     return base;
   }
 
+  //handles onclick for see all results button, opening a modal with a graph of 
+  //all results and a class selector
+  const openResultsModal = () => {
+    //Setting the graph modal to open so the content will reload if the selector 
+    //value changes
+    setGraphModelOpen(true);
+
+    //Checking if there are any assignments to display
+    const isValid = (returnBool = true) => {
+      //Initially all classes will be used
+      let classes = [...authContext.user.classes];
+
+      //If a specific class selected filter it out
+      //all classes is 0 so if the value is above 1 a class is selected
+      if (modalSelectedClass >= 0) {
+        classes = [classes[modalSelectedClass]];
+      }
+
+      //If there are no classes left no graph can be displayed
+      if (classes.length === 0) return false;
+
+      //Store all results linked to the selected class(es) in this array
+      let results = [];
+
+      classes.forEach(class_ => {
+        //stores all the results that are from this class
+        const linkedResults = [...authContext.user.results].filter(result => {
+          return result.assignment.class._id === class_._id;
+        });
+
+        //Adding the new linked results to the current results array
+        results = results.concat(linkedResults);
+      })
+
+      //If there are no results there is no data to show in the graph
+      if (results.length === 0) return false;
+
+      //If here there is a list of results to return 
+      if (returnBool) {
+        return true;
+      }
+
+      //If return bool is false then the results array should be returned
+      return results;
+    }
+
+    let content;
+
+    //if the user has no results to display...
+    if (authContext.user.results.length === 0) {
+      content = <p>You have no results yet...</p>
+    } else {
+      //If the user does have results - get all their classes
+      const options = authContext.user.classes.map((class_, index) => {
+        //Extracting data from the class
+        const { name, qualification, subject } = class_;
+
+        return { label: `${name} (${qualification} ${subject})`, value: index }
+      })
+
+      //Adding an all option to the class selector options
+      options.unshift({ label: 'All', value: -1 });
+
+      //Generates a random rgb colour
+      const randomColour = (alpha = 'FF') => {
+        let n = (Math.random() * 0xfffff * 1000000).toString(16);
+        return '#' + n.slice(0, 6) + alpha;
+      }
+
+      //Checking if there are results to display
+      const results = isValid(false);
+      let labels, colours, data;
+
+      //Returns the label formatted so short, if text length reduced ellipsis added
+      const snipLabel = label => {
+        let snipped = label.slice(0, 18);
+
+        if (snipped.length !== label.length) {
+          snipped = snipped + '...';
+        }
+
+        return snipped;
+      }
+
+      //If there are a list of results to present then extract the data from them
+      if (results) {
+        //Each bar will represent an assignment
+        labels = results.map(result => snipLabel(result.assignment.title));
+
+        //A random colour for each assignment
+        colours = results.map(() => randomColour('73'));
+
+        //Each bar's length will be the percentage result achieved
+        data = results.map(result => {
+          return Number((result.marks / result.assignment.maxMarks).toFixed(2)) * 100;
+        })
+      }
+
+      content = <>
+        <Select className="selector" options={options} onChange={selectorChange} />
+
+        {isValid() ?
+          <Graph
+            type="Bar" labels={labels} colours={colours} data={data}
+            yaxis={true} xtitle={'Result (%)'} ytitle={'Assignments'}
+          /> :
+          <p>No results to display...</p>}
+      </>
+    }
+
+    //Opening the modal to display the graph
+    modalContext.updateModal({
+      title: 'Your results',
+      content:
+        <div id="results-modal">
+          {content}
+        </div>
+    })
+  }
+
+  const selectorChange = e => {
+    //Setting the selected class to the index of the class in the student's class list
+    setModalSelectedClass(e.value);
+  }
+
+  //whenever the modal selector value changes the modal rerender so the correct class
+  //data is shown
+  useEffect(() => {
+    //only rerender the modal if it is open, if it is closed then no need to rerender
+    if (graphModalOpen) {
+      openResultsModal();
+    }
+  }, [modalSelectedClass]);
+
   return (
     <div id="student-homepage">
-      <p id="welcome-msg">Welcome {authContext.user.username}</p>
+      <div id="student-homepage-header">
+        <p id="welcome-msg">Welcome {authContext.user.username}</p>
+        <button className="btn" onClick={openResultsModal}>See all results</button>
+      </div>
 
       <div id="shp-main">
         <div id="assignments">

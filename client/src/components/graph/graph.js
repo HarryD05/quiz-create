@@ -91,11 +91,22 @@ const Graph = props => {
             }
           },
           scales: {
+            x: {
+              title: {
+                text: xtitle,
+                display: true
+              }
+            },
             y: {
               ticks: {
                 stepSize: 1,
                 min: 0,
+                max: 100,
                 beginAtZero: true
+              },
+              title: {
+                text: ytitle,
+                display: true
               }
             }
           }

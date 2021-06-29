@@ -130,6 +130,14 @@
     margin-bottom: 1rem;
   }
 
+  #results-modal {
+    min-height: 300px;
+
+    .selector {
+      margin-bottom: 1rem;
+    }
+  }
+
   #student-assignments, #class-assignments {
     .btn {
       margin-top: 1rem;

@@ -78,10 +78,32 @@
   max-width: calc(80% - 4rem);
   width: 640px; 
 
-  #welcome-msg {
-    text-align: left;
+  #student-homepage-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
     margin-bottom: 2rem;
-    font-weight: 700;
+
+    @media (max-width: 600px) {
+      flex-direction: column;
+      align-items: center;
+
+      .btn {
+        margin: 0 !important;
+        margin-top: 8px !important;
+      }
+    }
+
+    #welcome-msg {
+      text-align: left;
+      font-weight: 700;
+    }
+
+    .btn {
+      min-height: 2em;
+      margin-left: 8px;
+    }
   }
 
   #shp-main {
@@ -97,14 +119,14 @@
 
       #assignments {
         border-right: none !important;
-        border-bottom: 1px solid black;
+        border-bottom: 1px solid grey;
         padding-bottom: 2rem !important;
       }
 
       #classes {
         padding-top: 2rem !important;
         border-left: none !important;
-        border-top: 1px solid black;
+        border-top: 1px solid grey;
       }
     }
 
@@ -114,7 +136,7 @@
     }
 
     #assignments {
-      border-right: 1px solid black;
+      border-right: 1px solid grey;
       padding: 8px;
       text-align: center;
 
@@ -154,7 +176,7 @@
     }
 
     #classes {
-      border-left: 1px solid black;
+      border-left: 1px solid grey;
       padding: 8px;
 
       #join-class {
