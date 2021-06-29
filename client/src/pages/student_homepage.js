@@ -427,9 +427,9 @@ const StudentHomepage = props => {
     return (
       <button id="class-card" onClick={() => selectClass(class_._id)} className={btnClass} key={class_._id}>
         <div className="heading">{class_.name} ({class_.qualification} {class_.subject})</div>
-        <p><div>Teacher</div><div>{class_.teacher.username}</div></p>
+        <p style={{ marginBottom: '12px' }}><div>Teacher</div><div>{class_.teacher.username}</div></p>
         <p><div>Completed assignments</div><div className="right">{assignmentsCompleted(true)}</div></p>
-        <p><div>Assignments still to do</div><div className="right">{assignmentsCompleted(false)}</div></p>
+        <p style={{ marginBottom: '12px' }}><div>Assignments still to do</div><div className="right">{assignmentsCompleted(false)}</div></p>
         <p><div>Best topic</div><div className="right">{getStudentBestTopic()}</div></p>
         <p><div>Weakest topic</div><div className="right">{getStudentPoorestTopic()}</div></p>
       </button>
@@ -599,7 +599,7 @@ const StudentHomepage = props => {
         {isValid() ?
           <Graph
             type="Bar" labels={labels} colours={colours} data={data}
-            yaxis={true} xtitle={'Result (%)'} ytitle={'Assignments'}
+            yaxis={true} xtitle={'Result (%)'}
           /> :
           <p>No results to display...</p>}
       </>
