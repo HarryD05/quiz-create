@@ -3,13 +3,16 @@
 
 %card {
   width: 100%;
-  border: 1px solid black;
   border-radius: 8px;
   padding: 8px;
   text-align: left;
   font-size: 14px;
   background-color: #DAE8FC;
   margin-bottom: 8px;
+
+  border: none;
+  box-shadow: #43475545 0px 0px 0.25em, 
+              #5a7dbc0d 0px 0.25em 1em;
 
   .heading {
     text-align: center;
