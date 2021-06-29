@@ -34,6 +34,7 @@ const StudentHomepage = props => {
   //Whenever a modal is closed set the graph modal open state variable to closed
   document.getElementById('main').addEventListener('modalClosed', () => {
     setGraphModelOpen(false);
+    setModalSelectedClass('');
   });
 
   //Returns if the passed in assignment has been completed by the current student
