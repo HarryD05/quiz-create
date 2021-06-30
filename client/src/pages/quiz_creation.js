@@ -573,7 +573,7 @@ const QuizCreation = props => {
             `
         } else {
           //Putting all 4 options in 1 list
-          let options = [...q.wrong, q.correct];
+          const options = [...q.wrong, q.correct];
 
           //Shuffle the options so that the position of the correct
           //answer is random
@@ -582,13 +582,13 @@ const QuizCreation = props => {
           // While there are elements in the array
           while (counter > 0) {
             // Pick a random index
-            let index = Math.floor(Math.random() * counter);
+            const index = Math.floor(Math.random() * counter);
 
             // Decrease counter by 1
             counter--;
 
             // And swap the last element with it
-            let temp = options[counter];
+            const temp = options[counter];
             options[counter] = options[index];
             options[index] = temp;
           }

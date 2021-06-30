@@ -73,6 +73,7 @@ export default {
                   topic
                   correct
                   marks
+                  hint
                 }
                 class {
                   _id
@@ -130,6 +131,7 @@ export default {
                     correct
                     marks
                     explanation
+                    hint
                   }
                 }
               }
@@ -150,6 +152,7 @@ export default {
                   wrong
                   explanation
                   topic
+                  hint
                 }
                 class {
                   _id 

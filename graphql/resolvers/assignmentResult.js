@@ -15,10 +15,15 @@ module.exports = {
       //Extracting input data from request
       const { marks, timeTaken, answers, hints, assignment } = args.initResultInput;
 
+      //Getting a date string which is just the date with the time set to 00:00:00 with no timezone offset
+      const dateString = new Date().toLocaleDateString();
+      const dateParts = dateString.split('/');
+      const dateValue = new Date(`${dateParts[2]}-${dateParts[0]}-${dateParts[1]} 00:00:00 GMT+0000`);
+
       const newResult = new AssignmentResult({
         marks,
         timeTaken,
-        date: new Date(),
+        date: dateValue,
         answers,
         assignment,
         hints,

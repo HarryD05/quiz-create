@@ -87,6 +87,17 @@ const getInfoText = path => {
       </ul>);
       break;
 
+    case '/student/quiz':
+      title = 'Quiz page';
+      content = (<ul>
+        <li>When you first are redirected to this page you will see the welcome screen which displays the assignment title, description, number of questions, number of marks and whether or not the time it takes you to complete the assignment will be recorded. Here if you decided not to complete the assignment you can press the home button in the top left to return to the student homepage or if you want to start the quiz you press the 'Start' button.</li>
+        <li>Once you have pressed the start button the quiz will begin (if the time is being recorded the timer will begin) you will see the assignment title in the top left and your current question and current marks in the top left. Then below that you will see the question and the number of marks it is worth in square brackets e.g. [2]. If the question has a hint you will see the 'Hint' button, if you press that you will see the hint but it will be recorded that you used the hint (you can open the hint as many times as you want).</li>
+        <li>Below the question is the answer space which will either be a text input or if the question is multiple choice 2-4 boxed for you to select from, the option you select in multiple choice will be highlighted in blue. </li>
+        <li>When you submit a question you will then see immediately if it is correct or incorrect accompanied with an explanation of the correct answer. </li>
+        <li>Once you submit the last question you will see the 'Complete assignment' button instead of 'Next question' in the bottom right, once you press 'Complete assignment' you result will be stored and you will return to the student homepage.</li>
+      </ul>);
+      break;
+
     default:
       title = 'Unknown';
       content = (<p>No info for this page!</p>);
