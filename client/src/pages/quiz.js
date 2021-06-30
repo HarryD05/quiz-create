@@ -103,7 +103,7 @@ const Quiz = props => {
   //Renders the main quiz content (questions etc.)
   const renderQuizPage = () => {
     //Extracting the data from the current question
-    const { question, marks, qtype, correct, wrong, explanation, hint } = questions[currentQuestion];
+    const { question, marks, qtype, correct, wrong, explanation, hint, imageURL } = questions[currentQuestion];
 
     //Returns whether the current answer is correct or not
     const isCorrect = () => {
@@ -164,9 +164,9 @@ const Quiz = props => {
 
           //If the option button is the student's answer which has been submitted and 
           //is correct then make the button green
-          if (submitted && option === correct && option === currentAnswer) {
+          if (submitted && option === correct.toLowerCase() && option === currentAnswer) {
             baseClasses += ' correct'
-          } else if (submitted && option !== correct && option === currentAnswer) {
+          } else if (submitted && option !== correct.toLowerCase() && option === currentAnswer) {
             //If wrong make it red
             baseClasses += ' wrong'
           }
@@ -249,7 +249,7 @@ const Quiz = props => {
         //Calculate seconds it took to complete assignment if time recorded 
         if (recordTime) {
           const seconds = Math.abs(new Date() - resultsDetails.startTime) / 1000;
-          resultInfo.timeTaken = seconds;
+          resultInfo.timeTaken = Math.round(seconds);
         }
 
         //Making the API call - completeAssignment
@@ -294,14 +294,11 @@ const Quiz = props => {
 
     //Renders the footer that displays when the answer is submitted
     const renderSubmitted = () => {
-      //Checking if the answer is correct
-      const isCorrect = (currentAnswer.trim().toLowerCase() === correct);
-
       //Checking there are any more questions left
       const completed = (currentQuestion + 1 === questions.length);
 
       return <div id="footer" className={getClasses(submitted)}>
-        <p>{isCorrect ? 'Correct' : 'Incorrect'}</p>
+        <p>{isCorrect() ? 'Correct' : 'Incorrect'}</p>
         <p>{explanation}</p>
         <button className="btn" id="submit" onClick={() => footerClicked(completed)}>
           {completed ? 'Submit assignment' : 'Next question'}
@@ -335,6 +332,10 @@ const Quiz = props => {
         <b>{question} [{marks}]</b>
         {hint !== null && hint !== undefined ?
           <button className="btn" id="hint" onClick={showHint}>See hint</button> :
+          null
+        }
+        {imageURL !== null & imageURL !== undefined ?
+          <img src={imageURL} alt={'Unable to provide...'}></img> :
           null
         }
       </div>
