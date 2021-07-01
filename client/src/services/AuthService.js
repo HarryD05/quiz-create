@@ -135,6 +135,9 @@ export default {
                     explanation
                     hint
                   }
+                  class {
+                    _id
+                  }
                 }
               }
               assignments {

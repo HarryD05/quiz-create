@@ -70,6 +70,13 @@ const TeacherHomepage = props => {
     return (submitDate - deadline > 0);
   }
 
+  //Returns all fully completed results which link to the passed in class
+  const returnClassResults = class_ => {
+    return [...class_.results].filter(result => {
+      return (result.assignment.class._id === class_._id && result.completed);
+    })
+  }
+
   //Returns all class names in the correct format from the user 
   const getClassNames = user => {
     if (user === null) {
@@ -162,12 +169,12 @@ const TeacherHomepage = props => {
   //Gets average from all class' assignment results
   const getClassAverage = () => {
     if (currentClass === null) return 'N/A';
-    if (currentClass.results.length === 0) return 'No results yet';
+    if (returnClassResults(currentClass).length === 0) return 'No results yet';
 
     //addup percentages of each result then find average percentage
     let total = 0;
     let count = 0;
-    for (let result of currentClass.results) {
+    for (let result of returnClassResults(currentClass)) {
       total += result.marks / result.assignment.maxMarks;
       count++;
     }
@@ -181,21 +188,21 @@ const TeacherHomepage = props => {
 
     const totalAssignments = currentClass.assignments.length * currentClass.students.length;
 
-    return (totalAssignments - currentClass.results.length);
+    return (totalAssignments - returnClassResults(currentClass).length);
   }
 
   //Counts number of assignments completed
   const getClassSubmitted = () => {
     if (currentClass === null) return 'N/A';
 
-    return currentClass.results.length;
+    return returnClassResults(currentClass).length;
   }
 
   //Counts number of assignments completed by submitted post due date
   const getLateSubmissions = number => {
     if (currentClass === null) return 'N/A';
 
-    const results = currentClass.results;
+    const results = returnClassResults(currentClass);
 
     if (results.length === 0) return 'No results yet';
 
@@ -219,9 +226,9 @@ const TeacherHomepage = props => {
     if (specificStudent === null || specificStudent === undefined) {
       if (currentStudent === null) return [];
 
-      return [...currentClass.results].filter(result => result.student._id === currentStudent._id);
+      return [...returnClassResults(currentClass)].filter(result => result.student._id === currentStudent._id);
     } else {
-      return [...currentClass.results].filter(result => result.student._id === specificStudent._id);
+      return [...returnClassResults(currentClass)].filter(result => result.student._id === specificStudent._id);
     }
   }
 
@@ -298,7 +305,7 @@ const TeacherHomepage = props => {
   const expectedClassResults = () => {
     if (currentClass === null) return 'N/A';
 
-    if (currentClass.results.length === 0) return 'No results yet';
+    if (returnClassResults(currentClass).length === 0) return 'No results yet';
 
     if (currentClass.assignments.length === 0) return 'No assignments yet';
 
@@ -311,7 +318,7 @@ const TeacherHomepage = props => {
       //Check if assignment has expected results
       if (assignment.expectedResults.length === 3) {
         //Find any results linking to the current assignment
-        const assignmentResults = currentClass.results.filter(result => {
+        const assignmentResults = [...returnClassResults(currentClass)].filter(result => {
           return result.assignment._id === assignment._id;
         });
 
@@ -530,9 +537,9 @@ const TeacherHomepage = props => {
   //Gets the lowest scoring topic for the selected class
   const getClassPoorestTopic = () => {
     if (currentClass === null) return 'N/A';
-    if (currentClass.results.length === 0) return 'No results yet';
+    if (returnClassResults(currentClass).length === 0) return 'No results yet';
 
-    const topicList = getTopicsRanked(currentClass.results);
+    const topicList = getTopicsRanked(returnClassResults(currentClass));
 
     let poorestTopic = null;
     let worstPercentage = 101;
@@ -549,9 +556,9 @@ const TeacherHomepage = props => {
   //Gets the highest scoring topic for the current class
   const getClassBestTopic = () => {
     if (currentClass === null) return 'N/A';
-    if (currentClass.results.length === 0) return 'No results yet';
+    if (returnClassResults(currentClass).length === 0) return 'No results yet';
 
-    const topicList = getTopicsRanked(currentClass.results);
+    const topicList = getTopicsRanked(returnClassResults(currentClass));
 
     let bestTopic = null;
     let bestPercentage = -1;
@@ -691,7 +698,9 @@ const TeacherHomepage = props => {
 
     //Function returns the students that have completed the assignment passed into the function
     const missingStudents = assignment => {
-      const completedAssignments = getAssignmentResults(currentClass.results, assignment._id);
+      const completedAssignments = getAssignmentResults([...currentClass.results].filter(result => {
+        return (result.assignment.class._id === currentClass._id);
+      }), assignment._id);
       if (completedAssignments.length === 0) return 'No results yet';
 
       let students = [...currentClass.students];
@@ -701,14 +710,14 @@ const TeacherHomepage = props => {
         students.splice(students.indexOf(completed.student.username), 1);
       });
 
-      if (students.length === 0) return 'No students';
+      if (students.length === 0) return <ul><li>No students</li></ul>;
 
-      return students.toString().replaceAll(',', ', ');
+      return <ul><li>{students.toString().replaceAll(',', ', ')}</li></ul>;
     }
 
     //Function returns the average score from the results of the assignment passed into the function
     const getAverageResult = assignment => {
-      const completedAssignments = getAssignmentResults(currentClass.results, assignment._id);
+      const completedAssignments = getAssignmentResults(returnClassResults(currentClass), assignment._id);
       if (completedAssignments.length === 0) return 'No results yet';
 
       //addup percentages of each result then find average percentage
@@ -722,10 +731,30 @@ const TeacherHomepage = props => {
       return `${((total / count) * 100).toFixed(0)}%`;
     }
 
+    //Returns all the results of partially completed assignments
+    const startedScores = assignment => {
+      //Getting all the incomplete assignments 
+      const incompleteAssignments = getAssignmentResults([...currentClass.results].filter(result => {
+        return (result.assignment.class._id === currentClass._id && result.completed === false);
+      }), assignment._id);
+
+      //If there are no incomplete assignments then explain that
+      if (incompleteAssignments.length === 0) {
+        return <ul><li>No students</li></ul>;
+      }
+
+      //Display all incomplete results
+      return (<ul>
+        {incompleteAssignments.map(result => {
+          return <li>{result.student.username} - Questions completed: {result.answers.length}/{assignment.questions.length}</li>
+        })}
+      </ul>)
+    }
+
     //Returns all scores ranked (as list items)
     const scoresRanked = assignment => {
-      const completedAssignments = getAssignmentResults(currentClass.results, assignment._id);
-      if (completedAssignments.length === 0) return <li>No results yet</li>;
+      const completedAssignments = getAssignmentResults(returnClassResults(currentClass), assignment._id);
+      if (completedAssignments.length === 0) return <p>No results yet</p>;
 
       let students = [];
 
@@ -819,7 +848,7 @@ const TeacherHomepage = props => {
 
     //Returns all questions with their average (as list items)
     const questionsSummarised = assignment => {
-      const completedAssignments = getAssignmentResults(currentClass.results, assignment._id);
+      const completedAssignments = getAssignmentResults(returnClassResults(currentClass), assignment._id);
       if (completedAssignments.length === 0) return <li>No results yet</li>;
 
       let questions = [];
@@ -843,9 +872,11 @@ const TeacherHomepage = props => {
         }
       }
 
-      return questions.map(question => {
-        return <li key={question.index}>{question.question} - {(question.total / completedAssignments.length).toFixed(2)}/{question.maxMarks}</li>
-      });
+      return <ol>
+        {questions.map(question => {
+          return <li key={question.index}>{question.question} - {(question.total / completedAssignments.length).toFixed(2)}/{question.maxMarks}</li>
+        })}
+      </ol>
     }
 
     //returns the average time taken for the assignment
@@ -854,7 +885,7 @@ const TeacherHomepage = props => {
         return 'Times not recorded';
       } else {
         //Getting all the results of the passed in assignment
-        const completedAssignments = getAssignmentResults(currentClass.results, assignment._id);
+        const completedAssignments = getAssignmentResults(returnClassResults(currentClass), assignment._id);
 
         let total = 0;
         let count = 0;
@@ -876,13 +907,14 @@ const TeacherHomepage = props => {
         <h3>{assignment.title}</h3>
         <ul>
           <li><b>Due date</b> - {formatDate(new Date(Number(assignment.dueDate)))}</li>
-          <li><b>Not completed</b> - {missingStudents(assignment)}</li>
+          <li><b>Not started</b></li>
+          {missingStudents(assignment)}
+          <li><b>Started (but incomplete)</b></li>
+          {startedScores(assignment)}
           <li><b>Completed</b></li>
           {scoresRanked(assignment)}
           <li><b>Questions (and average mark)</b></li>
-          <ol>
-            {questionsSummarised(assignment)}
-          </ol>
+          {questionsSummarised(assignment)}
           <li><b>Average score</b> - {getAverageResult(assignment)}</li>
           <li><b>Average time</b> - {getAverageTime(assignment)}</li>
         </ul>
@@ -949,29 +981,54 @@ const TeacherHomepage = props => {
   //Opens modal to show selected students assignments
   const showStudentAssignmentsModal = () => {
     //Function returns the student's result for the assignment
-    const getResult = assignment => {
-      let studentResults = getStudentResults();
+    const getResult = (assignment, returnResult = true) => {
+      //Getting all the student's results
+      const studentResults = [...currentClass.results].filter(result => {
+        return result.student._id === currentStudent._id;
+      })
+
       if (studentResults.length === 0) return null;
 
       //Check if a result is linked to the passes in assignment
-      const completedResult = studentResults.filter(result => result.assignment._id === assignment._id);
+      const completedResult = [...studentResults].filter(result => result.assignment._id === assignment._id);
 
-      if (completedResult.length === 0) return null;
-      return completedResult[0];
+      if (returnResult) {
+        if (completedResult.length === 0) return null;
+      } else {
+        if (completedResult.length === 0) return 'missing';
+      }
+
+      if (returnResult) {
+        return completedResult[0];
+      }
+
+      return (completedResult[0].completed ? 'complete' : 'incomplete');
     }
 
     //Works out if the assignment passed in is completed
     const isCompleted = assignment => {
-      //Get results which are from the selected student
-      const completedResult = getResult(assignment);
-      if (completedResult === null) return 'NO';
+      //Getting all the student's results
+      const studentResults = [...currentClass.results].filter(result => {
+        return result.student._id === currentStudent._id;
+      });
 
-      //Checking is the assignment was late
-      if (isResultLate(completedResult)) {
-        return 'YES [LATE]';
+      //Get results which are from the selected student
+      const completedResult = getResult(assignment, false);
+      if (completedResult === 'missing') return 'NO';
+
+      //Checking is the assignment that was completed was late
+      if (completedResult === 'complete') {
+        if (isResultLate([...studentResults].filter(result => {
+          return result.assignment._id === assignment._id;
+        })[0])) {
+          return 'YES [LATE]';
+        } else {
+          return 'YES [ON TIME]'
+        }
       }
 
-      return 'YES [ON TIME]'
+      //Checking if the assignment is incomplete
+      if (completedResult === 'incomplete') return 'Started';
     }
 
     //Gets the student's score for the assignment
@@ -980,10 +1037,23 @@ const TeacherHomepage = props => {
       const completedResult = getResult(assignment);
       if (completedResult === null) return 'N/A';
 
-      return (completedResult ?
-        `${completedResult.marks}/${completedResult.assignment.maxMarks} (${((completedResult.marks / completedResult.assignment.maxMarks).toFixed(2) * 100)}%)` :
-        'N/A'
-      );
+      if (completedResult.completed) {
+        return (completedResult !== null ?
+          `${completedResult.marks}/${assignment.maxMarks} (${((completedResult.marks / assignment.maxMarks).toFixed(2) * 100)}%)` :
+          'N/A'
+        );
+      } else {
+        //Getting the highest possible total marks 
+        let total = 0;
+        for (let i = 0; i < completedResult.answers.length; i++) {
+          total += assignment.questions[i].marks;
+        }
+
+        return (completedResult !== null ?
+          `${completedResult.marks}/${total} (${((completedResult.marks / total).toFixed(2) * 100)}%)` :
+          'N/A'
+        );
+      }
     }
 
     //Gets the date the student completed the assignment
@@ -1260,7 +1330,7 @@ const TeacherHomepage = props => {
     //Returns the array for statuses
     //[ontime, late, missing]
     const getStatuses = () => {
-      const results = currentClass.results.length;
+      const results = returnClassResults(currentClass).length;
       const late = getLateSubmissions(true);
       const ontime = results - late;
       const total = currentClass.assignments.length * currentClass.students.length;
@@ -1317,7 +1387,7 @@ const TeacherHomepage = props => {
       ];
 
       //Getting all results
-      const results = currentClass.results;
+      const results = returnClassResults(currentClass);
 
       //Looping through all results
       for (const result of results) {
