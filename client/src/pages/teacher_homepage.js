@@ -837,7 +837,7 @@ const TeacherHomepage = props => {
       //loop through all results
       for (let result of completedAssignments) {
         for (let i = 0; i < questions.length; i++) {
-          if (result.answers[i] === result.assignment.questions[i].correct) {
+          if (result.answers[i].toLowerCase() === result.assignment.questions[i].correct.toLowerCase()) {
             questions[i].total += result.assignment.questions[i].marks;
           }
         }

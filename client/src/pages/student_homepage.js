@@ -230,7 +230,7 @@ const StudentHomepage = props => {
         const getAnswers = () => {
           //Returns wrong/correct for the answer so the answer can be colour coded
           const getClass = (answer, index) => {
-            return (answer !== assignment.questions[index].correct ? 'wrong' : 'correct');
+            return (answer.toLowerCase() !== assignment.questions[index].correct.toLowerCase() ? 'wrong' : 'correct');
           }
 
           return assignmentResult.answers.map((answer_, index) => {
