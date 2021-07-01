@@ -205,6 +205,16 @@ const Quiz = props => {
     const submitQuestion = e => {
       e.preventDefault();
 
+      //if the answer is blank, modal to state must have answer
+      if (currentAnswer.replaceAll(' ', '') === '') {
+        modalContext.updateModal({
+          title: 'Error',
+          content: <p>You have left the answer blank, please answer the question.</p>
+        })
+
+        return;
+      }
+
       //Sets submitted to true so submitted footer opens
       setSubmitted(true);
 
@@ -306,15 +316,30 @@ const Quiz = props => {
       </div>
     }
 
-    //Called when hint button pressed, opens modal to show hint
+    //opens modal to show hint if are you sure confirmed
     const showHint = () => {
       //Setting that this question's hint has been used
       setHintUsed(true);
 
-      //Opening modal with hint
       modalContext.updateModal({
         title: 'Hint',
         content: <p>{hint}</p>
+      })
+    }
+
+    //Called when hint button pressed
+    const hintSure = () => {
+      //Opening are you sure modal, if yes then openHint
+      modalContext.updateModal({
+        title: 'Show hint',
+        content: <div id="sure">
+          <p>Are you sure?</p>
+
+          <div id="buttons">
+            <button type="button" className="btn" onClick={showHint}>Yes</button>
+            <button type="button" className="btn" onClick={() => modalContext.clearModal()}>No</button>
+          </div>
+        </div>
       })
     }
 
@@ -331,7 +356,7 @@ const Quiz = props => {
       <div id="question">
         <b>{question} [{marks}]</b>
         {hint !== null && hint !== undefined ?
-          <button className="btn" id="hint" onClick={showHint}>See hint</button> :
+          <button className="btn" id="hint" onClick={hintSure}>See hint</button> :
           null
         }
         {imageURL !== null && imageURL !== undefined && imageURL.replaceAll(' ', '') !== '' ?

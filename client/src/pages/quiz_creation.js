@@ -512,8 +512,6 @@ const QuizCreation = props => {
   const openSureModal = e => {
     e.preventDefault();
 
-    console.log('called1');
-
     modalContext.updateModal({
       title: 'Publish assignment',
       content: <div id="sure">
