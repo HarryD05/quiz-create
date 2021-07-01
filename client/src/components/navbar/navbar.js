@@ -63,10 +63,8 @@ const Navbar = () => {
   const homeButton = () => {
     const path = window.location.href.split('#')[1];
 
-    //Sends the user to the previous page (the homepage)
+    //Sends the user to the previous page (the student homepage)
     if (path === '/teacher/create') {
-      window.history.back();
-    } else if (path === '/student/quiz') {
       window.history.back();
     }
 
@@ -91,12 +89,12 @@ const Navbar = () => {
   const renderHomeButton = () => {
     const path = window.location.href.split('#')[1];
 
-    if (path === '/auth' || path === '/teacher/home' || path === '/student/home') {
-      return (<button className="btn disabled" id="home-btn" onChange={homeButton}>Home</button>);
-      //button not displayed if authentication page or a homepage
+    if (path === '/teacher/create') {
+      return (<button className="btn" id="home-btn" onClick={homeButton}>Home</button>);
+      //button only displayed on quiz creation page
     }
 
-    return (<button className="btn" id="home-btn" onClick={homeButton}>Home</button>);
+    return (<button className="btn disabled" id="home-btn" onChange={homeButton}>Home</button>);
   }
 
   return (

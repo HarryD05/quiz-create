@@ -55,6 +55,7 @@ module.exports = buildSchema(`
 
   type AssignmentResult {
     _id: ID!
+    completed: Boolean!
     marks: Int!
     date: String!
     answers: [String]!
@@ -115,6 +116,8 @@ module.exports = buildSchema(`
   }
 
   input InitResultInput {
+    initResult: Boolean!
+    completed: Boolean!
     marks: Int!
     timeTaken: Int
     answers: [String]!

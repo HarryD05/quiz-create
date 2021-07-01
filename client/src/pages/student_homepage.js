@@ -42,7 +42,7 @@ const StudentHomepage = props => {
     //Filtering all the student's results to check for results that are for the 
     //passed in assignment
     const results = [...authContext.user.results].filter(result => {
-      return result.assignment._id === assignment._id
+      return (result.assignment._id === assignment._id && result.completed)
     });
 
     //If the return result parameter is passed in check if the result is available
@@ -53,7 +53,28 @@ const StudentHomepage = props => {
 
     //If the result is for the passed in assignment then there will be 1 result in the 
     //array so the statement is true if not the statement is flase (assignment not compete)
-    return (results.length === 1);
+    if (results.length === 0) {
+      return false;
+    } else {
+      return results[0].completed;
+    }
+  }
+
+  const returnStatus = assignment => {
+    //Filtering all the student's results to check for results that are for the 
+    //passed in assignment
+    const results = [...authContext.user.results].filter(result => {
+      return (result.assignment._id === assignment._id)
+    });
+
+    //If the result is for the passed in assignment then there will be 1 result in the 
+    //array so if no results then the asignment hasn't been started, then check the result
+    //to see if it is completed or just started
+    if (results.length === 0) return 'missing';
+
+    if (results[0].completed) return 'completed';
+
+    return 'started';
   }
 
   //Returns assignment cards for all assignments
@@ -210,8 +231,29 @@ const StudentHomepage = props => {
         //If assignment not completed redirect user to the assignment completion page
         props.history.push('/student/quiz');
 
-        //Update the authContext to have the currentAssignment
-        authContext.updateAssignment(assignment);
+        //Getting the status (either started or missing)
+        const status = returnStatus(assignment);
+
+        if (status === 'started') {
+          //Get the partial result
+          const result = [...authContext.user.results].filter(result => {
+            return (result.assignment._id === assignment._id && result.completed === false);
+          })[0];
+
+          //Update the authContext to have the currentAssignment at next incomplete question
+          authContext.updateAssignment({
+            assignment,
+            startingQuestion: result.answers.length,
+            currentMarks: result.marks
+          });
+        } else {
+          //Update the authContext to have the currentAssignment, starting at question 1 
+          authContext.updateAssignment({
+            assignment,
+            startingQuestion: 0,
+            currentMarks: 0
+          });
+        }
       } else {
         //Returns the timetaken to complete the assignment if it is available
         const getTime = () => {
@@ -274,6 +316,26 @@ const StudentHomepage = props => {
       }
     }
 
+    //Returns the relevant button text
+    const renderAssignmentButton = () => {
+      //Getting the status of the current assignment
+      const status = returnStatus(assignment);
+
+      switch (status) {
+        case 'missing':
+          return 'Start assignment';
+
+        case 'started':
+          return 'Continue assignment';
+
+        case 'completed':
+          return 'See result';
+
+        default:
+          return 'Error';
+      }
+    }
+
     //Returns the assignment card with all the assignment data 
     return (
       <div id="assignment-card" className={checkMissing(assignment)} key={assignment._id}>
@@ -290,7 +352,7 @@ const StudentHomepage = props => {
         <p><div>Due date</div><div className="right">{formatDate(assignment.dueDate)}</div></p>
         <div className="footer">
           <button className="btn" onClick={handleAssignmentClick.bind(this, assignment)}>
-            {isCompleted(assignment) ? 'See result' : 'Start assignment'}
+            {renderAssignmentButton()}
           </button>
         </div>
       </div>
@@ -314,7 +376,7 @@ const StudentHomepage = props => {
 
       //Getting the results that link to the passed in class
       const results = [...authContext.user.results].filter(result => {
-        return result.assignment.class._id === class_._id
+        return (result.assignment.class._id === class_._id && result.completed)
       });
 
       //If looking for completed assignments just return the number of results
@@ -362,7 +424,7 @@ const StudentHomepage = props => {
     const getStudentPoorestTopic = () => {
       //Checking that the user has results for this class
       const classResults = [...authContext.user.results].filter(result => {
-        return result.assignment.class._id === class_._id
+        return (result.assignment.class._id === class_._id && result.completed)
       });
 
       if (classResults.length === 0) return 'No results yet';
@@ -388,7 +450,7 @@ const StudentHomepage = props => {
     const getStudentBestTopic = () => {
       //Checking that the user has results for this class
       const classResults = [...authContext.user.results].filter(result => {
-        return result.assignment.class._id === class_._id
+        return (result.assignment.class._id === class_._id && result.completed)
       });
 
       if (classResults.length === 0) return 'No results yet';
@@ -522,7 +584,7 @@ const StudentHomepage = props => {
       classes.forEach(class_ => {
         //stores all the results that are from this class
         const linkedResults = [...authContext.user.results].filter(result => {
-          return result.assignment.class._id === class_._id;
+          return (result.assignment.class._id === class_._id && result.completed)
         });
 
         //Adding the new linked results to the current results array
@@ -644,7 +706,7 @@ const StudentHomepage = props => {
             <div className="form-control">
               <input type="text" name="keyword" autoComplete="off"
                 onChange={handleAssignmentSearchChange} required />
-              <label htmlFor="keyword">Search assignments...</label>
+              <label htmlFor="keyword">Filter assignments...</label>
             </div>
 
             <div id="search-buttons">

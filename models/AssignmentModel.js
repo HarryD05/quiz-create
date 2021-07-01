@@ -2,7 +2,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-//CREATING CLASS SCHEMA (an object of the Schema class)
+//CREATING ASSIGNMENT SCHEMA (an object of the Schema class)
 const AssignmentSchema = new Schema({
   title: {
     type: String,

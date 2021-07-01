@@ -9,6 +9,22 @@
   max-width: calc(80% - 4rem);
   width: 640px; 
 
+  #home-button {
+    //Displaying the custom quiz page home button in top left corner
+    position: absolute;
+    top: 15px;
+    left: 0;
+    z-index: 50;
+
+    //Stlying from the navbar component for home button
+    width: 5rem;
+    margin-left: 1rem;
+
+    &:hover {
+      background-color: #e7e7e7;
+    }
+  }
+
   #welcome {
     width: 100%;
 
@@ -29,11 +45,15 @@
     #quiz-details {
       padding: 1rem;
       margin: 1rem auto;
-      max-width: 280px;
+      max-width: 300px;
       border-radius: 8px;
       text-align: left;
       box-shadow: #43475545 0px 0px 0.25em inset, 
                   #5a7dbc0d 0px 0.25em 1em inset;
+
+      ul {
+        list-style-position: inside;
+      }
 
       #footer {
         margin-top: 12px;

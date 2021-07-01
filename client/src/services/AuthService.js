@@ -60,6 +60,7 @@ export default {
               date
               answers
               hints
+              completed
               assignment {
                 _id
                 title
@@ -113,6 +114,7 @@ export default {
                 date
                 answers
                 hints
+                completed
                 student {
                   _id
                   username

@@ -2,8 +2,12 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-//CREATING CLASS SCHEMA (an object of the Schema class)
+//CREATING ASSIGNMENTRESULT SCHEMA (an object of the Schema class)
 const AssignmentResultSchema = new Schema({
+  completed: {
+    type: Boolean,
+    required: [true, 'Completed boolean required']
+  },
   marks: {
     type: Number,
     required: [true, 'Marks required']
