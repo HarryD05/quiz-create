@@ -334,7 +334,7 @@ const Quiz = props => {
           <button className="btn" id="hint" onClick={showHint}>See hint</button> :
           null
         }
-        {imageURL !== null & imageURL !== undefined ?
+        {imageURL !== null && imageURL !== undefined && imageURL.replaceAll(' ', '') !== '' ?
           <img src={imageURL} alt={'Unable to provide...'}></img> :
           null
         }
