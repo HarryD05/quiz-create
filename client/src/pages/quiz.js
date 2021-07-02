@@ -24,8 +24,8 @@ const Quiz = props => {
   const [screenState, setScreenState] = useState('start');
 
   //Stores the details that will be used for completeAssignment API call
-  const [resultsDetails, setResultsDetails] = useState({
-    startTime: '', endTime: '', marks: 0, hints: [], answers: []
+  const [extraDetails, setExtraDetails] = useState({
+    startTime: '', marks: 0, totalMarks: 0
   });
 
   //Stores the current question number - initialised using the index in the authContext 
@@ -71,8 +71,8 @@ const Quiz = props => {
       setScreenState('quiz');
 
       //Saving the start time
-      setResultsDetails({
-        ...resultsDetails,
+      setExtraDetails({
+        ...extraDetails,
         startTime: new Date()
       })
     }
@@ -237,18 +237,17 @@ const Quiz = props => {
       setSubmitted(true);
 
       //Adding the marks of the question to the total marks if corrrect answer
-      let totalMarks = resultsDetails.marks;
+      let totalMarks = 0;
       if (isCorrect()) {
         totalMarks += marks;
       }
 
       //Updating the results details (adding this question's answer, the new total
       //marks and adding whether or not a hint was used this question)
-      setResultsDetails({
-        ...resultsDetails,
-        answers: [...resultsDetails.answers, currentAnswer],
+      setExtraDetails({
+        ...extraDetails,
         marks: totalMarks,
-        hints: [...resultsDetails.hints, hintUsed]
+        totalMarks: totalMarks + extraDetails.totalMarks
       })
     }
 
@@ -261,69 +260,75 @@ const Quiz = props => {
 
     //Handles on click of footer button (next question or complete assignment)
     const footerClicked = async completed => {
-      if (completed) {
-        //Checking if the result needs to be updated or initiated
-        //If the starting question wasn't 0 then the result just needs to be updated
-        const initResult = (authContext.assignment.startingQuestion === 0);
+      //save current answer
+      //Checking if the result needs to be updated or initiated
+      //If the starting question wasn't 0 then the result just needs to be updated
+      const initResult = (authContext.assignment.startingQuestion === 0 && currentQuestion === 0);
 
-        //Cleaning data to be saved in database (completeAssignment API call)
-        //Including completed being true as all questions answered
-        const resultInfo = {
-          initResult,
-          completed: true,
-          marks: resultsDetails.marks,
-          answers: resultsDetails.answers.map(answer => {
-            answer = answer.trim();
-            answer = answer.toLowerCase();
-            return answer;
-          }),
-          hints: resultsDetails.hints,
-          assignment: _id
-        }
+      const sanitiseAnswer = answer => {
+        answer = answer.trim();
+        answer = answer.toLowerCase();
+        return answer;
+      }
 
-        //Calculate seconds it took to complete assignment if time recorded 
-        if (recordTime) {
-          const seconds = Math.abs(new Date() - resultsDetails.startTime) / 1000;
-          resultInfo.timeTaken = Math.round(seconds);
-        }
+      //Cleaning data to be saved in database (completeAssignment API call)
+      //Including completed being true as all questions answered
+      const resultInfo = {
+        initResult,
+        completed,
+        marks: extraDetails.marks,
+        answers: [sanitiseAnswer(currentAnswer)],
+        hints: [hintUsed],
+        assignment: _id
+      }
 
-        //Making the API call - completeAssignment
-        try {
-          //Send the API request and retrieve any data returned
-          const resultData = await ResultService.completeAssignment(resultInfo, authContext.token);
+      //Calculate seconds it took to complete assignment if time recorded 
+      if (recordTime) {
+        const seconds = Math.abs(new Date() - extraDetails.startTime) / 1000;
+        resultInfo.timeTaken = Math.round(seconds);
+      }
 
-          if (resultData) {
+      //Making the API call - completeAssignment
+      try {
+        //Send the API request and retrieve any data returned
+        const resultData = await ResultService.completeAssignment(resultInfo, authContext.token);
+
+        //Answer saved
+        if (resultData) {
+          authContext.updateUser(); //Reloads the user data
+
+          if (completed) {
             //Redirect user back to homepage when assignment published
             props.history.push('/student/home');
-
-            authContext.updateUser(); //Reloads the user data
-
-            modalContext.updateModal({
-              title: 'Success',
-              content: <p>Result successfully saved.</p>
-            })
           } else {
-            modalContext.updateModal({
-              title: 'Error',
-              content: <p>There was an error saving your result to the database, please try again.</p>
-            });
+            //Next question - so resetting all values
+            setHintUsed(false);
+            setCurrentQuestion(currentQuestion + 1);
+            setCurrentAnswer('');
+            setOptions([]);
+            //Resetting the details
+            setExtraDetails({
+              ...extraDetails,
+              marks: 0,
+              startTime: new Date()
+            })
+            setSubmitted(false); //closes footer
           }
-        } catch (error) {
+
+          return;
+        } else {
           modalContext.updateModal({
             title: 'Error',
-            content: <p>There was an error saving your result, either press button again or go back to
-              the homepage and complete the assignment again.</p>
+            content: <p>There was an error saving your answer to the database, please try again.</p>
           });
-
-          throw error;
         }
-      } else {
-        //Next question - so resetting all values
-        setHintUsed(false);
-        setCurrentQuestion(currentQuestion + 1);
-        setCurrentAnswer('');
-        setOptions([]);
-        setSubmitted(false); //closes footer
+      } catch (error) {
+        modalContext.updateModal({
+          title: 'Error',
+          content: <p>There was an error saving your answer, please try again.</p>
+        });
+
+        throw error;
       }
     }
 
@@ -374,7 +379,7 @@ const Quiz = props => {
 
         <div id="question-details">
           <p>Question: {currentQuestion + 1}/{questions.length}</p>
-          <p>Marks: {resultsDetails.marks + authContext.assignment.currentMarks}/{getMarks()}</p>
+          <p>Marks: {extraDetails.totalMarks + authContext.assignment.currentMarks}/{getMarks()}</p>
         </div>
       </div>
 
@@ -398,94 +403,6 @@ const Quiz = props => {
     </div>
   }
 
-  //Called if the home button is pressed while the quiz has started
-  //Will saved the current details of the student's results
-  const saveProgress = async () => {
-    try {
-      //Checking if the result needs to be updated or initiated
-      //If the starting question wasn't 0 then the result just needs to be updated
-      const initResult = (authContext.assignment.startingQuestion === 0);
-
-      //Cleaning data to be saved in database (completeAssignment API call)
-      //Including completed being true as all questions answered
-      const resultInfo = {
-        initResult,
-        completed: (resultsDetails.answers.length === authContext.assignment.assignment.questions.length),
-        marks: resultsDetails.marks,
-        answers: resultsDetails.answers.map(answer => {
-          answer = answer.trim();
-          answer = answer.toLowerCase();
-          return answer;
-        }),
-        hints: resultsDetails.hints,
-        assignment: _id
-      }
-
-      //Calculate seconds it took to complete assignment if time recorded 
-      if (recordTime) {
-        const seconds = Math.abs(new Date() - resultsDetails.startTime) / 1000;
-        resultInfo.timeTaken = Math.round(seconds);
-      }
-
-      //Making the API call - completeAssignment
-      try {
-        //Send the API request and retrieve any data returned
-        const resultData = await ResultService.completeAssignment(resultInfo, authContext.token);
-
-        if (resultData) {
-          //Redirect user back to homepage when assignment published
-          props.history.push('/student/home');
-
-          authContext.updateUser(); //Reloads the user data
-
-          modalContext.updateModal({
-            title: 'Success',
-            content: <p>Result successfully saved.</p>
-          })
-        } else {
-          modalContext.updateModal({
-            title: 'Error',
-            content: <p>There was an error saving your result to the database, please try again.</p>
-          });
-        }
-      } catch (error) {
-        modalContext.updateModal({
-          title: 'Error',
-          content: <p>There was an error saving your result, either press button again or go back to
-            the homepage and complete the assignment again.</p>
-        });
-
-        throw error;
-      }
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  //Handles home button click (either just return to homepage if quiz not started or 
-  //send partial result API call if quiz started 
-  const homeButtonClick = () => {
-    //Checking if any answers submitted yet (if not can just return to homepage)
-    if (resultsDetails.answers.length === 0) {
-      props.history.push('/teacher/home');
-    } else {
-      //if the assignment has started check if the student is sure (open are you 
-      //sure modal - if yes save the current result)
-      //Opening are you sure modal, if yes then openHint
-      modalContext.updateModal({
-        title: 'Return to homepage',
-        content: <div id="sure">
-          <p>Are you sure?</p>
-
-          <div id="buttons">
-            <button type="button" className="btn" onClick={saveProgress}>Yes</button>
-            <button type="button" className="btn" onClick={() => modalContext.clearModal()}>No</button>
-          </div>
-        </div>
-      })
-    }
-  }
-
   //Renders the content of the current screenState
   const renderMain = () => {
     switch (screenState) {
@@ -501,8 +418,6 @@ const Quiz = props => {
   }
 
   return <div id="quiz">
-    <button id="home-button" className="btn" onClick={homeButtonClick}>Home</button>
-
     {renderMain()}
   </div>
 }
