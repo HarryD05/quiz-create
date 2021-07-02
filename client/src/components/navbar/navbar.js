@@ -51,8 +51,7 @@ const Navbar = () => {
     //this returns the end of the url which just has the router path
     const path = window.location.href.split('#')[1];
 
-    //temporarily this will be an alert, in the future there will be 
-    //a dedicated compoenent for the info box
+    //Showing the info text in a modal
     modalContext.updateModal(getInfoText(path));
   }
 
@@ -63,8 +62,8 @@ const Navbar = () => {
   const homeButton = () => {
     const path = window.location.href.split('#')[1];
 
-    //Sends the user to the previous page (the student homepage)
-    if (path === '/teacher/create') {
+    //Sends the user to the previous page (the homepage)
+    if (path === '/teacher/create' || path === '/student/quiz') {
       window.history.back();
     }
 
@@ -84,12 +83,11 @@ const Navbar = () => {
     return (<button className="btn" id="logout-btn" onClick={logoutButton}>Logout</button>);
   }
 
-  //if the page isn't the authenitcation page or a homepage 
-  //render a home button
+  //if the page isn't the authenitcation page or a homepage render a home button
   const renderHomeButton = () => {
     const path = window.location.href.split('#')[1];
 
-    if (path === '/teacher/create') {
+    if (path === '/teacher/create' || path === '/student/quiz') {
       return (<button className="btn" id="home-btn" onClick={homeButton}>Home</button>);
       //button only displayed on quiz creation page
     }

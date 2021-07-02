@@ -9,22 +9,6 @@
   max-width: calc(80% - 4rem);
   width: 640px; 
 
-  #home-button {
-    //Displaying the custom quiz page home button in top left corner
-    position: absolute;
-    top: 15px;
-    left: 0;
-    z-index: 50;
-
-    //Stlying from the navbar component for home button
-    width: 5rem;
-    margin-left: 1rem;
-
-    &:hover {
-      background-color: #e7e7e7;
-    }
-  }
-
   #welcome {
     width: 100%;
 
