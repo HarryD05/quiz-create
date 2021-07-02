@@ -73,10 +73,11 @@ const getInfoText = path => {
         <ul>
           <li>The left side of the homepage (or top half on a smaller device) displays a list of all your assignments in order of due date.</li>
           <li>If an assignment is red then you haven't completed it and the due date has passed so you need to complete it quickly.</li>
-          <li>You can use the search bar below the 'Your assignments' heading to search for specific assignments, the word/phrase you input is checked against lots of data about each assignment including the assignment title and description, the questions etc.</li>
-          <li>You can use the 3 buttons below the search bar to select what assignments you want to see: all, completed or still to do (assignments that haven't been submitted yet).</li>
+          <li>You can use the search bar below the 'Your assignments' heading to filter for specific assignments, the word/phrase you input is checked against lots of data about each assignment including the assignment title and description, the questions etc.</li>
+          <li>You can use the 3 buttons below the search bar to select what assignments you want to see: all, completed or still to do (assignments that haven't been completed yet - either not started or partially complete).</li>
           <li>Pressing the 'See results' button will open a popup giving some details about your result for that assignment including your answers and below an explanation of the correct answer.</li>
-          <li>Pressing the 'Complete assignment' button will redirect you to the quiz completion page where you can complete the quiz.</li>
+          <li>Pressing the 'Start assignment' button will redirect you to the quiz completion page where you can complete the quiz.</li>
+          <li>Pressing the 'Continue assignment' button will redirect you to the quiz completion page where you can continue the assignment from where you last left it.</li>
         </ul>
         <li>Your classes</li>
         <ul>
@@ -93,7 +94,7 @@ const getInfoText = path => {
         <li>When you first are redirected to this page you will see the welcome screen which displays the assignment title, description, number of questions, number of marks and whether or not the time it takes you to complete the assignment will be recorded. Here if you decided not to complete the assignment you can press the home button in the top left to return to the student homepage or if you want to start the quiz you press the 'Start' button.</li>
         <li>Once you have pressed the start button the quiz will begin (if the time is being recorded the timer will begin) you will see the assignment title in the top left and your current question and current marks in the top left. Then below that you will see the question and the number of marks it is worth in square brackets e.g. [2]. If the question has a hint you will see the 'Hint' button, if you press that you will see the hint but it will be recorded that you used the hint (you can open the hint as many times as you want).</li>
         <li>Below the question is the answer space which will either be a text input or if the question is multiple choice 2-4 boxed for you to select from, the option you select in multiple choice will be highlighted in blue. </li>
-        <li>When you submit a question you will then see immediately if it is correct or incorrect accompanied with an explanation of the correct answer. </li>
+        <li>When you submit a question you will then see immediately if it is correct or incorrect accompanied with an explanation of the correct answer. This answer will be stored so that if you leave the page when you next try to complete the assignment you will start from where you left off.</li>
         <li>Once you submit the last question you will see the 'Complete assignment' button instead of 'Next question' in the bottom right, once you press 'Complete assignment' you result will be stored and you will return to the student homepage.</li>
       </ul>);
       break;
