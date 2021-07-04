@@ -38,7 +38,7 @@ const TeacherHomepage = props => {
   const [newClassInfo, setNewClassInfo] = useState({
     name: '', qualification: '', subject: '', joiningCode: ''
   });
-  const [attainmentLevel, setAttainmentLevel] = useState(null);
+  const [attainmentLevel, setAttainmentLevel] = useState('');
   const [isSmall, setIsSmall] = useState(window.visualViewport.width < 600);
 
   //variable in state when updated the page re-renders

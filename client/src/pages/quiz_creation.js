@@ -18,12 +18,10 @@ const QuizCreation = props => {
   const [currentQuestions, setCurrentQuestions] = useState([]);
   const [allQuestions, setAllQuestions] = useState([]);
   const [newQuestionInput, setNewQuestionInput] = useState({
-    question: '', imageURL: '', topic: '', hint: '', explanation: '', qtype: '', option1: '',
-    option2: '', option3: '', option4: '', correct: '', marks: ''
+    question: '', imageURL: '', topic: '', hint: '', explanation: '', qtype: '', option1: '', option2: '', option3: '', option4: '', correct: '', marks: ''
   });
   const [newAssignmentInput, setNewAssignmentInput] = useState({
-    title: '', description: '', recordTime: false, dueDate: '', expectedHigh: 0, expectedMid: 0,
-    expectedLow: 0
+    title: '', description: '', recordTime: false, dueDate: '', expectedHigh: 0, expectedMid: 0, expectedLow: 0
   });
   const [createQuestionFormShowing, setCreateQuestionFormShowing] = useState(false);
   const [expectedShowing, setExpectedShowing] = useState(false);
