@@ -429,9 +429,6 @@ const QuizCreation = props => {
     //stops the page reloading when the button is pressed
     e.preventDefault();
 
-    console.log('called');
-    console.log(currentQuestions);
-
     //Showing error if no questions as assignment can't have 0 questions
     if (currentQuestions.length === 0) {
       modalContext.updateModal({
