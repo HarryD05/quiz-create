@@ -4,6 +4,17 @@ const Schema = mongoose.Schema;
 
 //CREATING USER SCHEMA (an object of the Schema class)
 const UserSchema = new Schema({
+  firstname: {
+    type: String,
+    required: [true, 'Firstname required'],
+  },
+  surname: {
+    type: String,
+    required: [true, 'Surname required'],
+  },
+  prefix: {
+    type: String
+  },
   username: {
     type: String,
     required: [true, 'Username required'],

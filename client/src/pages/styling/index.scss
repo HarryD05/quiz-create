@@ -177,8 +177,11 @@ $hint-orange: #FFC77A;
   }
 }
 
-//Styling for the role radio buttons
-.role {
+//Styling for the dropdowns
+.dropdown {
+  margin-bottom: 0;
+  margin-top: 2rem;
+
   label, input {
     width: 100%;
     display: block;
@@ -190,14 +193,9 @@ $hint-orange: #FFC77A;
     cursor: initial;
   }
 
-  .radioBtn {
-    margin: auto;
-    display: flex;
-    text-align: right;
-  }
-
-  input:hover {
-    cursor: pointer;
+  label {
+    position: relative;
+    bottom: 60px;
   }
 }
 

@@ -113,7 +113,7 @@ const TeacherHomepage = props => {
 
     //Return all assignments as well as all, which when selected
     //means all assignments will be displayed
-    return [...assignments, { label: 'All assignments', value: -1 }];
+    return [{ label: 'All assignments', value: -1 }, ...assignments];
   }
 
   //get the student list from the selected class
@@ -126,7 +126,9 @@ const TeacherHomepage = props => {
 
     //looping through class' students to extract the usernames
     for (let i = 0; i < currentClass.students.length; i++) {
-      names.push({ label: currentClass.students[i].username, value: i });
+      const { firstname, surname } = currentClass.students[i];
+      const name = `${firstname} ${surname}`;
+      names.push({ label: name, value: i });
     }
 
     return names;
@@ -704,10 +706,12 @@ const TeacherHomepage = props => {
       if (completedAssignments.length === 0) return 'No results yet';
 
       let students = [...currentClass.students];
-      students = students.map(student => student.username);
+      students = students.map(student => `${student.firstname} ${student.surname}`);
 
       completedAssignments.forEach(completed => {
-        students.splice(students.indexOf(completed.student.username), 1);
+        students.splice(
+          students.indexOf(`${completed.student.firstname} ${completed.student.surname}`)
+          , 1);
       });
 
       if (students.length === 0) return <ul><li>No students</li></ul>;
@@ -746,7 +750,7 @@ const TeacherHomepage = props => {
       //Display all incomplete results
       return (<ul>
         {incompleteAssignments.map(result => {
-          return <li>{result.student.username} - Questions completed: {result.answers.length}/{assignment.questions.length}</li>
+          return <li>{result.student.firstname} {result.student.surname} - Questions completed: {result.answers.length}/{assignment.questions.length}</li>
         })}
       </ul>)
     }
@@ -764,7 +768,7 @@ const TeacherHomepage = props => {
 
         students.push({
           _id: result.student._id,
-          username: result.student.username,
+          name: `${result.student.firstname} ${result.student.surname}`,
           mark: result.marks,
           score: Number(((result.marks / assignment.maxMarks) * 100).toFixed(0)),
           date: formatDate(new Date(Number(result.date))),
@@ -777,8 +781,8 @@ const TeacherHomepage = props => {
       const renderAsList = () => {
         return (<ol>
           {students.map(student => {
-            return <li key={student.username}>
-              {student.username} - {student.mark}/{assignment.maxMarks} ({student.score}%)
+            return <li key={student.name}>
+              {student.name} - {student.mark}/{assignment.maxMarks} ({student.score}%)
               - {student.date} {student.isLate ? '[LATE]' : '[ON TIME]'}
             </li>
           })}
@@ -831,7 +835,7 @@ const TeacherHomepage = props => {
             {students.map((student, index) => {
               return (<tr key={index} className={getBelow(student)}>
                 <td>{index + 1}</td>
-                <td>{student.username}</td>
+                <td>{student.name}</td>
                 <td>{getStudentAttainment(student)}</td>
                 <td>{`${student.mark}/${assignment.maxMarks}`}</td>
                 <td>{getExpectedScore(assignment, student)}</td>
@@ -1173,7 +1177,7 @@ const TeacherHomepage = props => {
     //the modal component
     const changeModalState = state => {
       modalContext.updateModal({
-        title: `${currentStudent.username}'s assignments/results`,
+        title: `${currentStudent.firstname} ${currentStudent.surname}'s assignments/results`,
         content: <div id="student-assignments">
           <Select className="modal-selector" options={getAssignmentNames(currentClass.assignments)}
             onChange={handleStudentAssignmentSelectorChange} updateModal={changeModalState} defaultValue={'All assignments'} />
@@ -1197,12 +1201,12 @@ const TeacherHomepage = props => {
     } else {
       if (currentClass.assignments.length === 0) {
         modalContext.updateModal({
-          title: `${currentStudent.username}'s assignments/results`,
+          title: `${currentStudent.firstname} ${currentStudent.surname}'s assignments/results`,
           content: <p>No assignments set...</p>
         });
       } else {
         modalContext.updateModal({
-          title: `${currentStudent.username}'s assignments/results`,
+          title: `${currentStudent.firstname} ${currentStudent.surname}'s assignments/results`,
           content: <div id="student-assignments">
             <Select className="modal-selector" options={getAssignmentNames(currentClass.assignments)}
               onChange={handleStudentAssignmentSelectorChange} updateModal={changeModalState} defaultValue={'All assignments'} />
@@ -1256,7 +1260,7 @@ const TeacherHomepage = props => {
       currentClass.students.forEach(student => {
         const results = getStudentResults(student); //Getting all the students results
 
-        let output = [student.username, getStudentAttainment(student._id)];
+        let output = [`${student.firstname} ${student.surname}`, getStudentAttainment(student._id)];
         //First items in row should be student's name and attainment level
 
         //Getting the student's attainment level
@@ -1387,7 +1391,7 @@ const TeacherHomepage = props => {
       ];
 
       //Getting all results
-      const results = returnClassResults(currentClass);
+      let results = returnClassResults(currentClass);
 
       //Looping through all results
       for (const result of results) {
@@ -1461,7 +1465,7 @@ const TeacherHomepage = props => {
                 addition = `(${level})`;
               }
 
-              return `${student.username} ${addition}`;
+              return `${student.firstname} ${student.surname} ${addition}`;
             })}
             colours={currentClass.students.map(() => randomColour('73'))}
             secondaryLabels={currentClass.assignments.map(assignment => assignment.title)}
@@ -1523,7 +1527,7 @@ const TeacherHomepage = props => {
 
   return (
     <div id="teacher-homepage" key={key}>
-      <p id="welcome-msg">Welcome {authContext.user.username}</p>
+      <p id="welcome-msg">Welcome {authContext.user.firstname}</p>
 
       <div id="thp-tables">
         <div id="classes">

@@ -488,10 +488,16 @@ const StudentHomepage = props => {
       btnClass = 'selected';
     }
 
+    const returnTeacherName = () => {
+      const { prefix, firstname, surname } = class_.teacher;
+
+      return `${prefix} ${firstname.toUpperCase()[0]} ${surname}`;
+    }
+
     return (
       <button id="class-card" onClick={() => selectClass(class_._id)} className={btnClass} key={class_._id}>
         <div className="heading">{class_.name} ({class_.qualification} {class_.subject})</div>
-        <p style={{ marginBottom: '12px' }}><div>Teacher</div><div>{class_.teacher.username}</div></p>
+        <p style={{ marginBottom: '12px' }}><div>Teacher</div><div>{returnTeacherName()}</div></p>
         <p><div>Completed assignments</div><div className="right">{assignmentsCompleted(true)}</div></p>
         <p style={{ marginBottom: '12px' }}><div>Assignments still to do</div><div className="right">{assignmentsCompleted(false)}</div></p>
         <p><div>Best topic</div><div className="right">{getStudentBestTopic()}</div></p>
@@ -696,7 +702,7 @@ const StudentHomepage = props => {
   return (
     <div id="student-homepage">
       <div id="student-homepage-header">
-        <p id="welcome-msg">Welcome {authContext.user.username}</p>
+        <p id="welcome-msg">Welcome {authContext.user.firstname}</p>
         <button className="btn" onClick={openResultsModal}>See all results</button>
       </div>
 

@@ -1,5 +1,6 @@
 //React dependencies 
 import React, { useState, useContext } from 'react';
+import Select from 'react-select';
 
 //Importing context and services
 import AuthService from '../services/AuthService';
@@ -14,7 +15,9 @@ import './styling/auth.scss';
 const Authentication = props => {
   //Setting up state
   const [isLogin, setIsLogin] = useState(true);
-  const [user, setUser] = useState({ username: "", password: "", role: "" });
+  const [user, setUser] = useState({
+    firstname: '', surname: '', prefix: '', username: '', password: '', role: ''
+  });
 
   //Setting up context
   const authContext = useContext(AuthContext);
@@ -31,6 +34,21 @@ const Authentication = props => {
       ...user,
       [e.target.name]: e.target.value
     });
+  }
+
+  const handleSelectChange = e => {
+    //Selecting which attribute to update
+    if (e.value === 'teacher' || e.value === 'student') {
+      setUser({
+        ...user,
+        role: e.value
+      });
+    } else {
+      setUser({
+        ...user,
+        prefix: e.value
+      });
+    }
   }
 
   const login = async (user, isFromSignup) => {
@@ -116,16 +134,49 @@ const Authentication = props => {
 
   //Render role form control function (only needed if signup)
   const renderRole = () => {
+    let options = [
+      { label: 'Student', value: 'student' },
+      { label: 'Teacher', value: 'teacher' }
+    ]
+
     return (
-      <div className="form-control role">
-        <div className="radioBtn">
-          <label htmlFor="student">Student</label>
-          <input type="radio" name="role" value="student" onChange={handleChange} />
-        </div>
-        <div className="radioBtn">
-          <label htmlFor="teacher">Teacher</label>
-          <input type="radio" name="role" value="teacher" onChange={handleChange} />
-        </div>
+      <div className="form-control dropdown">
+        <Select name="role" options={options} onChange={handleSelectChange}
+          className="select" placeholder="Select account type..." />
+      </div>
+    )
+  }
+
+  const renderFirstname = () => {
+    return (
+      <div className="form-control">
+        <input type="firstname" name="firstname" onChange={handleChange} autoComplete="off" required />
+        <label htmlFor="firstname">First name</label>
+      </div>
+    )
+  }
+
+  const renderSurname = () => {
+    return (
+      <div className="form-control">
+        <input type="surname" name="surname" onChange={handleChange} autoComplete="off" required />
+        <label htmlFor="surname">Surname</label>
+      </div>
+    )
+  }
+  const renderPrefix = () => {
+    let options = [
+      { label: 'Mr', value: 'Mr' },
+      { label: 'Mrs', value: 'Mrs' },
+      { label: 'Miss', value: 'Miss' },
+      { label: 'Ms', value: 'Ms' },
+      { label: 'Mx', value: 'Mx' }
+    ]
+
+    return (
+      <div className="form-control dropdown">
+        <Select name="prefix" options={options} onChange={handleSelectChange}
+          className="select" placeholder="Select prefix..." />
       </div>
     )
   }
@@ -159,12 +210,18 @@ const Authentication = props => {
           <label htmlFor="username">Username</label>
         </div>
 
+        {isLogin ? null : renderFirstname()}
+
+        {isLogin ? null : renderSurname()}
+
         <div className="form-control">
           <input type="password" name="password" onChange={handleChange} required />
           <label htmlFor="password">Password</label>
         </div>
 
         {isLogin ? null : renderRole()}
+
+        {isLogin ? null : user.role === 'teacher' ? renderPrefix() : null}
 
         <div className="form-actions">
           <button type="submit" id="submit" className="btn">

@@ -80,16 +80,19 @@ module.exports = {
   },
   createUser: async (args, req) => {
     //extracting the details from the create user api call
-    const { username, password, role } = args.initUserInput;
+    const { firstname, surname, prefix, username, password, role } = args.initUserInput;
 
     try {
       //hashing the inputted password for security in the database
       const hashedPassword = await bcrypt.hash(password, 12);
 
       const newUser = new User({
-        username: username,
-        password: hashedPassword,
-        role: role
+        firstname,
+        surname,
+        prefix,
+        username,
+        role,
+        password: hashedPassword
       });
 
       //adding the new user to the database

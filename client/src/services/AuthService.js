@@ -23,13 +23,16 @@ export default {
     return await Service.sendRequest('login', requestBody, null);
   },
   signup: async user => {
-    const { username, password, role } = user;
+    const { firstname, surname, prefix, username, password, role } = user;
 
     const requestBody = {
       query: `
-        mutation createUser($username: String!, $password: String!, $role: String!) {
-          createUser(initUserInput: {username: $username, password: $password, role: $role}) {
+        mutation createUser($firstname: String!, $surname: String!, $prefix: String, $username: String!, $password: String!, $role: String!) {
+          createUser(initUserInput: {firstname: $firstname, surname: $surname, prefix: $prefix, username: $username, password: $password, role: $role}) {
             _id
+            firstname
+            surname
+            prefix
             username
             password
             role
@@ -37,6 +40,9 @@ export default {
         }
       `,
       variables: {
+        firstname,
+        surname,
+        prefix,
         username,
         password,
         role
@@ -52,6 +58,9 @@ export default {
           currentUser {
             _id
             username
+            firstname
+            surname 
+            prefix
             role
             results {
               _id
@@ -90,22 +99,33 @@ export default {
               teacher {
                 _id
                 username
+                firstname
+                surname 
+                prefix
               }
               students {
                 _id
                 username
+                firstname
+                surname
               }
               high {
                 _id
                 username
+                firstname
+                surname
               }
               mid {
                 _id
                 username
+                firstname
+                surname
               }
               low {
                 _id
                 username
+                firstname
+                surname
               }
               results {
                 _id
@@ -118,6 +138,8 @@ export default {
                 student {
                   _id
                   username
+                  firstname
+                  surname 
                 }
                 assignment {
                   _id

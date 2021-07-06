@@ -4,6 +4,9 @@ module.exports = buildSchema(`
   type User {
     _id: ID!
     username: String!
+    firstname: String!
+    surname: String!
+    prefix: String
     password: String
     role: String!
     classes: [Class]
@@ -73,6 +76,9 @@ module.exports = buildSchema(`
 
 
   input InitUserInput {
+    firstname: String!
+    surname: String!
+    prefix: String
     username: String!
     password: String!
     role: String!
