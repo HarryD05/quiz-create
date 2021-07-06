@@ -2,7 +2,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { HashRouter as Router } from 'react-router-dom';
-//BrowserRouter allows for the route functionality 
+//HashRouter allows for the route functionality 
 //where if the URL changes the page shown changes
 
 //Components
@@ -17,6 +17,8 @@ import ModalProvider from './context/ModalContext';
 import './index.scss'; //the root styling for the website
 
 ReactDOM.render(
-  <AuthProvider><ModalProvider><Router><App /></Router></ModalProvider></AuthProvider>,
+  <AuthProvider><ModalProvider>
+    <Router><App /></Router>
+  </ModalProvider></AuthProvider >,
   document.getElementById('root')
 ); //this renders the app component to the website

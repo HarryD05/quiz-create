@@ -92,7 +92,7 @@
         margin: 1rem auto;
 
         &:hover {
-          background-color: #ffc77a;
+          background-color: $hint-orange;
         }
       }
     }
@@ -112,19 +112,19 @@
           margin: 4px;
 
           &:hover {
-            background-color: #e4e4e4
+            background-color: $grey-hover
           }
 
           &.selected {
-            background-color: #DAE8FC;
+            background-color: $primary-blue;
           }
 
           &.correct {
-            background-color: #aaff91;
+            background-color: $overlay-green;
           }
 
           &.wrong {
-            background-color: #FEA3A3;
+            background-color: $overlay-red;
           }
         }
       }
@@ -157,7 +157,7 @@
         align-items: center;
 
         .btn:hover {
-          background-color: #e4e4e4;
+          background-color: $grey-hover;
         }
 
         p:nth-child(1) {
@@ -178,11 +178,11 @@
       }
 
       &.correct {
-        background-color: #aaff91;
+        background-color: $overlay-green;
       }
 
       &.wrong {
-        background-color: #FEA3A3;
+        background-color: $overlay-red;
       }
     }
   }

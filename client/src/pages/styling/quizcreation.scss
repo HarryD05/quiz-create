@@ -174,11 +174,11 @@
         }
 
         &.short {
-          background-color: #D5E8D4;
+          background-color: $short-green;
         }
 
         &.multichoice {
-          background-color: #E1D5E7;
+          background-color: $multichoice-purple;
         }
 
         &:hover {

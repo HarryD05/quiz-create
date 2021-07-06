@@ -244,14 +244,16 @@ const StudentHomepage = props => {
           authContext.updateAssignment({
             assignment,
             startingQuestion: result.answers.length,
-            currentMarks: result.marks
+            currentMarks: result.marks,
+            timeTaken: result.timeTaken
           });
         } else {
           //Update the authContext to have the currentAssignment, starting at question 1 
           authContext.updateAssignment({
             assignment,
             startingQuestion: 0,
-            currentMarks: 0
+            currentMarks: 0,
+            timeTaken: 0
           });
         }
       } else {

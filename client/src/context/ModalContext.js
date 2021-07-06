@@ -10,7 +10,7 @@ export default (props) => {
   //Extracting the react components within the Provider 
 
   //Setting up the variables within the context
-  const [isModalShowing, setIsModalShowing] = useState(null);
+  const [isModalShowing, setIsModalShowing] = useState(false);
   const [info, setInfo] = useState({ title: '', content: '' });
 
   //Public function used to update the info within the modal

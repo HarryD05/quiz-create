@@ -9,6 +9,9 @@ import { ModalContext } from '../context/ModalContext';
 //Importing services so API calls can be made
 import ResultService from '../services/ResultService';
 
+//Importing reuseable components
+import Timer from '../components/timer/timer';
+
 //Importing styling
 import './styling/index.scss';
 import './styling/quiz.scss';
@@ -20,6 +23,9 @@ const Quiz = props => {
   const modalContext = useContext(ModalContext);
 
   //Setting up state
+  //Stores information for displaying the timer
+  const [timerInfo, setTimerInfo] = useState({});
+
   //Screen state stores which screen is showing (initially the start screen)
   const [screenState, setScreenState] = useState('start');
 
@@ -74,7 +80,23 @@ const Quiz = props => {
       setExtraDetails({
         ...extraDetails,
         startTime: new Date()
-      })
+      });
+
+      //Only calling the timer to display if the assignment is recording the time
+      if (authContext.assignment.assignment.recordTime) {
+        let start = 0; //Default the timer to start at 0 seconds
+
+        if (authContext.assignment.timeTaken !== undefined && authContext.assignment.timeTaken !== null) {
+          start = authContext.assignment.timeTaken;
+          //If the assignment has been started, start the timer where the student left off
+        }
+
+        //Defining the timer info
+        setTimerInfo({
+          firstCall: true,
+          start
+        });
+      }
     }
 
     //If user not starting at question 1 (index 0) remind them
@@ -375,7 +397,10 @@ const Quiz = props => {
 
     return <div id="quiz-screen">
       <div id="quiz-header" className={screenState}>
-        <h3 id="title">{title}</h3>
+        <div id="question-left">
+          <h3 id="title">{title}</h3>
+          {timerInfo.firstCall ? <Timer start={timerInfo.start} /> : null}
+        </div>
 
         <div id="question-details">
           <p>Question: {currentQuestion + 1}/{questions.length}</p>

@@ -1,3 +1,6 @@
+//Importing the variables from the index.scss page
+@import '../../pages/styling/index.scss'; 
+
 //Styling for the modal
 #modal {
   //Setting the position so the modal always shows
@@ -7,7 +10,7 @@
   left: calc(50% - (240px + 1rem));
   width: 480px;
   z-index: 100; //Keeps the modal infront of all content
-  background-color: #DAE8FC;
+  background-color: $primary-blue;
   padding: 1rem;
 
   //stops text overflowing outside of the modal component)
@@ -54,7 +57,7 @@
   }
 
   #header {
-    background-color: #DAE8FC;
+    background-color: $primary-blue;
 
     //always in the top left corner of the modal
     //so it stays covering the entire top band of modal
@@ -95,7 +98,7 @@
     margin-top: 3rem;
 
     .btn:hover {  
-      background-color: #e4e4e4;
+      background-color: $grey-hover;
     }
   }
 

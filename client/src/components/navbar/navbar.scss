@@ -1,14 +1,17 @@
+//Importing the variables from the index.scss page
+@import '../../pages/styling/index.scss'; 
+
+//Styling for the navbar
 #navbar {
   width: 100%; //across entire width of browser;
   margin-bottom: 8px; //8 pixels of whitespace below navbar
-  background-color: #DAE8FC; //light-blue
+  background-color: $primary-blue; //light-blue
   display: initial;
   position: fixed;
   top: 0;
   left: 0;
 
   z-index: 50;
-
 
   box-shadow: 0 0 8px 2px #00000065; //adds a shadow below the
   //navbar making the UI less flat
@@ -31,7 +34,7 @@
       margin-left: 1rem;
 
       &:hover {
-        background-color: #e7e7e7;
+        background-color: $grey-hover;
       }
     }
 
@@ -67,7 +70,7 @@
     transition-duration: 0.25s;
 
     &:hover {
-      background-color: #DAE8FC !important;
+      background-color: $primary-blue !important;
       cursor: pointer;
     }
   }

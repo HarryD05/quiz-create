@@ -1,3 +1,13 @@
+//Global variables for colours
+$primary-blue: #DAE8FC;
+$dark-blue: #1D61E9;
+$grey-hover: #E4E4E4;
+$overlay-green: #AAFF91;
+$overlay-red: #FEA3A3;
+$multichoice-purple: #E1D5E7;
+$short-green: #D5E8D4;
+$hint-orange: #FFC77A;
+
 //Styling for all pages
 .form-control {
   position: relative;
@@ -27,13 +37,13 @@
     &:focus ~ label,
     &:valid ~ label {
       transform: translateY(-20px);
-      color: #1d61e9;
+      color: $dark-blue;
     }
 
     //Makes the bottom border blue when 
     //the user is typing
     &:focus {
-      border-bottom: 2px solid #1d61e9;
+      border-bottom: 2px solid $dark-blue;
     }
   }
 }
@@ -41,7 +51,7 @@
 .nonrequired {
   label {
     bottom: 4px;
-    color: #1d61e9;
+    color: $dark-blue;
     transform: translateY(-20px);
   }
 }
@@ -73,19 +83,19 @@
     border: 2px solid silver;
     font-size: 17px;
     width: 100%;
-    font-family:'Segoe UI', Roboto, sans-serif ;
+    font-family:'Segoe UI', 'Roboto', sans-serif ;
     
     transition: border 0.3s ease;
 
     &:focus ~ label,
     &:valid ~ label {
-      color: #1d61e9;
+      color: $dark-blue;
     }
 
     //Makes the bottom border blue when 
     //the user is typing
     &:focus {
-      border: 2px solid #1d61e9;
+      border: 2px solid $dark-blue;
     }
   }
 }
@@ -125,7 +135,7 @@
 
     &:focus ~ label,
     &:valid ~ label {
-      color: #1d61e9;
+      color: $dark-blue;
     }
   }
 }
@@ -161,7 +171,7 @@
 
     &:focus ~ label,
     &:valid ~ label {
-      color: #1d61e9;
+      color: $dark-blue;
       transform: translateY(0);
     }
   }
@@ -218,7 +228,7 @@
               #5a7dbc0d 0px 0.25em 1em;
 
   &:hover {
-    background-color: #DAE8FC;
+    background-color: $primary-blue;
     cursor: pointer;
   }
 }

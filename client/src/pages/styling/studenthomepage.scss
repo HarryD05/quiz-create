@@ -7,7 +7,7 @@
   padding: 8px;
   text-align: left;
   font-size: 14px;
-  background-color: #DAE8FC;
+  background-color: $primary-blue;
   margin-bottom: 12px;
 
   border: none;
@@ -48,7 +48,7 @@
       font-size: 14px;
 
       &:hover {
-        background-color: #e4e4e4;
+        background-color: $grey-hover;
       }
     }
   }
@@ -165,7 +165,7 @@
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
-
+        
         #assignment-card {
           @extend %card;
 
