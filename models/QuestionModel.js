@@ -29,7 +29,7 @@ const QuestionSchema = new Schema({
     type: [String]
   },
   correct: {
-    type: String,
+    type: [String],
     required: [true, 'Correct answer required']
   },
   marks: {

@@ -61,6 +61,11 @@ const Graph = props => {
           })
         }
 
+        //Checking if there is any data to graph
+        if (chartData.datasets[0].data.length === 0) {
+          return <p>There is no data to display...</p>
+        }
+
         return <Bar className="bar" options={options} height={200} data={chartData} />
 
       case 'Pie':
@@ -79,6 +84,11 @@ const Graph = props => {
             borderColor: colours.map(colour => colour.slice(0, 7)),
             borderWidth: 3
           }]
+        }
+
+        //Checking if there is any data to graph
+        if (chartData.labels.length === 0 || chartData.datasets[0].data.length === 0) {
+          return <p>There is no data to display...</p>
         }
 
         return <Pie className="pie" options={options} width={150} data={chartData} />
@@ -129,6 +139,11 @@ const Graph = props => {
             borderColor: colours.map(colour => colour.slice(0, 7)),
             borderWidth: 3
           }]
+        }
+
+        //Checking if there is any data to graph
+        if (chartData.labels.length === 0 || chartData.datasets[0].data.length === 0) {
+          return <p>There is no data to display...</p>
         }
 
         return <Bar className="bar" options={options} height={200} data={chartData} />

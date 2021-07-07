@@ -33,7 +33,7 @@ export default {
 
     const requestBody = {
       query: `
-        mutation createQuestion ($question: String!, $imageURL: String, $qualification: String!, $subject: String!, $topic: String!, $hint: String, $explanation: String!, $qtype: String!, $wrong: [String], $correct: String!, $marks: Int!) {
+        mutation createQuestion ($question: String!, $imageURL: String, $qualification: String!, $subject: String!, $topic: String!, $hint: String, $explanation: String!, $qtype: String!, $wrong: [String], $correct: [String]!, $marks: Int!) {
           createQuestion (initQuestionInput: {question: $question, imageURL: $imageURL, qualification: $qualification, subject: $subject, topic: $topic, hint: $hint, explanation: $explanation, qtype: $qtype, wrong: $wrong, correct: $correct, marks: $marks}) {
             _id
             question

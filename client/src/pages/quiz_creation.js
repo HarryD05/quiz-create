@@ -123,7 +123,7 @@ const QuizCreation = props => {
 
         <p><b>Type:</b> {returnQuestionType(question)}</p>
         <p><b>Topic:</b> {question.topic}</p>
-        <p><b>Answer:</b> {question.correct}</p>
+        <p><b>Answer(s):</b> {question.correct.join(' or ')}</p>
         <p><b>Marks:</b> {question.marks}</p>
         <p><b>Explanation:</b> {question.explanation}</p>
         <p><b>Hint:</b> {question.hint === null || question.hint.replaceAll(' ', '') === '' ? 'No hint' : question.hint}</p>
@@ -238,7 +238,7 @@ const QuizCreation = props => {
         }</p>
         <p><b>Type:</b> {returnQuestionType(question)}</p>
         <p><b>Topic:</b> {question.topic}</p>
-        <p><b>Answer:</b> {question.correct}</p>
+        <p><b>Answer(s):</b> {question.correct.join(' or ')}</p>
         <p><b>Marks:</b> {question.marks}</p>
       </button>
     })
@@ -263,8 +263,16 @@ const QuizCreation = props => {
         wrong = [option1.trim(), option2.trim(), option3.trim(), option4.trim()];
 
         const correctIndex = newQuestionInput.correct.split(' ')[1] - 1;
-        correct = wrong[correctIndex];
+        correct = [wrong[correctIndex].toLowerCase()];
         wrong.splice(correctIndex, 1);
+      } else {
+        //If the question is a short answer question split correct by semi colons
+        correct = newQuestionInput.correct.split(';');
+        correct = correct.map(text => {
+          let cleaned = text.trim();
+          cleaned = cleaned.toLowerCase();
+          return cleaned;
+        });
       }
 
       const newQuestion = await QuestionService.createQuestion({
@@ -276,7 +284,7 @@ const QuizCreation = props => {
         topic: toTitleCase(topic).trim(),
         hint: hint.trim(),
         explanation: explanation.trim(),
-        correct: correct.toLowerCase(),
+        correct,
         wrong,
         marks: Number(marks),
       }, authContext.token);
@@ -344,6 +352,8 @@ const QuizCreation = props => {
   const renderAnswerInput = type => {
     if (type === 'Short answer') {
       return <div id="short-answer">
+        <i>If you want multiple correct answers separate by semi-colons e.g. earthquake; an earthquake</i>
+
         <div className="form-control">
           <input type="text" name="correct" autoComplete="off" value={newQuestionInput.correct} onChange={handleQuestionChange} required />
           <label htmlFor="correct">Answer</label>
@@ -601,7 +611,7 @@ const QuizCreation = props => {
 
       //Returning the answer to each question as a list item
       let answers = currentQuestions.map(q => {
-        return `<li>${q.correct} (${q.marks})</li>`;
+        return `<li>${q.correct.join(' or ')} (${q.marks})</li>`;
       }).join('');
 
       //The HTML that will be converted to a word document

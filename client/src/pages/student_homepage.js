@@ -274,7 +274,7 @@ const StudentHomepage = props => {
         const getAnswers = () => {
           //Returns wrong/correct for the answer so the answer can be colour coded
           const getClass = (answer, index) => {
-            return (answer.toLowerCase() !== assignment.questions[index].correct.toLowerCase() ? 'wrong' : 'correct');
+            return assignment.questions[index].correct.indexOf(answer.toLowerCase()) !== -1 ? 'correct' : 'wrong';
           }
 
           return assignmentResult.answers.map((answer_, index) => {
@@ -405,7 +405,7 @@ const StudentHomepage = props => {
           }
 
           //if correct answer then add marks to the topics total marks
-          if (answer.toLowerCase() === question.correct.toLowerCase()) {
+          if (question.correct.indexOf(answer.toLowerCase()) !== -1) {
             output[question.topic].marks += question.marks;
           }
 

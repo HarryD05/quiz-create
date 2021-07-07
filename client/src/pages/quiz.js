@@ -150,7 +150,7 @@ const Quiz = props => {
       let answer = currentAnswer.trim();
       answer = answer.toLowerCase();
 
-      return (answer === correct.toLowerCase());
+      return (correct.indexOf(answer) !== -1);
     };
 
     //handles when an answer changes 
@@ -204,9 +204,9 @@ const Quiz = props => {
 
           //If the option button is the student's answer which has been submitted and 
           //is correct then make the button green
-          if (submitted && option === correct.toLowerCase() && option === currentAnswer) {
+          if (submitted && correct.indexOf(option) !== -1 && option === currentAnswer) {
             baseClasses += ' correct'
-          } else if (submitted && option !== correct.toLowerCase() && option === currentAnswer) {
+          } else if (submitted && correct.indexOf(option) !== -1 && option === currentAnswer) {
             //If wrong make it red
             baseClasses += ' wrong'
           }

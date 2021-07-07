@@ -18,24 +18,6 @@ module.exports = {
       throw error;
     }
   },
-  teachers: async (args, req) => {
-    try {
-      const allTeachers = await User.find({ role: 'teacher' });
-
-      return transformUsers(allTeachers);
-    } catch (error) {
-      throw error;
-    }
-  },
-  classStudents: async (args, req) => {
-    try {
-      const classResult = await Class.findById(args.classId);
-
-      return transformUsers(classResult.students);
-    } catch (error) {
-      throw error;
-    }
-  },
   currentUser: async (args, req) => {
     if (!req.isAuth) {
       throw new Error('NOT AUTHENTICATED');

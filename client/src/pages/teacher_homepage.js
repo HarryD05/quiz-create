@@ -519,7 +519,7 @@ const TeacherHomepage = props => {
         }
 
         //if correct answer then add marks to the topics total marks
-        if (answer.toLowerCase() === question.correct.toLowerCase()) {
+        if (question.correct.indexOf(answer.toLowerCase()) !== -1) {
           output[question.topic].marks += question.marks;
         }
 
@@ -870,7 +870,7 @@ const TeacherHomepage = props => {
       //loop through all results
       for (let result of completedAssignments) {
         for (let i = 0; i < questions.length; i++) {
-          if (result.answers[i].toLowerCase() === result.assignment.questions[i].correct.toLowerCase()) {
+          if (result.assignment.questions[i].correct.indexOf(result.answers[i].toLowerCase()) !== -1) {
             questions[i].total += result.assignment.questions[i].marks;
           }
         }
@@ -1107,7 +1107,7 @@ const TeacherHomepage = props => {
       let index = -1;
       return completedResult.answers.map(answer => {
         index++;
-        if (answer.toLowerCase() === completedResult.assignment.questions[index].correct.toLowerCase()) {
+        if (completedResult.assignment.questions[index].correct.indexOf(answer.toLowerCase()) !== -1) {
           return <li key={index}>{answer} - CORRECT {(completedResult.hints[index] ? '(Hint used)' : '')}</li>
         } else {
           return <li key={index}>{answer} - INCORRECT {(completedResult.hints[index] ? '(Hint used)' : '')}</li>

@@ -39,7 +39,7 @@ module.exports = buildSchema(`
     explanation: String!
     qtype: String!
     wrong: [String]!
-    correct: String!
+    correct: [String]!
     marks: Int!
     creator: User!
   }
@@ -106,7 +106,7 @@ module.exports = buildSchema(`
     explanation: String!
     qtype: String!
     wrong: [String]
-    correct: String!
+    correct: [String]!
     marks: Int!
   }
   
@@ -139,11 +139,8 @@ module.exports = buildSchema(`
 
   type RootQuery {
     users: [User]
-    teachers: [User]
-    classStudents(classId: ID!): [User]
     currentUser: User
     login(loginData: LoginData!): AuthData
-    classes: [Class]
     questions: [Question]
   }
   
