@@ -174,7 +174,7 @@ const Quiz = props => {
       //If options is equal to null they haven't been shuffled yet...
       if (options.length === 0) {
         //Put all options in an array
-        let allOptions = [...wrong, correct];
+        let allOptions = [...wrong, correct[0]];
 
         allOptions = allOptions.map(option => option.toLowerCase());
 
