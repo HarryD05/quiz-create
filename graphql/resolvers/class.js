@@ -138,5 +138,71 @@ module.exports = {
     } catch (error) {
       throw error;
     }
+  },
+  removeStudent: async (args, req) => {
+    try {
+      if (!req.isAuth) {
+        throw new Error('NOT AUTHENTICATED');
+      }
+
+      //Retrieving the class and student ID and desired level from the request
+      const { classID, studentID } = args.removeStudentInput;
+
+      //Finding the linked class
+      const targetClass = await Class.findById(classID);
+
+      //If no class then throw error
+      if (!targetClass) {
+        throw new Error('INVALID CLASS ID');
+      }
+
+      //Removing the student from the class' student array
+      const targetIndex = targetClass.students.indexOf(studentID);
+
+      //if the student isn't in the class' student array, throw error
+      if (targetIndex === -1) {
+        throw new Error('STUDENT NOT IN CLASS');
+      }
+
+      //Removing the student from the class' student array
+      targetClass.students.splice(targetIndex, 1);
+
+      //Removing the student from any attainment array  they are in
+      if (targetClass.low.indexOf(studentID) !== -1) {
+        targetClass.low.splice(targetClass.low.indexOf(studentID), 1);
+      } else if (targetClass.mid.indexOf(studentID) !== -1) {
+        targetClass.mid.splice(targetClass.mid.indexOf(studentID), 1);
+      } else if (targetClass.high.indexOf(studentID) !== -1) {
+        targetClass.high.splice(targetClass.high.indexOf(studentID), 1);
+      }
+
+      //Saving the class in the database
+      const result = await targetClass.save();
+
+      //Removing the class ID from the student's class array
+      const targetStudent = await User.findById(studentID);
+
+      //If no student then the ID is invalid, throw error
+      if (!targetStudent) {
+        throw new Error('INVALID STUDENT ID');
+      }
+
+      //Retrieving the index of the class in the student's class array
+      const classIndex = targetStudent.classes.indexOf(classID);
+
+      //If the class isn't in the array throw error
+      if (classIndex === -1) {
+        throw new Error('CLASS NOT IN STUDENT\'S CLASS ARRAY');
+      }
+
+      //Updating the student's class array (removing the class) and saving in DB
+      targetStudent.classes.splice(classIndex, 1);
+      await targetStudent.save();
+
+      //Returning the updated class
+      return transformClassById(result._id);
+    } catch (error) {
+      throw error;
+    }
   }
 }

@@ -1504,9 +1504,9 @@ const TeacherHomepage = props => {
 
       if (updatedClass) {
         setAttainmentLevel('');
-        authContext.updateUser();
         setCurrentClass(null);
         setCurrentStudent(null);
+        await authContext.updateUser();
         incrementKey();
       } else {
         modalContext.updateModal({
@@ -1524,6 +1524,50 @@ const TeacherHomepage = props => {
     { label: 'Mid', value: 1 },
     { label: 'Low', value: 2 }
   ]
+
+  //Removing the currently selected student from the current class
+  const removeStudent = async () => {
+    if (currentClass === null || currentStudent === null) {
+      //If there is no student selected then don't send the API call
+      modalContext.updateModal({
+        title: 'Error',
+        content: <p>Please select a student first...</p>
+      });
+      return;
+    }
+
+    //Try to send the API call if it fails throw an error
+    try {
+      //If a student has been selected send the remove student API call
+      const classData = await ClassService.removeStudent({
+        classID: currentClass._id,
+        studentID: currentStudent._id
+      }, authContext.token);
+
+      //If there is class data then the student was removed successfully so reload the class data
+      if (classData) {
+        modalContext.updateModal({
+          title: 'Success',
+          content: <p>{currentStudent.firstname} {currentStudent.surname} successfully removed from {currentClass.name}</p>
+        });
+
+        //Updating the current user data
+        setAttainmentLevel('');
+        setCurrentClass(null);
+        setCurrentStudent(null);
+        await authContext.updateUser();
+        incrementKey();
+      } else {
+        //If there is no class data then the API call failed
+        modalContext.updateModal({
+          title: 'Error',
+          content: <p>There was an error removing the student from this class, please try again...</p>
+        });
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
 
   return (
     <div id="teacher-homepage" key={key}>
@@ -1660,6 +1704,7 @@ const TeacherHomepage = props => {
           <div id="student-buttons">
             <a className="btn" onClick={submitAttainmentChange}>Change attainment level</a>
             <a className="btn" onClick={showStudentAssignmentsModal}>See all student's assignments</a>
+            <a className="btn" onClick={removeStudent}>Remove student from class</a>
           </div>
         </div>
       </div>

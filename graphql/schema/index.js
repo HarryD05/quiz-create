@@ -137,6 +137,11 @@ module.exports = buildSchema(`
     level: String!
   }
 
+  input RemoveStudentInput {
+    classID: ID!
+    studentID: ID!
+  }
+
   type RootQuery {
     users: [User]
     currentUser: User
@@ -149,6 +154,7 @@ module.exports = buildSchema(`
     createClass(initClassInput: InitClassInput!): Class
     joinClass(joiningCode: String!): Class
     setStudentLevel(initLevelInput: InitLevelInput!): Class
+    removeStudent(removeStudentInput: RemoveStudentInput!): Class
     createQuestion(initQuestionInput: InitQuestionInput!): Question
     createAssignment(initAssignmentInput: InitAssignmentInput!): Assignment
     completeAssignment(initResultInput: InitResultInput!): AssignmentResult

@@ -74,5 +74,31 @@ export default {
     }
 
     return await Service.sendRequest('setStudentLevel', requestBody, token);
-  }
+  },
+  removeStudent: async (info, token) => {
+    //Extracting the required data for the API call from the input
+    const { classID, studentID } = info;
+
+    //Creating the graphQL call
+    const requestBody = {
+      query: `
+        mutation removeStudent ($classID: ID!, $studentID: ID!) {
+          removeStudent (removeStudentInput: {classID: $classID, studentID: $studentID}) {
+            _id
+            name
+            students {
+              _id
+              username
+            }
+          }
+        }
+      `,
+      variables: {
+        classID,
+        studentID
+      }
+    }
+
+    return await Service.sendRequest('removeStudent', requestBody, token);
+  },
 }
