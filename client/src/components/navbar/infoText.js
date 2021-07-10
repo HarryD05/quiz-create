@@ -36,6 +36,7 @@ const getInfoText = path => {
           <li>The percentage next to the poorest/best topic is the average score this student achieves on questions of that topic.</li>
           <li>The 'see all student's assignments' button will bring up a popup displaying each assignment you have set for this student which whether or not they have completed the assignment, their score, the time it took them (if you set the assignment to record the time), on which questions they used hints and their answers. The popup has a dropdown menu where you can select which assignment you want to see, you can also select to see all assignments</li>
           <li>The attainment level is used to categorise the class into levels especially useful for mixed ability groups, use the dropdown selector to update the currently selected student's attainment level (high, mid or low) by pressing the 'change attainment level' button below the dropdown menu.</li>
+          <li>The 'remove student from class' button will remove the currently selected student from the currently selected class, their result's data is still accessible in the see all assignments popup but they will no longer see the assignments you set</li>
         </ul>
         <li>Create a new class</li>
         <ul>
@@ -56,7 +57,7 @@ const getInfoText = path => {
         <li>Adding questions - there are 2 buttons to add questions...</li>
         <ul>
           <li>Add question from bank - this will open a popup where all the questions ever made that are the same subject as the current class selected will be displayed, you can use the topright text input to search for key words in the question (including the topic, explanation and hint of the question) and if you click on a question it will be added to the current questions of the assignment.</li>
-          <li>Create and add new question - this will open sub-page with a text form where you can input data to create a new question (the hint is optional) if you press back the question won't be saved and you will return to the main create assignment page or if you press add question the question will be saved to the database and added to you current questions of the assignment.</li>
+          <li>Create and add new question - this will open sub-page with a text form where you can input data to create a new question (the hint is optional) if you press back the question won't be saved and you will return to the main create assignment page or if you press add question the question will be saved to the database and added to you current questions of the assignment. If the question has a short answer you can separate all the possible answers by using a semi colon e.g. "earthquake; earthquakes" would allow the 2 inputs to be correct.</li>
         </ul>
         <li>Below horizontal lines all the current questions in the assignment are displayed, if you click on a question it will be removed from the list.</li>
         <li>Then if you press the publish assignment button and all the inputs are filled and there are some questions selected the assignment will be published to all your students and you will be redirected back to the teacher homepage.</li>
