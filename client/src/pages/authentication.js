@@ -99,6 +99,17 @@ const Authentication = props => {
   const handleSubmit = async e => {
     e.preventDefault(); //stops the normal submit button functionality
 
+    //If signing up make sure that the prefix and role values aren't empty
+    if (!isLogin) {
+      if (user.role === '' || user.prefix === '') {
+        modalContext.updateModal({
+          title: 'Error',
+          content: <p>Must select an account type (and prefix if you're a teacher)</p>
+        });
+        return;
+      }
+    }
+
     //try/catch will handle the error if the api call fails
     try {
       //Send request to backend
@@ -142,7 +153,7 @@ const Authentication = props => {
     return (
       <div className="form-control dropdown">
         <Select name="role" options={options} onChange={handleSelectChange}
-          className="select" placeholder="Select account type..." />
+          className="select" placeholder="Select account type..." required />
       </div>
     )
   }
@@ -176,7 +187,7 @@ const Authentication = props => {
     return (
       <div className="form-control dropdown">
         <Select name="prefix" options={options} onChange={handleSelectChange}
-          className="select" placeholder="Select prefix..." />
+          className="select" placeholder="Select prefix..." required />
       </div>
     )
   }
