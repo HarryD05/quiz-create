@@ -97,7 +97,7 @@ const QuizCreation = props => {
 
         //Checking all data about the question for the filterword 
         if (question.question.search(filter) !== -1) found = true;
-        else if (question.correct.search(filter) !== -1) found = true;
+        else if (question.correct[0].search(filter) !== -1) found = true;
         else if (question.explanation.search(filter) !== -1) found = true;
         else if (question.hint) {
           if (question.hint.search(filter) !== -1) found = true;
